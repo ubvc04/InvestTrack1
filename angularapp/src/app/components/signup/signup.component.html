@@ -1,0 +1,322 @@
+<div class="auth-wrapper" style="background-image: url('assets/images/background.webp');">
+
+  <div class="auth-card signup-card">
+
+    <div class="text-center mb-4">
+
+      <div class="auth-logo mb-3">
+        <i class="bi bi-graph-up-arrow"></i>
+      </div>
+
+      <h1 class="auth-title">
+        InvestTrack
+      </h1>
+
+      <p class="auth-subtitle">
+        Create your account
+      </p>
+
+    </div>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
+
+      <!-- Username -->
+
+      <div class="mb-3">
+
+        <label class="form-label fw-semibold">
+          Username *
+        </label>
+
+        <div class="input-group-modern">
+
+          <span class="input-icon">
+            <i class="bi bi-person-circle"></i>
+          </span>
+
+          <input type="text" class="form-control" formControlName="username" placeholder="Enter username"
+            [class.is-invalid]="username?.invalid && username?.touched">
+
+        </div>
+
+        <div class="invalid-feedback" *ngIf="username?.invalid && username?.touched">
+
+          <span *ngIf="username?.errors?.['required']">
+            Username is required.
+          </span>
+
+          <span *ngIf="username?.errors?.['minlength']">
+            At least 3 characters.
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- Email -->
+
+      <div class="mb-3">
+
+        <label class="form-label fw-semibold">
+          Email Address *
+        </label>
+
+        <div class="input-group-modern">
+
+          <span class="input-icon">
+            <i class="bi bi-envelope-at"></i>
+          </span>
+
+          <input type="email" class="form-control" formControlName="email" placeholder="Enter email address"
+            [class.is-invalid]="email?.invalid && email?.touched">
+
+        </div>
+
+        <div class="invalid-feedback" *ngIf="email?.invalid && email?.touched">
+
+          <span *ngIf="email?.errors?.['required']">
+            Email is required.
+          </span>
+
+          <span *ngIf="email?.errors?.['email']">
+            Enter a valid email.
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- OTP Verification -->
+
+      <div class="mb-3">
+
+        <button type="button" class="btn btn-outline-primary w-100" (click)="sendOtp()">
+
+          <i class="bi bi-envelope-check me-2"></i>
+          Send OTP
+
+        </button>
+
+      </div>
+
+      <div *ngIf="otpSent" class="mb-3">
+
+        <label class="form-label fw-semibold">
+          Enter OTP *
+        </label>
+
+        <div class="input-group-modern">
+
+          <span class="input-icon">
+            <i class="bi bi-shield-check"></i>
+          </span>
+
+          <input type="text" class="form-control" [(ngModel)]="otp" [ngModelOptions]="{standalone: true}"
+            placeholder="Enter OTP received in email">
+
+        </div>
+
+      </div>
+
+      <div *ngIf="otpSent" class="mb-3">
+
+        <button type="button" class="btn btn-success w-100" (click)="verifyOtp()">
+
+          <i class="bi bi-check-circle me-2"></i>
+          Verify OTP
+
+        </button>
+
+      </div>
+
+      <div *ngIf="otpMessage" class="alert alert-info">
+
+        {{ otpMessage }}
+
+      </div>
+
+      <div *ngIf="otpVerified" class="alert alert-success">
+
+        <i class="bi bi-patch-check-fill me-2"></i>
+        Email verified successfully
+
+      </div>
+
+      <!-- Password -->
+
+      <div class="mb-3">
+
+        <label class="form-label fw-semibold">
+          Password *
+        </label>
+
+        <div class="input-group-modern">
+
+          <span class="input-icon">
+            <i class="bi bi-shield-lock"></i>
+          </span>
+
+          <input type="password" class="form-control" formControlName="password" placeholder="Enter password"
+            [class.is-invalid]="password?.invalid && password?.touched">
+
+        </div>
+
+        <div class="invalid-feedback" *ngIf="password?.invalid && password?.touched">
+
+          <span *ngIf="password?.errors?.['required']">
+            Password is required.
+          </span>
+
+          <span *ngIf="password?.errors?.['minlength']">
+            At least 6 characters.
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- Confirm Password -->
+
+      <div class="mb-3">
+
+        <label class="form-label fw-semibold">
+          Confirm Password *
+        </label>
+
+        <div class="input-group-modern">
+
+          <span class="input-icon">
+            <i class="bi bi-patch-check"></i>
+          </span>
+
+          <input type="password" class="form-control" formControlName="confirmPassword" placeholder="Confirm password"
+            [class.is-invalid]="confirmPassword?.touched && signupForm.errors?.['passwordMismatch']">
+
+        </div>
+
+        <div class="invalid-feedback" *ngIf="confirmPassword?.touched && signupForm.errors?.['passwordMismatch']">
+
+          Passwords do not match.
+
+        </div>
+
+      </div>
+
+      <!-- Mobile Number -->
+
+      <div class="mb-3">
+
+        <label class="form-label fw-semibold">
+          Mobile Number *
+        </label>
+
+        <div class="input-group-modern">
+
+          <span class="input-icon">
+            <i class="bi bi-phone"></i>
+          </span>
+
+          <input type="text" class="form-control" formControlName="mobileNumber" placeholder="10-digit mobile number"
+            [class.is-invalid]="mobileNumber?.invalid && mobileNumber?.touched">
+
+        </div>
+
+        <div class="invalid-feedback" *ngIf="mobileNumber?.invalid && mobileNumber?.touched">
+
+          <span *ngIf="mobileNumber?.errors?.['required']">
+            Mobile number is required.
+          </span>
+
+          <span *ngIf="mobileNumber?.errors?.['pattern']">
+            Enter a valid 10-digit number.
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- Backend Error -->
+
+      <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center">
+
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+        {{ errorMessage }}
+
+      </div>
+
+      <!-- Submit -->
+
+      <button type="submit" class="btn btn-primary signup-btn w-100 mb-3"
+        [disabled]="signupForm.invalid || loading || !otpVerified">
+        
+        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2">
+        </span>
+
+        <i *ngIf="!loading" class="bi bi-person-plus-fill me-2">
+        </i>
+
+        Create Account
+
+      </button>
+
+      <!-- Login -->
+
+      <div class="text-center">
+
+        <span class="text-muted">
+          Already have an account?
+        </span>
+
+        <a role="button" (click)="goToLogin()" class="login-link ms-1">
+
+          Sign In
+
+        </a>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<!-- SUCCESS MODAL -->
+
+<div class="modal fade" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content investtrack-modal">
+
+      <div class="modal-body text-center py-5">
+
+        <div class="success-icon mb-3">
+          <i class="bi bi-patch-check-fill"></i>
+        </div>
+
+        <h4 class="fw-bold mb-2">
+          Registration Successful!
+        </h4>
+
+        <p class="text-muted mb-4">
+          Your account has been created successfully.
+        </p>
+
+        <button class="btn btn-primary px-4" (click)="onModalOk()">
+
+          Continue to Login
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div *ngIf="showModal" class="modal-backdrop fade show">
+</div>

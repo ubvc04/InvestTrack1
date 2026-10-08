@@ -1,0 +1,360 @@
+<!-- ==========================================
+     PORTFOLIO HERO
+========================================== -->
+
+<div class="portfolio-header">
+
+  <div class="portfolio-info">
+
+    <span class="portfolio-tag">
+
+      <i class="bi bi-activity"></i>
+
+      INVESTTRACK
+
+    </span>
+
+    <h1>Investment Portfolio</h1>
+
+    <p>
+      Manage, monitor and analyze investment assets from one place.
+    </p>
+
+  </div>
+
+  <button
+    class="add-btn"
+    routerLink="/adminnav/add-investment">
+
+    <i class="bi bi-plus-lg"></i>
+
+    Add Investment
+
+  </button>
+
+</div>
+
+<!-- ==========================================
+     AI SEARCH BAR
+========================================== -->
+
+<div class="ai-search-wrapper">
+
+  <div class="ai-search-header">
+
+    <div class="ai-title">
+
+      <i class="bi bi-stars"></i>
+
+      <span>AI Investment Assistant</span>
+
+    </div>
+
+  </div>
+
+  <div class="input-group">
+
+    <input
+      type="text"
+      class="form-control"
+      [(ngModel)]="aiQuery"
+      placeholder="Ask AI: active stocks, crypto investments, high value assets..."
+      (keyup.enter)="onAiSearch()">
+
+    <button
+      class="btn btn-primary"
+      (click)="onAiSearch()"
+      [disabled]="aiLoading">
+
+      <span
+        *ngIf="aiLoading"
+        class="spinner-border spinner-border-sm">
+      </span>
+
+      <i
+        *ngIf="!aiLoading"
+        class="bi bi-arrow-right-circle-fill">
+      </i>
+
+    </button>
+
+  </div>
+
+  <div
+    *ngIf="aiResultActive"
+    class="ai-result">
+
+    <i class="bi bi-magic"></i>
+
+    Showing AI results for
+
+    <strong>{{ aiQuery }}</strong>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     FILTER TOOLBAR
+========================================== -->
+
+<div class="filter-toolbar">
+
+  <div class="search-box">
+
+    <i class="bi bi-search"></i>
+
+    <input
+      type="text"
+      [(ngModel)]="searchName"
+      (input)="applyFilter()"
+      placeholder="Search investments...">
+
+  </div>
+
+  <div class="filter-box">
+
+    <i class="bi bi-sliders"></i>
+
+    <select
+      [(ngModel)]="filterType"
+      (change)="applyFilter()">
+
+      <option value="">All Types</option>
+
+      <option
+        *ngFor="let type of types"
+        [value]="type">
+
+        {{ type }}
+
+      </option>
+
+    </select>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     SECTION TITLE
+========================================== -->
+
+<div class="portfolio-title">
+
+  <h3>
+
+    <i class="bi bi-briefcase-fill"></i>
+
+    Investment Assets
+
+  </h3>
+
+</div>
+
+<!-- ==========================================
+     EMPTY STATE
+========================================== -->
+
+<div
+  *ngIf="filteredInvestments.length === 0"
+  class="empty-state">
+
+  <i class="bi bi-folder2-open"></i>
+
+  <h4>No Investments Found</h4>
+
+  <p>
+    Adjust the search criteria or add a new investment.
+  </p>
+
+</div>
+
+<!-- ==========================================
+     INVESTMENT GRID
+========================================== -->
+
+<div
+  class="row g-4"
+  *ngIf="filteredInvestments.length > 0">
+
+  <div
+    class="col-xl-4 col-lg-6"
+    *ngFor="let inv of filteredInvestments">
+
+    <div class="investment-card">
+
+      <div class="investment-top">
+
+        <div>
+
+          <h5>{{ inv.name }}</h5>
+
+          <span class="investment-type">
+
+            <i class="bi bi-pie-chart-fill"></i>
+
+            {{ inv.type }}
+
+          </span>
+
+        </div>
+
+        <span
+          class="status-pill"
+          [ngClass]="{
+            'active-status': inv.status === 'Active',
+            'sold-status': inv.status !== 'Active'
+          }">
+
+          {{ inv.status }}
+
+        </span>
+
+      </div>
+
+      <div class="price-wrapper">
+
+        <div class="price-item">
+
+          <span>Purchase</span>
+
+          <strong>
+            ₹{{ inv.purchasePrice }}
+          </strong>
+
+        </div>
+
+        <div class="price-item">
+
+          <span>Current</span>
+
+          <strong>
+            ₹{{ inv.currentPrice }}
+          </strong>
+
+        </div>
+
+      </div>
+
+      <div class="investment-meta">
+
+        <div>
+
+          <i class="bi bi-box-seam"></i>
+
+          Qty: {{ inv.quantity }}
+
+        </div>
+
+        <div>
+
+          <i class="bi bi-calendar3"></i>
+
+          {{ inv.purchaseDate }}
+
+        </div>
+
+        <div *ngIf="inv.symbol">
+
+          <i class="bi bi-buildings"></i>
+
+          {{ inv.symbol }}
+
+        </div>
+
+      </div>
+
+      <div class="investment-actions">
+
+        <button
+          class="btn-edit"
+          (click)="editInvestment(inv.investmentId!)">
+
+          <i class="bi bi-pencil-fill"></i>
+
+          Edit
+
+        </button>
+
+        <button
+          class="btn-delete"
+          (click)="confirmDelete(inv.investmentId!)">
+
+          <i class="bi bi-trash-fill"></i>
+
+          Delete
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     DELETE MODAL
+========================================== -->
+
+<div
+  class="modal fade"
+  [class.show]="showDeleteModal"
+  [style.display]="showDeleteModal ? 'block' : 'none'"
+  tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content">
+
+      <div class="modal-body text-center p-5">
+
+        <i
+          class="bi bi-trash3-fill text-danger"
+          style="font-size:4rem">
+        </i>
+
+        <h4 class="mt-3">
+          Delete Investment?
+        </h4>
+
+        <p class="text-muted">
+
+          This action cannot be undone.
+
+        </p>
+
+        <div class="d-flex gap-2 justify-content-center mt-4">
+
+          <button
+            class="btn btn-danger"
+            (click)="onDelete()">
+
+            Delete
+
+          </button>
+
+          <button
+            class="btn btn-outline-secondary"
+            (click)="cancelDelete()">
+
+            Cancel
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  *ngIf="showDeleteModal"
+  class="modal-backdrop fade show">
+</div>

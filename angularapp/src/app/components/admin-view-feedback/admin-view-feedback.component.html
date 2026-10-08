@@ -1,0 +1,394 @@
+<!-- ==========================================
+     FEEDBACK CENTER HEADER
+========================================== -->
+
+<div class="portfolio-header">
+
+  <div class="portfolio-info">
+
+    <span class="portfolio-tag">
+
+      <i class="bi bi-chat-square-heart-fill"></i>
+
+      FEEDBACK CENTER
+
+    </span>
+
+    <h1>Feedback Management</h1>
+
+    <p>
+      Review customer feedback, platform opinions and investment experiences.
+    </p>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     FILTER TOOLBAR
+========================================== -->
+
+<div class="filter-toolbar">
+
+  <div class="filter-box">
+
+    <i class="bi bi-tags-fill"></i>
+
+    <select
+      [(ngModel)]="filterCategory"
+      (change)="applyFilter()">
+
+      <option value="">All Categories</option>
+
+      <option value="Portfolio">Portfolio</option>
+
+      <option value="Advice">Advice</option>
+
+      <option value="Service">Service</option>
+
+      <option value="Platform">Platform</option>
+
+      <option value="Investment">Investment</option>
+
+      <option value="Other">Other</option>
+
+    </select>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     EMPTY STATE
+========================================== -->
+
+<div
+  *ngIf="filtered.length === 0"
+  class="empty-state">
+
+  <i class="bi bi-chat-left-heart"></i>
+
+  <h4>No Feedback Found</h4>
+
+  <p>
+    No feedback records are available for the selected category.
+  </p>
+
+</div>
+
+<!-- ==========================================
+     FEEDBACK GRID
+========================================== -->
+
+<div
+  class="row g-4"
+  *ngIf="filtered.length > 0">
+
+  <div
+    class="col-xl-4 col-lg-6"
+    *ngFor="let fb of filtered">
+
+    <div class="feedback-card">
+
+      <!-- Top -->
+
+      <div class="feedback-top">
+
+        <div>
+
+          <h5>
+
+            {{ fb.subject || 'General Feedback' }}
+
+          </h5>
+
+          <div class="feedback-user">
+
+            <i class="bi bi-person-circle"></i>
+
+            {{ fb.user?.username || 'Unknown User' }}
+
+          </div>
+
+        </div>
+
+        <span class="category-badge">
+
+          {{ fb.category }}
+
+        </span>
+
+      </div>
+
+      <!-- Feedback Text -->
+
+      <div class="feedback-message">
+
+        <i class="bi bi-quote"></i>
+
+        <p>
+
+          {{ fb.feedbackText }}
+
+        </p>
+
+      </div>
+
+      <!-- Investment -->
+
+      <div
+        *ngIf="fb.investment"
+        class="investment-summary">
+
+        <div class="investment-label">
+
+          <i class="bi bi-briefcase-fill"></i>
+
+          Related Investment
+
+        </div>
+
+        <div class="investment-name">
+
+          {{ fb.investment.name }}
+
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+
+      <div class="feedback-footer">
+
+        <div class="feedback-date">
+
+          <i class="bi bi-calendar3"></i>
+
+          {{ fb.date }}
+
+        </div>
+
+      </div>
+
+      <!-- Actions -->
+
+      <div class="feedback-actions">
+
+        <button
+          class="btn-profile"
+          (click)="showProfile(fb)">
+
+          <i class="bi bi-person-badge-fill"></i>
+
+          User Profile
+
+        </button>
+
+        <button
+          class="btn-investment"
+          (click)="showInvestment(fb)"
+          [disabled]="!fb.investment">
+
+          <i class="bi bi-bar-chart-fill"></i>
+
+          Investment Info
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     USER PROFILE MODAL
+========================================== -->
+
+<div
+  class="modal fade"
+  [class.show]="showProfileModal"
+  [style.display]="showProfileModal ? 'block' : 'none'"
+  tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h5 class="modal-title">
+
+          <i class="bi bi-person-circle me-2"></i>
+
+          User Profile
+
+        </h5>
+
+      </div>
+
+      <div class="modal-body">
+
+        <div class="profile-item">
+
+          <strong>Username</strong>
+
+          <span>{{ selectedFeedback?.user?.username }}</span>
+
+        </div>
+
+        <div class="profile-item">
+
+          <strong>Email</strong>
+
+          <span>{{ selectedFeedback?.user?.email }}</span>
+
+        </div>
+
+        <div class="profile-item">
+
+          <strong>Mobile</strong>
+
+          <span>{{ selectedFeedback?.user?.mobileNumber }}</span>
+
+        </div>
+
+        <div class="profile-item">
+
+          <strong>Role</strong>
+
+          <span>{{ selectedFeedback?.user?.userRole }}</span>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button
+          class="btn btn-secondary"
+          (click)="closeModals()">
+
+          Close
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  *ngIf="showProfileModal"
+  class="modal-backdrop fade show">
+</div>
+
+<!-- ==========================================
+     INVESTMENT INFO MODAL
+========================================== -->
+
+<div
+  class="modal fade"
+  [class.show]="showInvestmentModal"
+  [style.display]="showInvestmentModal ? 'block' : 'none'"
+  tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h5 class="modal-title">
+
+          <i class="bi bi-bar-chart-line-fill me-2"></i>
+
+          Investment Information
+
+        </h5>
+
+      </div>
+
+      <div class="modal-body">
+
+        <div class="profile-item">
+
+          <strong>Name</strong>
+
+          <span>{{ selectedFeedback?.investment?.name }}</span>
+
+        </div>
+
+        <div class="profile-item">
+
+          <strong>Type</strong>
+
+          <span>{{ selectedFeedback?.investment?.type }}</span>
+
+        </div>
+
+        <div class="profile-item">
+
+          <strong>Status</strong>
+
+          <span>{{ selectedFeedback?.investment?.status }}</span>
+
+        </div>
+
+        <div class="profile-item">
+
+          <strong>Purchase Price</strong>
+
+          <span>
+            ₹{{ selectedFeedback?.investment?.purchasePrice | number:'1.2-2' }}
+          </span>
+
+        </div>
+
+        <div class="profile-item">
+
+          <strong>Current Price</strong>
+
+          <span>
+            ₹{{ selectedFeedback?.investment?.currentPrice | number:'1.2-2' }}
+          </span>
+
+        </div>
+
+        <div class="profile-item">
+
+          <strong>Quantity</strong>
+
+          <span>{{ selectedFeedback?.investment?.quantity }}</span>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button
+          class="btn btn-secondary"
+          (click)="closeModals()">
+
+          Close
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  *ngIf="showInvestmentModal"
+  class="modal-backdrop fade show">
+</div>

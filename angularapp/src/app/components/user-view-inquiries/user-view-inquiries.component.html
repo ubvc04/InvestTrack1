@@ -1,0 +1,228 @@
+<!-- ==========================================
+     HERO SECTION
+========================================== -->
+
+<div class="portfolio-header">
+
+  <div class="portfolio-info">
+
+    <span class="portfolio-tag">
+
+      <i class="bi bi-chat-left-dots-fill"></i>
+
+      INVESTTRACK SUPPORT
+
+    </span>
+
+    <h1>My Inquiries</h1>
+
+    <p>
+      Track your submitted inquiries, advisor responses and support requests.
+    </p>
+
+  </div>
+
+  <div class="header-stat">
+
+    <div class="stat-card">
+
+      <span>Total Inquiries</span>
+
+      <strong>{{ inquiries.length }}</strong>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     ACTION BAR
+========================================== -->
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+
+  <div>
+
+    <h4 class="mb-1 fw-bold">
+      Inquiry Dashboard
+    </h4>
+
+    <p class="text-muted mb-0">
+      Monitor all your conversations with our investment advisors.
+    </p>
+
+  </div>
+
+  <a
+    routerLink="/usernav/view-investments"
+    class="btn btn-primary new-inquiry-btn">
+
+    <i class="bi bi-plus-circle-fill me-2"></i>
+
+    New Inquiry
+
+  </a>
+
+</div>
+
+<!-- ==========================================
+     LOADER
+========================================== -->
+
+<div
+  *ngIf="loading"
+  class="text-center py-5">
+
+  <div
+    class="spinner-border text-primary"
+    style="width:3rem;height:3rem">
+  </div>
+
+  <p class="text-muted mt-3">
+    Loading inquiries...
+  </p>
+
+</div>
+
+<!-- ==========================================
+     EMPTY STATE
+========================================== -->
+
+<div
+  *ngIf="!loading && inquiries.length === 0"
+  class="empty-state">
+
+  <i class="bi bi-chat-square-text"></i>
+
+  <h4>No Inquiries Yet</h4>
+
+  <p>
+    Start your first conversation with an investment advisor.
+  </p>
+
+  <a
+    routerLink="/usernav/view-investments"
+    class="btn btn-primary">
+
+    Browse Investments
+
+  </a>
+
+</div>
+
+<!-- ==========================================
+     INQUIRY GRID
+========================================== -->
+
+<div
+  class="row g-4"
+  *ngIf="!loading && inquiries.length > 0">
+
+  <div
+    class="col-lg-6"
+    *ngFor="let inquiry of inquiries">
+
+    <div class="inquiry-card">
+
+      <!-- TOP -->
+
+      <div class="inquiry-top">
+
+        <div>
+
+          <h5>
+
+            <i class="bi bi-briefcase-fill me-2"></i>
+
+            {{ inquiry.subject || inquiry.investment.name }}
+
+          </h5>
+
+          <span class="inquiry-date">
+
+            <i class="bi bi-calendar-event me-1"></i>
+
+            {{ inquiry.inquiryDate | date:'mediumDate' }}
+
+          </span>
+
+        </div>
+
+        <span
+          class="status-pill"
+          [ngClass]="getStatusClass(inquiry.status)">
+
+          {{ inquiry.status || 'PENDING' }}
+
+        </span>
+
+      </div>
+
+      <!-- QUESTION -->
+
+      <div class="info-block">
+
+        <label>
+
+          Your Question
+
+        </label>
+
+        <p>
+
+          {{ inquiry.message }}
+
+        </p>
+
+      </div>
+
+      <!-- PRIORITY -->
+
+      <div class="priority-row">
+
+        <span class="priority-label">
+
+          Priority
+
+        </span>
+
+        <span
+          class="priority-pill"
+          [ngClass]="{
+            'high-priority': inquiry.priority === 'High',
+            'medium-priority': inquiry.priority === 'Medium',
+            'low-priority': inquiry.priority === 'Low'
+          }">
+
+          {{ inquiry.priority }}
+
+        </span>
+
+      </div>
+
+      <!-- RESPONSE -->
+
+      <div class="response-card">
+
+        <div class="response-header">
+
+          <i class="bi bi-person-workspace"></i>
+
+          Advisor Response
+
+        </div>
+
+        <p>
+
+          {{ inquiry.adminResponse || 'Awaiting response from investment advisor.' }}
+
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

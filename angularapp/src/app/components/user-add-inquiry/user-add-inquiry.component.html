@@ -1,0 +1,304 @@
+<div class="inquiry-page">
+
+  <!-- ==========================================
+       HERO SECTION
+  ========================================== -->
+
+  <div class="portfolio-header">
+
+    <div class="portfolio-info">
+
+      <span class="portfolio-tag">
+
+        <i class="bi bi-chat-dots-fill"></i>
+
+        INVESTTRACK ADVISORY
+
+      </span>
+
+      <h1>Investment Support Center</h1>
+
+      <p>
+        Get expert guidance, portfolio clarification and investment insights from our advisory team.
+      </p>
+
+    </div>
+
+    <div class="header-stat">
+
+      <div class="stat-card">
+
+        <span>Advisor Support</span>
+
+        <strong>24 × 7</strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       BACK BUTTON
+  ========================================== -->
+
+  <div class="mb-4">
+
+    <a
+      routerLink="/usernav/view-investments"
+      class="back-link">
+
+      <i class="bi bi-arrow-left-short"></i>
+
+      Back to Investments
+
+    </a>
+
+  </div>
+
+  <!-- ==========================================
+       INVESTMENT SUMMARY
+  ========================================== -->
+
+  <div
+    *ngIf="investment"
+    class="investment-summary-card">
+
+    <div class="summary-icon">
+
+      <i class="bi bi-briefcase-fill"></i>
+
+    </div>
+
+    <div class="summary-content">
+
+      <span class="info-label">
+        SELECTED INVESTMENT
+      </span>
+
+      <h4>
+        {{ investment.name }}
+      </h4>
+
+      <div class="summary-badges">
+
+        <span class="investment-type-badge">
+
+          <i class="bi bi-pie-chart-fill"></i>
+
+          {{ investment.type }}
+
+        </span>
+
+        <span
+          class="status-pill"
+          *ngIf="investment.status">
+
+          {{ investment.status }}
+
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       ERROR ALERT
+  ========================================== -->
+
+  <div
+    *ngIf="error"
+    class="alert alert-danger invest-alert mt-4">
+
+    <i class="bi bi-exclamation-circle-fill me-2"></i>
+
+    {{ error }}
+
+  </div>
+
+  <!-- ==========================================
+       SUCCESS STATE
+  ========================================== -->
+
+  <div
+    *ngIf="submitted"
+    class="success-container">
+
+    <div class="success-card">
+
+      <div class="success-circle">
+
+        <i class="bi bi-check2-circle"></i>
+
+      </div>
+
+      <h2>Inquiry Submitted</h2>
+
+      <p>
+        Your inquiry has been successfully forwarded to our investment advisory team.
+        We will contact you shortly.
+      </p>
+
+      <a
+        routerLink="/usernav/view-investments"
+        class="btn btn-primary success-btn">
+
+        <i class="bi bi-arrow-left-circle me-2"></i>
+
+        Return to Investments
+
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       INQUIRY FORM
+  ========================================== -->
+
+  <div
+    class="inquiry-card"
+    *ngIf="!submitted">
+
+    <div class="section-title">
+
+      <div class="section-icon">
+
+        <i class="bi bi-pencil-square"></i>
+
+      </div>
+
+      <div>
+
+        <h4>Investment Inquiry Form</h4>
+
+        <p>
+          Share your questions and our advisors will assist you.
+        </p>
+
+      </div>
+
+    </div>
+
+    <form (ngSubmit)="submit()">
+
+      <!-- Question -->
+
+      <div class="mb-4">
+
+        <label class="form-label">Subject</label>
+
+        <input
+          class="form-control mb-3"
+          [(ngModel)]="subject"
+          name="subject"
+          maxlength="255"
+          placeholder="Short summary of your question">
+
+        <label class="form-label">
+
+          Inquiry Message
+
+        </label>
+
+        <textarea
+          class="form-control inquiry-textarea"
+          rows="6"
+          [(ngModel)]="message"
+          name="message"
+          required
+          minlength="10"
+          placeholder="What would you like to know about this investment?">
+        </textarea>
+
+      </div>
+
+      <!-- Priority / Contact -->
+
+      <div class="row g-4">
+
+        <div class="col-md-6">
+
+          <label class="form-label">
+
+            Priority Level
+
+          </label>
+
+          <select
+            class="form-select"
+            [(ngModel)]="priority"
+            name="priority">
+
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+
+          </select>
+
+        </div>
+
+        <div class="col-md-6">
+
+          <label class="form-label">
+
+            Contact Details
+
+          </label>
+
+          <input
+            class="form-control"
+            [(ngModel)]="contactDetails"
+            name="contactDetails"
+            placeholder="Email or phone number">
+
+        </div>
+
+      </div>
+
+      <!-- Priority Notice -->
+
+      <div class="priority-info">
+
+        <div class="priority-card">
+
+          <i class="bi bi-lightning-charge-fill"></i>
+
+          <div>
+
+            <strong>High Priority Requests</strong>
+
+            <p class="mb-0">
+              High priority inquiries are reviewed first by our advisory team.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Action Buttons -->
+
+      <div class="action-area">
+
+        <button
+          type="submit"
+          class="btn btn-primary inquiry-btn">
+
+          <i class="bi bi-send-fill me-2"></i>
+
+          Submit Inquiry
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

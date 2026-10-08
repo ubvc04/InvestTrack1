@@ -1,0 +1,322 @@
+<!-- ==========================================
+     PAGE HEADER
+========================================== -->
+
+<div class="investment-header">
+
+  <div class="header-content">
+
+    <span class="header-tag">
+
+      <i class="bi bi-graph-up-arrow"></i>
+
+      INVESTMENT MANAGEMENT
+
+    </span>
+
+    <h1>Add Investment</h1>
+
+    <p>
+      Create and manage investment opportunities
+      within the InvestTrack platform.
+    </p>
+
+  </div>
+
+  <div class="header-icon">
+
+    <i class="bi bi-cash-stack"></i>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     INVESTMENT FORM
+========================================== -->
+
+<div class="investment-container">
+
+  <form
+    [formGroup]="investmentForm"
+    (ngSubmit)="onSubmit()">
+
+    <!-- BASIC DETAILS -->
+
+    <div class="form-section">
+
+      <h4>
+
+        <i class="bi bi-info-circle-fill me-2"></i>
+
+        Basic Details
+
+      </h4>
+
+      <div class="row g-4">
+
+        <div class="col-md-6">
+
+          <label class="form-label">
+            Investment Name
+          </label>
+
+          <input
+            type="text"
+            class="form-control"
+            formControlName="name"
+            placeholder="e.g. Apple Stock">
+
+        </div>
+
+        <div class="col-md-6">
+
+          <label class="form-label">
+            Investment Type
+          </label>
+
+          <select
+            class="form-select"
+            formControlName="type">
+
+            <option value="">Select Type</option>
+            <option value="Stock">Stock</option>
+            <option value="Crypto">Crypto</option>
+            <option value="Real Estate">Real Estate</option>
+            <option value="Mutual Fund">Mutual Fund</option>
+            <option value="Bond">Bond</option>
+
+          </select>
+
+        </div>
+
+        <div class="col-12">
+
+          <label class="form-label">
+            Description
+          </label>
+
+          <textarea
+            rows="4"
+            class="form-control"
+            formControlName="description"
+            placeholder="Enter investment description">
+          </textarea>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- FINANCIAL DETAILS -->
+
+    <div class="form-section">
+
+      <h4>
+
+        <i class="bi bi-currency-dollar me-2"></i>
+
+        Financial Details
+
+      </h4>
+
+      <div class="row g-4">
+
+        <div class="col-md-4">
+
+          <label class="form-label">
+            Purchase Price
+          </label>
+
+          <input
+            type="number"
+            class="form-control"
+            formControlName="purchasePrice"
+            placeholder="0.00">
+
+        </div>
+
+        <div class="col-md-4">
+
+          <label class="form-label">
+            Current Price
+          </label>
+
+          <input
+            type="number"
+            class="form-control"
+            formControlName="currentPrice"
+            placeholder="0.00">
+
+        </div>
+
+        <div class="col-md-4">
+
+          <label class="form-label">
+            Quantity
+          </label>
+
+          <input
+            type="number"
+            class="form-control"
+            formControlName="quantity"
+            placeholder="1">
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- STATUS -->
+
+    <div class="form-section">
+
+      <h4>
+
+        <i class="bi bi-calendar-event-fill me-2"></i>
+
+        Investment Status
+
+      </h4>
+
+      <div class="row g-4">
+
+        <div class="col-md-6">
+
+          <label class="form-label">
+            Purchase Date
+          </label>
+
+          <input
+            type="date"
+            class="form-control"
+            formControlName="purchaseDate">
+
+        </div>
+
+        <div class="col-md-6">
+
+          <label class="form-label">
+            Status
+          </label>
+
+          <select
+            class="form-select"
+            formControlName="status">
+
+            <option value="">Select Status</option>
+            <option value="Active">Active</option>
+            <option value="Sold">Sold</option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ERROR -->
+
+    <div
+      *ngIf="errorMessage"
+      class="alert alert-danger mt-4">
+
+      {{ errorMessage }}
+
+    </div>
+
+    <!-- ACTIONS -->
+
+    <div class="action-buttons">
+
+      <button
+        type="submit"
+        class="btn-save"
+        [disabled]="investmentForm.invalid || loading">
+
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm me-2">
+        </span>
+
+        <i class="bi bi-check-circle-fill me-2"></i>
+
+        Add Investment
+
+      </button>
+
+      <button
+        type="button"
+        class="btn-view"
+        (click)="goToView()">
+
+        <i class="bi bi-bar-chart-line-fill me-2"></i>
+
+        View Investments
+
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
+
+<!-- ==========================================
+     SUCCESS MODAL
+========================================== -->
+
+<div
+  class="modal fade"
+  [class.show]="showModal"
+  [style.display]="showModal ? 'block' : 'none'"
+  tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content success-modal">
+
+      <div class="modal-body text-center">
+
+        <div class="success-icon">
+
+          <i class="bi bi-check-circle-fill"></i>
+
+        </div>
+
+        <h3>
+
+          Investment Added Successfully
+
+        </h3>
+
+        <p>
+
+          The investment has been added to the
+          InvestTrack portfolio.
+
+        </p>
+
+        <button
+          class="btn-save mt-3"
+          (click)="onClose()">
+
+          Continue
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  *ngIf="showModal"
+  class="modal-backdrop fade show">
+</div>

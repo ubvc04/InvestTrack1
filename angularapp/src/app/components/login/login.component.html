@@ -1,0 +1,186 @@
+<div class="auth-wrapper" style="background-image: url('assets/images/background.webp');">
+
+  <div class="auth-card login-card">
+
+    <div class="text-center mb-4">
+
+      <div class="auth-logo mb-3">
+        <i class="bi bi-graph-up-arrow"></i>
+      </div>
+
+      <h1 class="auth-title">
+        InvestTrack
+      </h1>
+
+      <p class="auth-subtitle">
+        Sign in to continue
+      </p>
+
+    </div>
+
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="onLogin()"
+      novalidate>
+
+      <!-- EMAIL -->
+
+      <div class="mb-3">
+
+        <label class="form-label fw-semibold">
+          Email Address *
+        </label>
+
+        <div class="input-group-modern">
+
+          <span class="input-icon">
+            <i class="bi bi-envelope-at"></i>
+          </span>
+
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="Enter email address"
+            [class.is-invalid]="email?.invalid && email?.touched">
+
+        </div>
+
+        <div
+          class="invalid-feedback"
+          *ngIf="email?.invalid && email?.touched">
+
+          <span *ngIf="email?.errors?.['required']">
+            Email is required.
+          </span>
+
+          <span *ngIf="email?.errors?.['email']">
+            Enter a valid email address.
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- PASSWORD -->
+
+      <div class="mb-2">
+
+        <label class="form-label fw-semibold">
+          Password *
+        </label>
+
+        <div class="input-group-modern password-group">
+
+          <span class="input-icon">
+            <i class="bi bi-shield-lock"></i>
+          </span>
+
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-control"
+            formControlName="password"
+            placeholder="Enter password"
+            [class.is-invalid]="password?.invalid && password?.touched">
+
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="showPassword = !showPassword">
+
+            <i
+              class="bi"
+              [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'">
+            </i>
+
+          </button>
+
+        </div>
+
+        <div
+          class="invalid-feedback"
+          *ngIf="password?.invalid && password?.touched">
+
+          <span *ngIf="password?.errors?.['required']">
+            Password is required.
+          </span>
+
+          <span *ngIf="password?.errors?.['minlength']">
+            Password must be at least 4 characters.
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- FORGOT PASSWORD -->
+
+      <!-- <div class="text-end mb-3">
+
+        <a
+          role="button"
+          class="forgot-link">
+
+          Forgot Password?
+
+        </a>
+
+      </div> -->
+
+      <!-- BACKEND ERROR -->
+
+      <div
+        *ngIf="errorMessage"
+        class="alert alert-danger d-flex align-items-center">
+
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+        {{ errorMessage }}
+
+      </div>
+
+      <!-- LOGIN BUTTON -->
+
+      <button
+        type="submit"
+        class="btn btn-primary signup-btn w-100 mb-3"
+        [disabled]="loginForm.invalid || loading">
+
+        <span
+          *ngIf="loading"
+          class="spinner-border spinner-border-sm me-2">
+        </span>
+
+        <i
+          *ngIf="!loading"
+          class="bi bi-box-arrow-in-right me-2">
+        </i>
+
+        {{ loading ? 'Signing In...' : 'Login' }}
+
+      </button>
+
+      <!-- SIGNUP -->
+
+      <div class="text-center">
+
+        <span class="text-muted">
+          Don't have an account?
+        </span>
+
+        <a
+          role="button"
+          (click)="goToSignup()"
+          class="login-link ms-1">
+
+          Sign Up
+
+        </a>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

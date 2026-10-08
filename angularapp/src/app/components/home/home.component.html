@@ -1,0 +1,391 @@
+<!-- ==========================================
+     MARKET PULSE HERO
+========================================== -->
+
+<div class="market-hero">
+
+  <div class="hero-content">
+
+    <div class="hero-badge">
+
+      <i class="bi bi-graph-up-arrow"></i>
+
+      INVESTTRACK MARKET PULSE
+
+    </div>
+
+    <h1>
+
+      Welcome Back,
+
+      <span>{{ username }}</span>
+
+    </h1>
+
+    <p>
+
+      Monitor market trends, manage investments,
+      and stay ahead with smarter investment decisions.
+
+    </p>
+
+    <div class="role-pill">
+
+      <i class="bi bi-person-badge-fill"></i>
+
+      {{ userRole }}
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     AI INVESTMENT ASSISTANT
+========================================== -->
+
+<div class="container-fluid mb-5">
+
+  <div class="ai-investment-card">
+
+    <div class="ai-card-header">
+
+      <div class="ai-icon">
+
+        <i class="bi bi-stars"></i>
+
+      </div>
+
+      <div>
+
+        <h3>AI Investment Assistant</h3>
+
+        <p>
+          Discover investment opportunities using smart AI-powered search.
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="input-group ai-search-group">
+
+      <input
+        class="form-control"
+        [(ngModel)]="aiSearch"
+        (keyup.enter)="runAiSearch()"
+        placeholder="Ask AI: growth stocks, mutual funds, low risk investments, crypto opportunities...">
+
+      <button
+        class="btn ai-search-btn"
+        (click)="runAiSearch()">
+
+        <i class="bi bi-arrow-right-circle-fill"></i>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     MARKET PERFORMANCE
+========================================== -->
+
+<div class="container-fluid mb-5">
+
+  <div class="section-heading">
+
+    <h2>Market Performance</h2>
+
+    <p>Popular asset classes and growth indicators</p>
+
+  </div>
+
+  <div class="row g-4">
+
+    <div class="col-lg-3 col-md-6">
+
+      <div class="market-card stocks">
+
+        <i class="bi bi-graph-up"></i>
+
+        <h4>Stocks</h4>
+
+        <h3>+12.8%</h3>
+
+        <span>Strong Growth</span>
+
+      </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+      <div class="market-card funds">
+
+        <i class="bi bi-pie-chart-fill"></i>
+
+        <h4>Mutual Funds</h4>
+
+        <h3>+8.4%</h3>
+
+        <span>Stable Returns</span>
+
+      </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+      <div class="market-card estate">
+
+        <i class="bi bi-building-fill"></i>
+
+        <h4>Real Estate</h4>
+
+        <h3>+6.2%</h3>
+
+        <span>Asset Appreciation</span>
+
+      </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+      <div class="market-card gold">
+
+        <i class="bi bi-award-fill"></i>
+
+        <h4>Gold</h4>
+
+        <h3>+4.9%</h3>
+
+        <span>Safe Investment</span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     INVESTMENT JOURNEY
+========================================== -->
+
+<div class="container-fluid mb-5">
+
+  <div class="journey-card">
+
+    <h2>
+
+      <i class="bi bi-diagram-3-fill me-2"></i>
+
+      Investment Journey
+
+    </h2>
+
+    <p>
+
+      Every successful investor follows a structured path.
+
+    </p>
+
+    <div class="journey-flow">
+
+      <div class="step">
+
+        <div class="step-icon">
+
+          <i class="bi bi-search"></i>
+
+        </div>
+
+        <span>Research</span>
+
+      </div>
+
+      <div class="connector"></div>
+
+      <div class="step">
+
+        <div class="step-icon">
+
+          <i class="bi bi-bar-chart"></i>
+
+        </div>
+
+        <span>Analyze</span>
+
+      </div>
+
+      <div class="connector"></div>
+
+      <div class="step">
+
+        <div class="step-icon">
+
+          <i class="bi bi-cash-stack"></i>
+
+        </div>
+
+        <span>Invest</span>
+
+      </div>
+
+      <div class="connector"></div>
+
+      <div class="step">
+
+        <div class="step-icon">
+
+          <i class="bi bi-graph-up-arrow"></i>
+
+        </div>
+
+        <span>Track</span>
+
+      </div>
+
+      <div class="connector"></div>
+
+      <div class="step">
+
+        <div class="step-icon">
+
+          <i class="bi bi-trophy-fill"></i>
+
+        </div>
+
+        <span>Grow</span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     PLATFORM HIGHLIGHTS
+========================================== -->
+
+<div class="container-fluid mb-5">
+
+  <div class="section-heading">
+
+    <h2>Platform Highlights</h2>
+
+    <p>Built to simplify the investment experience</p>
+
+  </div>
+
+  <div class="highlights-wrapper">
+
+    <div class="highlight-chip">
+
+      <i class="bi bi-shield-check"></i>
+
+      Secure Authentication
+
+    </div>
+
+    <div class="highlight-chip">
+
+      <i class="bi bi-graph-up"></i>
+
+      Investment Tracking
+
+    </div>
+
+    <div class="highlight-chip">
+
+      <i class="bi bi-life-preserver"></i>
+
+      Inquiry Management
+
+    </div>
+
+    <div class="highlight-chip">
+
+      <i class="bi bi-chat-heart"></i>
+
+      Feedback System
+
+    </div>
+
+    <div class="highlight-chip">
+
+      <i class="bi bi-lightning-charge"></i>
+
+      Fast Performance
+
+    </div>
+
+    <div class="highlight-chip">
+
+      <i class="bi bi-lock-fill"></i>
+
+      Role Based Access
+
+    </div>
+
+    <div class="highlight-chip">
+
+      <i class="bi bi-database-fill"></i>
+
+      Centralized Records
+
+    </div>
+
+    <div class="highlight-chip">
+
+      <i class="bi bi-stars"></i>
+
+      Modern Experience
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     INVESTOR INSIGHT
+========================================== -->
+
+<div class="container-fluid mb-5">
+
+  <div class="insight-card">
+
+    <div class="quote-icon">
+
+      <i class="bi bi-lightbulb-fill"></i>
+
+    </div>
+
+    <h3>Today's Investment Insight</h3>
+
+    <p>
+
+      Successful investing is not about timing the market.
+      It is about consistency, discipline, and long term vision.
+
+    </p>
+
+    <span>
+
+      InvestTrack Intelligence
+
+    </span>
+
+  </div>
+
+</div>

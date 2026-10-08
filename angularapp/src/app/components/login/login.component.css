@@ -1,0 +1,498 @@
+:host {
+  display: block;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ==================================================
+   BACKGROUND
+================================================== */
+
+.auth-wrapper {
+  min-height: 100vh;
+  padding: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  overflow: hidden;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.auth-wrapper::before {
+  content: "";
+
+  position: absolute;
+
+  width: 500px;
+  height: 500px;
+
+  top: -150px;
+  left: -150px;
+
+  border-radius: 50%;
+
+  background: rgba(37, 99, 235, .16);
+
+  filter: blur(120px);
+
+  pointer-events: none;
+}
+
+.auth-wrapper::after {
+  content: "";
+
+  position: absolute;
+
+  width: 550px;
+  height: 550px;
+
+  right: -180px;
+  bottom: -180px;
+
+  border-radius: 50%;
+
+  background: rgba(20, 184, 166, .15);
+
+  filter: blur(120px);
+
+  pointer-events: none;
+}
+
+/* ==================================================
+   CARD
+================================================== */
+
+.auth-card {
+  width: 100%;
+  max-width: 520px;
+
+  padding: 40px;
+
+  position: relative;
+  z-index: 10;
+
+  border-radius: 30px;
+
+  background: rgba(255,255,255,.88);
+
+  backdrop-filter: blur(24px);
+
+  border: 1px solid rgba(255,255,255,.85);
+
+  box-shadow:
+    0 30px 80px rgba(15,23,42,.12),
+    0 8px 24px rgba(15,23,42,.06),
+    inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+.login-card {
+  overflow: visible;
+}
+
+/* ==================================================
+   LOGO
+================================================== */
+
+.auth-logo {
+  width: 84px;
+  height: 84px;
+
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #06b6d4,
+      #14b8a6
+    );
+
+  box-shadow:
+    0 20px 50px rgba(37,99,235,.22);
+}
+
+.auth-logo i {
+  font-size: 2rem;
+  color: #fff;
+}
+
+/* ==================================================
+   TITLE
+================================================== */
+
+.auth-title {
+  font-size: 2.3rem;
+  font-weight: 800;
+
+  color: #0f172a;
+
+  letter-spacing: -.03em;
+
+  margin-bottom: .35rem;
+}
+
+.auth-subtitle {
+  color: #64748b;
+  font-size: .95rem;
+}
+
+/* ==================================================
+   LABELS
+================================================== */
+
+.form-label {
+  display: block;
+
+  color: #334155;
+
+  font-size: .9rem;
+
+  font-weight: 600;
+
+  margin-bottom: .55rem;
+}
+
+/* ==================================================
+   INPUT GROUP
+================================================== */
+
+.input-group-modern {
+  position: relative;
+  transition: all .25s ease;
+}
+
+.input-group-modern:focus-within {
+  transform: translateY(-1px);
+}
+
+.input-icon {
+  position: absolute;
+
+  left: 18px;
+  top: 50%;
+
+  width: 18px;
+  height: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transform: translateY(-50%);
+
+  color: #94a3b8;
+
+  font-size: 1rem;
+
+  z-index: 5;
+
+  transition: all .28s cubic-bezier(.4,0,.2,1);
+}
+
+/* ==================================================
+   FLOATING ICON EFFECT
+================================================== */
+
+.input-group-modern:focus-within .input-icon {
+  top: 0;
+
+  left: 14px;
+
+  width: 34px;
+  height: 34px;
+
+  transform:
+    translateY(-50%)
+    scale(.92);
+
+  background: #fff;
+
+  border-radius: 50%;
+
+  border: 1px solid #dbeafe;
+
+  color: #2563eb;
+
+  box-shadow:
+    0 8px 20px rgba(37,99,235,.15);
+}
+
+.input-group-modern .form-control {
+  padding-left: 54px;
+}
+
+/* ==================================================
+   INPUTS
+================================================== */
+
+.form-control {
+  height: 58px;
+
+  border-radius: 16px;
+
+  border: 1px solid #dbe4f0;
+
+  background: rgba(255,255,255,.82);
+
+  color: #0f172a;
+
+  transition: all .25s ease;
+}
+
+.form-control::placeholder {
+  color: #94a3b8;
+}
+
+.form-control:focus {
+  background: #fff;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 4px rgba(37,99,235,.10),
+    0 8px 25px rgba(37,99,235,.08);
+
+  outline: none;
+}
+
+/* ==================================================
+   PASSWORD
+================================================== */
+
+.password-group .form-control {
+  padding-right: 56px;
+}
+
+.password-toggle {
+  position: absolute;
+
+  right: 16px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  color: #64748b;
+
+  cursor: pointer;
+
+  z-index: 20;
+
+  transition: .25s ease;
+}
+
+.password-toggle:hover {
+  color: #2563eb;
+}
+
+.password-toggle i {
+  font-size: 1rem;
+}
+
+/* ==================================================
+   VALIDATION
+================================================== */
+
+.is-invalid {
+  border-color: #ef4444 !important;
+
+  background: #fffafa;
+
+  box-shadow:
+    0 0 0 4px rgba(239,68,68,.08) !important;
+}
+
+.invalid-feedback {
+  margin-top: 8px;
+
+  font-size: .82rem;
+
+  font-weight: 500;
+
+  color: #dc2626;
+
+  animation: validationFade .2s ease;
+}
+
+@keyframes validationFade {
+
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================================================
+   FORGOT PASSWORD
+================================================== */
+
+.forgot-link {
+  text-decoration: none;
+
+  color: #2563eb;
+
+  font-size: .9rem;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: .25s ease;
+}
+
+.forgot-link:hover {
+  color: #14b8a6;
+}
+
+/* ==================================================
+   BUTTON
+================================================== */
+
+.signup-btn {
+  height: 58px;
+
+  border: none;
+
+  border-radius: 16px;
+
+  font-weight: 700;
+
+  letter-spacing: .02em;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #06b6d4,
+      #14b8a6
+    );
+
+  box-shadow:
+    0 18px 40px rgba(37,99,235,.20);
+
+  transition: all .25s ease;
+}
+
+.signup-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 24px 60px rgba(37,99,235,.30);
+}
+
+.signup-btn:disabled {
+  opacity: .75;
+  cursor: not-allowed;
+}
+
+/* ==================================================
+   ERROR ALERT
+================================================== */
+
+.alert-danger {
+  border-radius: 14px;
+
+  border: 1px solid #fecdd3;
+
+  background: #fff1f2;
+
+  color: #be123c;
+}
+
+/* ==================================================
+   LINKS
+================================================== */
+
+.login-link {
+  color: #2563eb;
+
+  font-weight: 600;
+
+  text-decoration: none;
+
+  transition: .25s ease;
+}
+
+.login-link:hover {
+  color: #14b8a6;
+}
+
+/* ==================================================
+   MOBILE
+================================================== */
+
+@media (max-width: 768px) {
+
+  .auth-wrapper {
+    padding: 20px;
+  }
+
+  .auth-card {
+    padding: 28px;
+    border-radius: 24px;
+  }
+
+  .auth-title {
+    font-size: 1.8rem;
+  }
+
+  .auth-logo {
+    width: 72px;
+    height: 72px;
+  }
+
+  .auth-logo i {
+    font-size: 1.7rem;
+  }
+
+  .form-control {
+    height: 54px;
+  }
+
+  .signup-btn {
+    height: 54px;
+  }
+
+  .input-group-modern .form-control {
+    padding-left: 50px;
+  }
+}
+
+@media (max-width: 576px) {
+
+  .auth-card {
+    padding: 22px;
+  }
+
+  .auth-title {
+    font-size: 1.6rem;
+  }
+
+  .auth-logo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .auth-logo i {
+    font-size: 1.5rem;
+  }
+}
+

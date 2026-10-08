@@ -1,0 +1,229 @@
+<!-- ==========================================
+     HERO SECTION
+========================================== -->
+
+<div class="portfolio-header">
+
+    <div class="portfolio-info">
+  
+      <span class="portfolio-tag">
+  
+        <i class="bi bi-chat-heart-fill"></i>
+  
+        INVESTTRACK EXPERIENCE
+  
+      </span>
+  
+      <h1>Feedback Center</h1>
+  
+      <p>
+        Review your submitted feedback, suggestions and platform experiences that help us continuously improve InvestTrack.
+      </p>
+  
+    </div>
+  
+    <div class="header-stat">
+  
+      <div class="stat-card">
+  
+        <span>Total Feedback</span>
+  
+        <strong>{{ feedbacks.length }}</strong>
+  
+      </div>
+  
+    </div>
+  
+  </div>
+  
+  <!-- ==========================================
+       DASHBOARD HEADER
+  ========================================== -->
+  
+  <div class="dashboard-section">
+  
+    <div>
+  
+      <h4 class="fw-bold mb-1">
+        My Feedback History
+      </h4>
+  
+      <p class="text-muted mb-0">
+        View all your submitted feedback records and contributions.
+      </p>
+  
+    </div>
+  
+    <a
+      routerLink="/usernav/add-feedback"
+      class="btn btn-primary new-feedback-btn">
+  
+      <i class="bi bi-plus-circle-fill me-2"></i>
+  
+      Share Feedback
+  
+    </a>
+  
+  </div>
+  
+  <!-- ==========================================
+       LOADING
+  ========================================== -->
+  
+  <div
+    *ngIf="loading"
+    class="text-center py-5">
+  
+    <div
+      class="spinner-border text-primary"
+      style="width:3rem;height:3rem">
+    </div>
+  
+    <p class="text-muted mt-3">
+  
+      Loading feedback records...
+  
+    </p>
+  
+  </div>
+  
+  <!-- ==========================================
+       EMPTY STATE
+  ========================================== -->
+  
+  <div
+    *ngIf="!loading && feedbacks.length === 0"
+    class="empty-state">
+  
+    <i class="bi bi-chat-square-heart"></i>
+  
+    <h4>No Feedback Submitted Yet</h4>
+  
+    <p>
+      We value your opinion. Share your investment experience and suggestions with InvestTrack.
+    </p>
+  
+    <a
+      routerLink="/usernav/add-feedback"
+      class="btn btn-primary">
+  
+      Submit Feedback
+  
+    </a>
+  
+  </div>
+  
+  <!-- ==========================================
+       FEEDBACK CARDS
+  ========================================== -->
+  
+  <div
+    class="row g-4"
+    *ngIf="!loading && feedbacks.length > 0">
+  
+    <div
+      class="col-xl-6"
+      *ngFor="let feedback of feedbacks">
+  
+      <div class="feedback-card">
+  
+        <!-- CARD HEADER -->
+  
+        <div class="feedback-header">
+  
+          <div>
+  
+            <h5>
+  
+              <i class="bi bi-briefcase-fill me-2"></i>
+  
+              {{ feedback.investment?.name || 'General Feedback' }}
+  
+            </h5>
+  
+            <small class="feedback-date">
+  
+              <i class="bi bi-calendar-event me-1"></i>
+  
+              {{ feedback.date | date:'medium' }}
+  
+            </small>
+  
+          </div>
+  
+          <span
+            class="feedback-badge"
+            [ngClass]="{
+              'badge-investment': feedback.category === 'Investment',
+              'badge-platform': feedback.category === 'Platform',
+              'badge-service': feedback.category === 'Service',
+              'badge-other': feedback.category === 'Other'
+            }">
+  
+            {{ feedback.category }}
+  
+          </span>
+  
+        </div>
+  
+        <!-- SUBJECT -->
+  
+        <div
+          *ngIf="feedback.subject"
+          class="feedback-subject">
+  
+          <label>
+  
+            Subject
+  
+          </label>
+  
+          <p>
+  
+            {{ feedback.subject }}
+  
+          </p>
+  
+        </div>
+  
+        <!-- FEEDBACK CONTENT -->
+  
+        <div class="feedback-content">
+  
+          <label>
+  
+            Feedback Message
+  
+          </label>
+  
+          <p>
+  
+            {{ feedback.feedbackText }}
+  
+          </p>
+  
+        </div>
+  
+        <!-- FOOTER -->
+  
+        <div class="feedback-footer">
+  
+          <div class="footer-icon">
+  
+            <i class="bi bi-chat-quote-fill"></i>
+  
+          </div>
+  
+          <span>
+  
+            Thank you for helping improve InvestTrack.
+  
+          </span>
+  
+        </div>
+  
+      </div>
+  
+    </div>
+  
+  </div>

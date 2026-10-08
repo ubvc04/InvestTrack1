@@ -1,0 +1,57 @@
+<div class="row g-4">
+    <div class="col-lg-5">
+      <section class="card shadow-sm p-4">
+        <h2 class="h4">Create New Admin</h2>
+        <p *ngIf="message" class="alert alert-success">{{ message }}</p>
+        <p *ngIf="errorMessage" class="alert alert-danger">
+          {{ errorMessage }}
+          <a *ngIf="errorMessage.includes('initial password')"
+            routerLink="/adminnav/change-password" class="alert-link d-block mt-2">
+            Change SuperAdmin Password
+          </a>
+        </p>
+        <form [formGroup]="adminForm" (ngSubmit)="createAdmin()">
+          <input class="form-control mb-3" formControlName="username" placeholder="Username">
+          <input class="form-control mb-3" formControlName="email" type="email" placeholder="Email">
+          <button class="btn btn-outline-primary w-100 mb-3" type="button"
+            (click)="sendOtp()" [disabled]="otpLoading">
+            <span *ngIf="otpLoading" class="spinner-border spinner-border-sm me-2"></span>
+            <i *ngIf="!otpLoading" class="bi bi-envelope-check me-2"></i>
+            Send OTP
+          </button>
+          <div *ngIf="otpSent" class="mb-3">
+            <input class="form-control mb-2" [(ngModel)]="otp"
+              [ngModelOptions]="{standalone: true}" placeholder="Enter OTP">
+            <button class="btn btn-outline-success w-100" type="button" (click)="verifyOtp()">
+              <i class="bi bi-check-circle me-2"></i>Verify OTP
+            </button>
+          </div>
+          <div *ngIf="otpMessage" class="alert alert-info">{{ otpMessage }}</div>
+          <div *ngIf="otpVerified" class="alert alert-success">
+            <i class="bi bi-patch-check-fill me-2"></i>Email verified successfully
+          </div>
+          <input class="form-control mb-3" formControlName="password" type="password" placeholder="Password">
+          <input class="form-control mb-3" formControlName="confirmPassword" type="password" placeholder="Confirm Password">
+          <input class="form-control mb-3" formControlName="mobileNumber" placeholder="Mobile Number">
+          <button class="btn btn-primary" type="submit" [disabled]="adminForm.invalid || !otpVerified">
+            Create Admin
+          </button>
+        </form>
+      </section>
+    </div>
+    <div class="col-lg-7">
+      <section class="card shadow-sm p-4">
+        <h2 class="h4">Admin Management</h2>
+        <p>Total Admins: <strong>{{ admins.length }}</strong></p>
+        <div class="table-responsive">
+          <table class="table">
+            <thead><tr><th>Username</th><th>Email</th><th>Role</th></tr></thead>
+            <tbody><tr *ngFor="let admin of admins">
+            <td>{{ admin.username }}</td><td>{{ admin.email }}</td><td>{{ admin.userRole }}</td>
+            </tr></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+  

@@ -1,0 +1,690 @@
+/* =====================================
+   PAGE
+===================================== */
+
+:host {
+    display: block;
+  }
+  
+  body {
+    background: #f8fafc;
+  }
+  
+  /* =====================================
+     HERO SECTION
+  ===================================== */
+  
+  .portfolio-header {
+  
+    background:
+      linear-gradient(
+        135deg,
+        #081227,
+        #1e3a8a,
+        #2563eb
+      );
+  
+    border-radius: 32px;
+  
+    padding: 42px;
+  
+    margin-bottom: 30px;
+  
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  
+    color: white;
+  
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .portfolio-header::before {
+  
+    content: "";
+  
+    position: absolute;
+  
+    width: 420px;
+    height: 420px;
+  
+    right: -150px;
+    top: -150px;
+  
+    border-radius: 50%;
+  
+    background: rgba(255,255,255,.08);
+  }
+  
+  .portfolio-info {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .portfolio-tag {
+  
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  
+    padding: 10px 18px;
+  
+    border-radius: 999px;
+  
+    background: rgba(255,255,255,.12);
+  
+    font-size: .82rem;
+  
+    font-weight: 700;
+  
+    margin-bottom: 20px;
+  }
+  
+  .portfolio-header h1 {
+  
+    font-size: 3rem;
+  
+    font-weight: 800;
+  
+    margin-bottom: 12px;
+  }
+  
+  .portfolio-header p {
+  
+    max-width: 700px;
+  
+    opacity: .9;
+  
+    margin: 0;
+  
+    font-size: 1.05rem;
+  }
+  
+  /* =====================================
+     HERO STAT
+  ===================================== */
+  
+  .header-stat {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .stat-card {
+  
+    min-width: 180px;
+  
+    padding: 24px;
+  
+    text-align: center;
+  
+    border-radius: 24px;
+  
+    background: rgba(255,255,255,.12);
+  
+    backdrop-filter: blur(15px);
+  }
+  
+  .stat-card span {
+  
+    display: block;
+  
+    font-size: .85rem;
+  
+    margin-bottom: 8px;
+  
+    opacity: .9;
+  }
+  
+  .stat-card strong {
+  
+    font-size: 2.8rem;
+  
+    font-weight: 800;
+  }
+  
+  /* =====================================
+     INVESTMENT SUMMARY
+  ===================================== */
+  
+  .investment-summary-card {
+  
+    background: white;
+  
+    border-radius: 24px;
+  
+    padding: 24px;
+  
+    margin-bottom: 24px;
+  
+    display: flex;
+    align-items: center;
+  
+    gap: 18px;
+  
+    border: 1px solid #e2e8f0;
+  
+    box-shadow:
+      0 10px 25px rgba(15,23,42,.05);
+  }
+  
+  .summary-icon {
+  
+    width: 75px;
+    height: 75px;
+  
+    border-radius: 20px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    font-size: 1.8rem;
+  
+    color: white;
+  
+    background:
+      linear-gradient(
+        135deg,
+        #2563eb,
+        #14b8a6
+      );
+  }
+  
+  .summary-label {
+  
+    display: block;
+  
+    font-size: .75rem;
+  
+    letter-spacing: 1px;
+  
+    color: #64748b;
+  
+    margin-bottom: 6px;
+  }
+  
+  .summary-content h4 {
+  
+    margin: 0 0 10px;
+  
+    font-weight: 700;
+  
+    color: #0f172a;
+  }
+  
+  .investment-type-badge {
+  
+    background: #eff6ff;
+  
+    color: #2563eb;
+  
+    border-radius: 999px;
+  
+    padding: 8px 14px;
+  
+    font-size: .85rem;
+  
+    font-weight: 600;
+  }
+  
+  /* =====================================
+     FORM CARD
+  ===================================== */
+  
+  .feedback-form-card {
+  
+    background: white;
+  
+    border-radius: 28px;
+  
+    padding: 32px;
+  
+    border: 1px solid #e2e8f0;
+  
+    box-shadow:
+      0 20px 40px rgba(15,23,42,.06);
+  }
+  
+  /* =====================================
+     SECTION HEADER
+  ===================================== */
+  
+  .section-title {
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 16px;
+  
+    margin-bottom: 28px;
+  }
+  
+  .section-icon {
+  
+    width: 55px;
+    height: 55px;
+  
+    display: flex;
+  
+    align-items: center;
+    justify-content: center;
+  
+    border-radius: 16px;
+  
+    background:
+      linear-gradient(
+        135deg,
+        #2563eb,
+        #14b8a6
+      );
+  
+    color: white;
+  
+    font-size: 1.2rem;
+  }
+  
+  .section-title h4 {
+  
+    margin: 0;
+  
+    font-weight: 700;
+  
+    color: #0f172a;
+  }
+  
+  .section-title p {
+  
+    margin: 4px 0 0;
+  
+    color: #64748b;
+  }
+  
+  /* =====================================
+     FORM
+  ===================================== */
+  
+  .form-label {
+  
+    font-weight: 600;
+  
+    color: #334155;
+  
+    margin-bottom: 8px;
+  }
+  
+  .form-control,
+  .form-select {
+  
+    border-radius: 14px;
+  
+    border: 1px solid #dbe4f0;
+  
+    min-height: 56px;
+  
+    transition: .3s ease;
+  }
+  
+  .form-control:focus,
+  .form-select:focus {
+  
+    border-color: #14b8a6;
+  
+    box-shadow:
+      0 0 0 5px rgba(20,184,166,.12);
+  }
+  
+  .feedback-textarea {
+  
+    min-height: 180px !important;
+  
+    resize: vertical;
+  }
+  
+  /* =====================================
+     NOTE BOX
+  ===================================== */
+  
+  .feedback-note {
+  
+    background: #eff6ff;
+  
+    border: 1px solid #bfdbfe;
+  
+    border-radius: 18px;
+  
+    padding: 18px;
+  
+    margin-top: 25px;
+  
+    display: flex;
+  
+    gap: 14px;
+  
+    align-items: flex-start;
+  }
+  
+  .feedback-note i {
+  
+    color: #2563eb;
+  
+    font-size: 1.3rem;
+  }
+  
+  .feedback-note strong {
+  
+    display: block;
+  
+    color: #1d4ed8;
+  
+    margin-bottom: 4px;
+  }
+  
+  .feedback-note p {
+  
+    color: #64748b;
+  }
+  
+  /* =====================================
+     ALERTS
+  ===================================== */
+  
+  .invest-alert {
+  
+    border-radius: 16px;
+  
+    margin-bottom: 20px;
+  }
+  
+  /* =====================================
+     ACTION AREA
+  ===================================== */
+  
+  .action-area {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    align-items: center;
+  
+    gap: 15px;
+  
+    margin-top: 28px;
+  }
+  
+  .feedback-submit-btn {
+  
+    border: none;
+  
+    border-radius: 16px;
+  
+    height: 56px;
+  
+    min-width: 220px;
+  
+    font-weight: 700;
+  
+    background:
+      linear-gradient(
+        135deg,
+        #2563eb,
+        #14b8a6
+      );
+  
+    box-shadow:
+      0 15px 30px rgba(37,99,235,.20);
+  
+    transition: .3s ease;
+  }
+  
+  .feedback-submit-btn:hover {
+  
+    transform: translateY(-3px);
+  
+    box-shadow:
+      0 18px 35px rgba(37,99,235,.25);
+  }
+  
+  /* =====================================
+     SUCCESS
+  ===================================== */
+  
+  .success-container {
+  
+    display: flex;
+  
+    justify-content: center;
+  }
+  
+  .success-card {
+  
+    max-width: 700px;
+  
+    width: 100%;
+  
+    background: white;
+  
+    text-align: center;
+  
+    padding: 50px;
+  
+    border-radius: 30px;
+  
+    box-shadow:
+      0 20px 40px rgba(15,23,42,.06);
+  }
+  
+  .success-circle {
+  
+    width: 120px;
+    height: 120px;
+  
+    margin: 0 auto 25px;
+  
+    border-radius: 50%;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    font-size: 3.5rem;
+  
+    color: white;
+  
+    background:
+      linear-gradient(
+        135deg,
+        #22c55e,
+        #14b8a6
+      );
+  }
+  
+  .success-card h2 {
+  
+    font-weight: 800;
+  
+    color: #0f172a;
+  }
+  
+  .success-card p {
+  
+    color: #64748b;
+  
+    max-width: 500px;
+  
+    margin: 12px auto 24px;
+  }
+  
+  .success-btn {
+    border-radius: 16px;
+  }
+  
+  /* =====================================
+     ANIMATION
+  ===================================== */
+  
+  .feedback-form-card,
+  .success-card,
+  .investment-summary-card,
+  .stat-card {
+  
+    animation: fadeInUp .4s ease;
+  }
+  
+  @keyframes fadeInUp {
+  
+    from {
+  
+      opacity: 0;
+  
+      transform: translateY(15px);
+    }
+  
+    to {
+  
+      opacity: 1;
+  
+      transform: translateY(0);
+    }
+  }
+  
+ /* =====================================
+   MOBILE
+===================================== */
+
+@media (max-width: 768px) {
+
+    .portfolio-header {
+  
+      flex-direction: column;
+  
+      text-align: center;
+  
+      gap: 24px;
+    }
+  
+    .portfolio-header h1 {
+      font-size: 2rem;
+    }
+  
+    .investment-summary-card {
+  
+      flex-direction: column;
+  
+      text-align: center;
+    }
+  
+    .action-area {
+  
+      flex-direction: column;
+  
+      align-items: stretch;
+  
+      gap: 12px;
+    }
+  
+    .feedback-submit-btn {
+  
+      width: 100%;
+    }
+  
+    .feedback-form-card {
+  
+      padding: 24px;
+    }
+  
+    .stat-card {
+  
+      width: 100%;
+    }
+  
+    .section-title {
+  
+      flex-direction: column;
+  
+      text-align: center;
+    }
+  
+    .feedback-note {
+  
+      flex-direction: column;
+  
+      text-align: center;
+  
+      align-items: center;
+    }
+  }
+  
+  /* =====================================
+     SMALL MOBILE
+  ===================================== */
+  
+  @media (max-width: 576px) {
+  
+    .portfolio-header {
+  
+      padding: 28px 22px;
+    }
+  
+    .portfolio-header h1 {
+  
+      font-size: 1.8rem;
+    }
+  
+    .portfolio-tag {
+  
+      font-size: .75rem;
+  
+      padding: 8px 14px;
+    }
+  
+    .feedback-form-card {
+  
+      padding: 20px;
+    }
+  
+    .investment-summary-card {
+  
+      padding: 20px;
+    }
+  
+    .summary-icon {
+  
+      width: 65px;
+      height: 65px;
+  
+      font-size: 1.6rem;
+    }
+  
+    .success-card {
+  
+      padding: 30px 20px;
+    }
+  
+    .success-circle {
+  
+      width: 100px;
+      height: 100px;
+  
+      font-size: 3rem;
+    }
+  
+    .stat-card strong {
+  
+      font-size: 2.2rem;
+    }
+  
+    .feedback-submit-btn {
+  
+      width: 100%;
+      min-width: 100%;
+    }
+  
+    .section-icon {
+  
+      width: 48px;
+      height: 48px;
+    }
+  }

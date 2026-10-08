@@ -1,0 +1,263 @@
+:host {
+    display: block;
+  }
+  
+  /* =====================================
+     PAGE
+  ===================================== */
+  
+  .error-wrapper {
+  
+    min-height: 80vh;
+  
+    display: flex;
+  
+    align-items: center;
+  
+    justify-content: center;
+  
+    padding: 30px;
+  }
+  
+  /* =====================================
+     CARD
+  ===================================== */
+  
+  .error-card {
+  
+    width: 100%;
+  
+    max-width: 650px;
+  
+    text-align: center;
+  
+    padding: 60px 40px;
+  
+    background: white;
+  
+    border-radius: 32px;
+  
+    border: 1px solid #e2e8f0;
+  
+    box-shadow:
+      0 20px 50px rgba(15,23,42,.08);
+  
+    position: relative;
+  
+    overflow: hidden;
+  }
+  
+  .error-card::before {
+  
+    content: "";
+  
+    position: absolute;
+  
+    width: 250px;
+    height: 250px;
+  
+    background:
+      rgba(239,68,68,.05);
+  
+    border-radius: 50%;
+  
+    top: -100px;
+    right: -80px;
+  }
+  
+  /* =====================================
+     ICON
+  ===================================== */
+  
+  .error-icon {
+  
+    width: 120px;
+    height: 120px;
+  
+    margin: 0 auto 24px;
+  
+    border-radius: 50%;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    background:
+      linear-gradient(
+        135deg,
+        #ef4444,
+        #f97316
+      );
+  
+    color: white;
+  
+    font-size: 3.5rem;
+  
+    box-shadow:
+      0 20px 40px rgba(239,68,68,.25);
+  }
+  
+  /* =====================================
+     BADGE
+  ===================================== */
+  
+  .error-badge {
+  
+    display: inline-block;
+  
+    padding: 10px 18px;
+  
+    border-radius: 999px;
+  
+    background:
+      rgba(239,68,68,.08);
+  
+    color: #ef4444;
+  
+    font-size: .8rem;
+  
+    font-weight: 700;
+  
+    letter-spacing: 1px;
+  
+    margin-bottom: 20px;
+  }
+  
+  /* =====================================
+     CONTENT
+  ===================================== */
+  
+  .error-card h1 {
+  
+    font-size: 2.5rem;
+  
+    font-weight: 800;
+  
+    color: #0f172a;
+  
+    margin-bottom: 15px;
+  }
+  
+  .error-card p {
+  
+    color: #64748b;
+  
+    font-size: 1.05rem;
+  
+    line-height: 1.8;
+  
+    max-width: 520px;
+  
+    margin: 0 auto 30px;
+  }
+  
+  /* =====================================
+     BUTTON
+  ===================================== */
+  
+  .error-btn {
+  
+    border: none;
+  
+    color: white;
+  
+    padding: 14px 30px;
+  
+    border-radius: 16px;
+  
+    font-weight: 700;
+  
+    background:
+      linear-gradient(
+        135deg,
+        #2563eb,
+        #14b8a6
+      );
+  
+    box-shadow:
+      0 15px 30px rgba(37,99,235,.20);
+  
+    transition: .3s ease;
+  }
+  
+  .error-btn:hover {
+  
+    color: white;
+  
+    transform: translateY(-3px);
+  
+    box-shadow:
+      0 20px 40px rgba(37,99,235,.25);
+  }
+  
+  /* =====================================
+     ANIMATION
+  ===================================== */
+  
+  .error-card {
+  
+    animation: fadeInUp .45s ease;
+  }
+  
+  @keyframes fadeInUp {
+  
+    from {
+  
+      opacity: 0;
+  
+      transform: translateY(20px);
+    }
+  
+    to {
+  
+      opacity: 1;
+  
+      transform: translateY(0);
+    }
+  }
+  
+  /* =====================================
+     MOBILE
+  ===================================== */
+  
+  @media (max-width: 768px) {
+  
+    .error-card {
+  
+      padding: 40px 24px;
+    }
+  
+    .error-card h1 {
+  
+      font-size: 2rem;
+    }
+  
+    .error-icon {
+  
+      width: 100px;
+      height: 100px;
+  
+      font-size: 3rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+  
+    .error-card h1 {
+  
+      font-size: 1.8rem;
+    }
+  
+    .error-icon {
+  
+      width: 85px;
+      height: 85px;
+  
+      font-size: 2.5rem;
+    }
+  
+    .error-btn {
+  
+      width: 100%;
+    }
+  }

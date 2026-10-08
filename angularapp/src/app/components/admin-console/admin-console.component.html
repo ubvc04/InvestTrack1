@@ -1,0 +1,738 @@
+<main class="console-shell">
+
+  <!-- ==========================================
+       HERO SECTION
+  ========================================== -->
+
+  <section class="portfolio-header">
+
+    <div class="portfolio-info">
+
+      <span class="portfolio-tag">
+
+        <i class="bi bi-speedometer2"></i>
+
+        ADMIN COMMAND CENTER
+
+      </span>
+
+      <h1>Admin Console</h1>
+
+      <p>
+        Monitor investments, inquiries, feedback, portfolio performance
+        and platform operations from a centralized dashboard.
+      </p>
+
+    </div>
+
+    <div class="portfolio-icon">
+
+      <i class="bi bi-graph-up-arrow"></i>
+
+    </div>
+
+  </section>
+
+  <!-- ==========================================
+       DASHBOARD TOOLBAR
+  ========================================== -->
+
+  <header class="dashboard-heading">
+
+    <div>
+
+      <div class="section-kicker">
+
+        <span class="kicker-line"></span>
+
+        Operations & Investment Overview
+
+      </div>
+
+    </div>
+
+    <div class="heading-actions">
+
+      <div class="system-status">
+
+        <span class="status-dot"></span>
+
+        <span>All Systems Operational</span>
+
+      </div>
+
+      <span
+        class="updated-at"
+        *ngIf="lastUpdated">
+
+        Updated {{ lastUpdated | date:'shortTime' }}
+
+      </span>
+
+      <button
+        class="refresh-button"
+        type="button"
+        (click)="refresh()"
+        [disabled]="refreshing">
+
+        <span
+          *ngIf="refreshing"
+          class="spinner-border spinner-border-sm">
+        </span>
+
+        <i
+          *ngIf="!refreshing"
+          class="bi bi-arrow-clockwise">
+        </i>
+
+        Refresh Data
+
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- ==========================================
+       ERROR BANNER
+  ========================================== -->
+
+  <div
+    class="error-banner"
+    *ngIf="errorMessage">
+
+    <i class="bi bi-exclamation-circle"></i>
+
+    {{ errorMessage }}
+
+    <button
+      type="button"
+      (click)="refresh()">
+
+      Retry
+
+    </button>
+
+  </div>
+
+  <!-- ==========================================
+       KPI CARDS
+  ========================================== -->
+
+  <section class="kpi-grid">
+
+    <article class="kpi-card kpi-blue">
+
+      <div class="kpi-top">
+
+        <span class="kpi-label">Investments</span>
+
+        <span class="kpi-icon">
+
+          <i class="bi bi-bar-chart-line"></i>
+
+        </span>
+
+      </div>
+
+      <strong>
+
+        {{ investments.length }}
+
+      </strong>
+
+      <div class="kpi-foot">
+
+        <span>Catalog Entries</span>
+
+        <span class="trend positive">
+
+          <i class="bi bi-check2-circle"></i>
+
+          Active Catalog
+
+        </span>
+
+      </div>
+
+    </article>
+
+    <article class="kpi-card kpi-purple">
+
+      <div class="kpi-top">
+
+        <span class="kpi-label">Feedback</span>
+
+        <span class="kpi-icon">
+
+          <i class="bi bi-chat-square-text"></i>
+
+        </span>
+
+      </div>
+
+      <strong>
+
+        {{ feedbacks.length }}
+
+      </strong>
+
+      <div class="kpi-foot">
+
+        <span>Customer Submissions</span>
+
+        <span class="trend neutral">
+
+          <i class="bi bi-inbox"></i>
+
+          All Activity
+
+        </span>
+
+      </div>
+
+    </article>
+
+    <article class="kpi-card kpi-amber">
+
+      <div class="kpi-top">
+
+        <span class="kpi-label">Open Inquiries</span>
+
+        <span class="kpi-icon">
+
+          <i class="bi bi-hourglass-split"></i>
+
+        </span>
+
+      </div>
+
+      <strong>
+
+        {{ openInquiries }}
+
+      </strong>
+
+      <div class="kpi-foot">
+
+        <span>Awaiting Response</span>
+
+        <span class="trend warning">
+
+          <i class="bi bi-flag"></i>
+
+          Monitor Queue
+
+        </span>
+
+      </div>
+
+    </article>
+
+    <article class="kpi-card kpi-green">
+
+      <div class="kpi-top">
+
+        <span class="kpi-label">Resolved</span>
+
+        <span class="kpi-icon">
+
+          <i class="bi bi-check2-circle"></i>
+
+        </span>
+
+      </div>
+
+      <strong>
+
+        {{ count('RESOLVED') }}
+
+      </strong>
+
+      <div class="kpi-foot">
+
+        <span>Completed Inquiries</span>
+
+        <span class="trend positive">
+
+          <i class="bi bi-arrow-up-right"></i>
+
+          Closed Loop
+
+        </span>
+
+      </div>
+
+    </article>
+
+  </section>
+
+  <!-- ==========================================
+       HEALTH + PRIORITY
+  ========================================== -->
+
+  <section class="split-grid">
+
+    <article class="dashboard-card">
+
+      <div class="card-heading">
+
+        <div>
+
+          <span class="card-eyebrow">
+
+            Workflow Status
+
+          </span>
+
+          <h2>Inquiry Health</h2>
+
+        </div>
+
+      </div>
+
+      <div class="health-total">
+
+        <strong>{{ inquiries.length }}</strong>
+
+        <span>Total Inquiries</span>
+
+      </div>
+
+      <div class="health-list">
+
+        <div class="health-item">
+      
+          <div class="health-meta">
+      
+            <span>
+              Pending
+            </span>
+      
+            <b>
+              {{ count('PENDING') }}
+              <small>{{ percentage('PENDING') }}%</small>
+            </b>
+      
+          </div>
+      
+          <div class="health-track">
+      
+            <span
+              class="health-fill pending-fill"
+              [style.width.%]="percentage('PENDING')">
+            </span>
+      
+          </div>
+      
+        </div>
+      
+        <div class="health-item">
+      
+          <div class="health-meta">
+      
+            <span>
+              Resolved
+            </span>
+      
+            <b>
+              {{ count('RESOLVED') }}
+              <small>{{ percentage('RESOLVED') }}%</small>
+            </b>
+      
+          </div>
+      
+          <div class="health-track">
+      
+            <span
+              class="health-fill resolved-fill"
+              [style.width.%]="percentage('RESOLVED')">
+            </span>
+      
+          </div>
+      
+        </div>
+      
+        <div class="health-item">
+      
+          <div class="health-meta">
+      
+            <span>
+              RESOLVED
+            </span>
+      
+            <b>
+              {{ count('RESOLVED') }}
+              <small>{{ percentage('RESOLVED') }}%</small>
+            </b>
+      
+          </div>
+      
+          <div class="health-track">
+      
+            <span
+              class="health-fill closed-fill"
+              [style.width.%]="percentage('RESOLVED')">
+            </span>
+      
+          </div>
+      
+        </div>
+      
+      </div>
+
+    </article>
+
+    <article class="dashboard-card">
+
+      <div class="card-heading">
+
+        <div>
+
+          <span class="card-eyebrow">
+
+            Workload Triage
+
+          </span>
+
+          <h2>Priority Queue</h2>
+
+        </div>
+
+      </div>
+
+      <div class="priority-list">
+
+        <div class="priority-row">
+      
+          <span class="priority-mark">H</span>
+      
+          <div>
+      
+            <strong>High Priority</strong>
+      
+            <small>Requires immediate attention</small>
+      
+          </div>
+      
+          <b>{{ countPriority('High') }}</b>
+      
+        </div>
+      
+        <div class="priority-row">
+      
+          <span class="priority-mark">M</span>
+      
+          <div>
+      
+            <strong>Medium Priority</strong>
+      
+            <small>Needs follow up</small>
+      
+          </div>
+      
+          <b>{{ countPriority('Medium') }}</b>
+      
+        </div>
+      
+        <div class="priority-row">
+      
+          <span class="priority-mark">L</span>
+      
+          <div>
+      
+            <strong>Low Priority</strong>
+      
+            <small>Routine requests</small>
+      
+          </div>
+      
+          <b>{{ countPriority('Low') }}</b>
+      
+        </div>
+      
+      </div>
+
+    </article>
+
+  </section>
+
+  <!-- ==========================================
+       SUMMARY
+  ========================================== -->
+
+  <section class="dashboard-card summary-card">
+
+    <div class="card-heading">
+
+      <div>
+
+        <span class="card-eyebrow">
+
+          At A Glance
+
+        </span>
+
+        <h2>Operations Summary</h2>
+
+      </div>
+
+    </div>
+
+    <div class="summary-grid">
+
+      <div>
+
+        <span>Active Investments</span>
+
+        <strong>{{ activeInvestments }}</strong>
+
+      </div>
+
+      <div>
+
+        <span>Pending Inquiries</span>
+
+        <strong>{{ count('PENDING') }}</strong>
+
+      </div>
+
+      <div>
+
+        <span>High Priority</span>
+
+        <strong class="critical-number">
+
+          {{ countPriority('High') }}
+
+        </strong>
+
+      </div>
+
+      <div>
+
+        <span>Resolved</span>
+
+        <strong class="success-number">
+
+          {{ count('RESOLVED') }}
+
+        </strong>
+
+      </div>
+
+      <div>
+
+        <span>Total Feedback</span>
+
+        <strong>{{ feedbacks.length }}</strong>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==========================================
+       CONTENT SECTION
+  ========================================== -->
+
+  <section class="content-grid">
+
+    <article class="dashboard-card table-card">
+
+      <div class="card-heading">
+
+        <div>
+
+          <span class="card-eyebrow">
+
+            Customer Activity
+
+          </span>
+
+          <h2>Recent Inquiries</h2>
+
+        </div>
+
+      </div>
+
+      <div
+  class="table-wrap"
+  *ngIf="inquiries.length; else noInquiries">
+
+  <table>
+
+    <thead>
+
+      <tr>
+
+        <th>Investment</th>
+        <th>User</th>
+        <th>Priority</th>
+        <th>Status</th>
+        <th>Date</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let inquiry of inquiries | slice:0:5">
+
+        <td>{{ inquiry.investment.name }}</td>
+
+        <td>{{ inquiry.user.username }}</td>
+
+        <td>{{ inquiry.priority }}</td>
+
+        <td>{{ inquiry.status }}</td>
+
+        <td>{{ inquiry.inquiryDate | date:'shortDate' }}</td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
+
+<ng-template #noInquiries>
+
+  <div class="empty-state">
+
+    <div class="empty-icon">
+
+      <i class="bi bi-chat-square"></i>
+
+    </div>
+
+    <strong>No Inquiries Available</strong>
+
+  </div>
+
+</ng-template>
+
+    </article>
+
+    <article class="dashboard-card catalog-card">
+
+      <div class="card-heading">
+
+        <div>
+
+          <span class="card-eyebrow">
+
+            Investment Catalog
+
+          </span>
+
+          <h2>Investment Snapshot</h2>
+
+        </div>
+
+      </div>
+
+      <div
+  class="catalog-list"
+  *ngIf="investments.length; else noInvestments">
+
+  <div
+    class="catalog-item"
+    *ngFor="let investment of investments | slice:0:5">
+
+    <div class="catalog-name">
+
+      <strong>{{ investment.name }}</strong>
+
+      <small>{{ investment.type }}</small>
+
+    </div>
+
+  </div>
+
+</div>
+
+<ng-template #noInvestments>
+
+  <div class="empty-state">
+
+    <div class="empty-icon">
+
+      <i class="bi bi-bar-chart-line"></i>
+
+    </div>
+
+    <strong>No Investments Available</strong>
+
+  </div>
+
+</ng-template>
+
+    </article>
+
+  </section>
+
+  <section class="dashboard-card feedback-card">
+
+    <div class="card-heading">
+  
+      <div>
+  
+        <span class="card-eyebrow">
+          Customer Voice
+        </span>
+  
+        <h2>Latest Feedback</h2>
+  
+      </div>
+  
+    </div>
+  
+    <div
+      class="feedback-grid"
+      *ngIf="feedbacks.length; else noFeedback">
+  
+      <article
+        class="feedback-item"
+        *ngFor="let feedback of feedbacks | slice:0:3">
+  
+        <div class="feedback-top">
+  
+          <span>
+            {{ feedback.category }}
+          </span>
+  
+          <span>
+            {{ feedback.date | date:'shortDate' }}
+          </span>
+  
+        </div>
+  
+        <p>
+          {{ feedback.feedbackText }}
+        </p>
+  
+      </article>
+  
+    </div>
+  
+    <ng-template #noFeedback>
+  
+      <div class="empty-state">
+  
+        <div class="empty-icon">
+  
+          <i class="bi bi-chat-heart"></i>
+  
+        </div>
+  
+        <strong>No Feedback Available</strong>
+  
+      </div>
+  
+    </ng-template>
+  
+  </section>

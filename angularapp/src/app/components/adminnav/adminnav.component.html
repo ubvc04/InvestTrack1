@@ -1,0 +1,419 @@
+<!-- ==================================================
+     INVESTTRACK ADMIN NAVBAR
+================================================== -->
+
+<nav class="navbar navbar-expand-xl invest-navbar">
+
+  <div class="container-fluid px-5">
+
+    <!-- Brand -->
+
+    <a
+      class="navbar-brand invest-brand"
+      routerLink="/adminnav/home">
+
+      <div class="brand-icon">
+        <i class="bi bi-currency-exchange"></i>
+      </div>
+
+      <span class="brand-title">
+        InvestTrack
+      </span>
+
+    </a>
+
+    <!-- Mobile Toggle -->
+
+    <button
+      class="navbar-toggler custom-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#adminNav"
+      aria-controls="adminNav"
+      aria-expanded="false">
+
+      <i class="bi bi-list"></i>
+
+    </button>
+
+    <!-- Navigation -->
+
+    <div
+      class="collapse navbar-collapse"
+      id="adminNav">
+
+      <ul class="navbar-nav">
+
+        <!-- Home -->
+
+        <!-- <li class="nav-item">
+
+          <a
+            class="nav-link"
+            routerLink="/adminnav/home"
+            routerLinkActive="active">
+
+            <i class="bi bi-house-fill"></i>
+
+            <span>Home</span>
+
+          </a>
+
+        </li> -->
+
+        <!-- Add Investment -->
+
+        <li class="nav-item">
+
+          <a
+            class="nav-link"
+            routerLink="/adminnav/add-investment"
+            routerLinkActive="active">
+
+            <i class="bi bi-plus-circle-fill"></i>
+
+            <span>Add Investment</span>
+
+          </a>
+
+        </li>
+
+        <li class="nav-item" *ngIf="authService.isSuperAdmin()">
+          <a class="nav-link" routerLink="/adminnav/management" routerLinkActive="active">
+            <i class="bi bi-shield-lock-fill"></i><span>Admin Management</span>
+          </a>
+        </li>
+
+        <!-- View Investments -->
+
+        <li class="nav-item">
+
+          <a
+            class="nav-link"
+            routerLink="/adminnav/view-investment"
+            routerLinkActive="active">
+
+            <i class="bi bi-bar-chart-line-fill"></i>
+
+            <span>View Investments</span>
+
+          </a>
+
+        </li>
+
+        <!-- Inquiries -->
+
+        <li class="nav-item">
+
+          <a
+            class="nav-link"
+            routerLink="/adminnav/view-inquiry"
+            routerLinkActive="active">
+
+            <i class="bi bi-life-preserver"></i>
+
+            <span>Inquiries</span>
+
+          </a>
+
+        </li>
+
+        <!-- Feedback -->
+
+        <li class="nav-item">
+
+          <a
+            class="nav-link"
+            routerLink="/adminnav/view-feedback"
+            routerLinkActive="active">
+
+            <i class="bi bi-chat-heart-fill"></i>
+
+            <span>Feedback</span>
+
+          </a>
+
+        </li>
+
+        <!-- Console -->
+
+        <li class="nav-item">
+
+          <a
+            class="nav-link"
+            routerLink="/adminnav/console"
+            routerLinkActive="active">
+
+            <i class="bi bi-grid-1x2-fill"></i>
+
+            <span>Console</span>
+
+          </a>
+
+        </li>
+
+      </ul>
+
+
+<!-- NOTIFICATION BELL -->
+<!-- 
+<div class="dropdown me-4">
+
+  <button
+    class="admin-notification"
+    type="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false">
+
+    <i class="bi bi-bell-fill"></i>
+
+    <span
+      *ngIf="openInquiries > 0"
+      class="admin-badge">
+
+      {{ openInquiries }}
+
+    </span>
+
+  </button>
+
+  <ul
+  class="dropdown-menu dropdown-menu-end notification-dropdown">
+
+  <li class="notification-title">
+
+    <i class="bi bi-bell-fill me-2"></i>
+
+    Notifications
+
+  </li>
+
+  <li>
+    <hr class="dropdown-divider">
+  </li>
+
+  <li *ngIf="notifications.length === 0">
+
+    <div class="empty-notification">
+
+      <i class="bi bi-check-circle-fill"></i>
+
+      <span>No New Notifications</span>
+
+    </div>
+
+  </li>
+
+  <li
+    *ngFor="let notification of notifications">
+
+    <a
+      class="dropdown-item notification-item"
+      (click)="goToInquiries()">
+
+      <div class="notification-icon">
+
+        <i class="bi bi-life-preserver"></i>
+
+      </div>
+
+      <div>
+
+        <strong>
+
+          {{ notification.username }}
+
+        </strong>
+
+        <div class="small text-muted">
+
+          submitted an inquiry for
+
+          {{ notification.investmentName }}
+
+        </div>
+
+      </div>
+
+    </a>
+
+  </li>
+
+</ul>
+
+</div> -->
+
+      <!-- Profile -->
+
+      <div class="user-dropdown-container">
+
+        <div class="dropdown">
+
+          <button
+            class="user-menu-btn"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false">
+
+            <div class="user-avatar">
+              {{ username?.charAt(0) | uppercase }}
+            </div>
+
+            <div class="user-meta">
+
+              <span class="user-name">
+                {{ username }}
+              </span>
+
+              <span class="user-role-small">
+                {{ userRole }}
+              </span>
+
+            </div>
+
+            <i class="bi bi-chevron-down"></i>
+
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-end user-dropdown">
+
+            <li>
+
+              <div class="dropdown-user-info">
+
+                <div class="dropdown-user-name">
+                  {{ username }}
+                </div>
+
+                <div class="dropdown-user-role">
+                  {{ userRole }}
+                </div>
+
+              </div>
+
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+
+              <a
+                class="dropdown-item"
+                routerLink="/adminnav/change-password">
+
+                <i class="bi bi-key-fill"></i>
+
+                Change Password
+
+              </a>
+
+            </li>
+
+            <li>
+
+              <a
+                class="dropdown-item logout-item"
+                (click)="confirmLogout()">
+
+                <i class="bi bi-door-open-fill"></i>
+
+                Logout
+
+              </a>
+
+            </li>
+
+          </ul>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</nav>
+
+<!-- ==================================================
+     PAGE CONTENT
+================================================== -->
+
+<div class="container-fluid py-4 px-4">
+
+  <router-outlet></router-outlet>
+
+</div>
+
+<!-- ==================================================
+     LOGOUT MODAL
+================================================== -->
+
+<div
+  class="modal fade"
+  [class.show]="showLogoutModal"
+  [style.display]="showLogoutModal ? 'block' : 'none'"
+  tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content investtrack-modal">
+
+      <div class="modal-header border-0">
+
+        <h5 class="modal-title fw-bold">
+          Confirm Logout
+        </h5>
+
+      </div>
+
+      <div class="modal-body text-center">
+
+        <div class="logout-icon mb-3">
+
+          <i class="bi bi-door-open-fill fs-1 text-danger"></i>
+
+        </div>
+
+        <p class="mb-0 fs-5">
+
+          Are you sure you want to logout from InvestTrack?
+
+        </p>
+
+      </div>
+
+      <div class="modal-footer border-0 justify-content-center">
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          (click)="cancelLogout()">
+
+          Cancel
+
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="onLogout()">
+
+          Logout
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  *ngIf="showLogoutModal"
+  class="modal-backdrop fade show">
+</div>

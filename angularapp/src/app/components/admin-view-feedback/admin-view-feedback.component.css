@@ -1,0 +1,656 @@
+/* ==========================================
+   PAGE
+========================================== */
+
+:host {
+    display: block;
+  }
+  
+  /* ==========================================
+     HEADER
+  ========================================== */
+  
+  .portfolio-header {
+  
+    background:
+      linear-gradient(
+        135deg,
+        #0f172a,
+        #1e40af,
+        #2563eb
+      );
+  
+    border-radius: 28px;
+  
+    padding: 40px;
+  
+    margin-bottom: 25px;
+  
+    position: relative;
+  
+    overflow: hidden;
+  
+    color: white;
+  }
+  
+  .portfolio-header::before {
+  
+    content: "";
+  
+    position: absolute;
+  
+    width: 320px;
+    height: 320px;
+  
+    border-radius: 50%;
+  
+    background: rgba(255,255,255,.06);
+  
+    right: -120px;
+    top: -120px;
+  }
+  
+  .portfolio-info {
+  
+    position: relative;
+  
+    z-index: 2;
+  }
+  
+  .portfolio-tag {
+  
+    display: inline-flex;
+  
+    align-items: center;
+  
+    gap: 8px;
+  
+    padding: 8px 16px;
+  
+    border-radius: 999px;
+  
+    background: rgba(255,255,255,.15);
+  
+    font-size: .82rem;
+  
+    font-weight: 600;
+  
+    margin-bottom: 15px;
+  }
+  
+  .portfolio-header h1 {
+  
+    font-size: 2.3rem;
+  
+    font-weight: 800;
+  
+    margin-bottom: 10px;
+  }
+  
+  .portfolio-header p {
+  
+    margin: 0;
+  
+    opacity: .9;
+  }
+  
+  /* ==========================================
+     INFO STRIP
+  ========================================== */
+  
+  .feedback-info-strip {
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 12px;
+  
+    background: white;
+  
+    border-radius: 18px;
+  
+    padding: 16px 20px;
+  
+    margin-bottom: 20px;
+  
+    border: 1px solid #e2e8f0;
+  
+    box-shadow:
+      0 10px 20px rgba(15,23,42,.04);
+  
+    color: #475569;
+  }
+  
+  .feedback-info-strip i {
+  
+    color: #f59e0b;
+  
+    font-size: 1.3rem;
+  }
+  
+  /* ==========================================
+     FILTER
+  ========================================== */
+  
+  .filter-toolbar {
+  
+    margin-bottom: 30px;
+  }
+  
+  .filter-box {
+  
+    width: 320px;
+  
+    background: white;
+  
+    height: 58px;
+  
+    border-radius: 16px;
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 12px;
+  
+    padding: 0 18px;
+  
+    border: 1px solid #e2e8f0;
+  
+    box-shadow:
+      0 10px 20px rgba(15,23,42,.05);
+  }
+  
+  .filter-box i {
+  
+    color: #2563eb;
+  }
+  
+  .filter-box select {
+  
+    width: 100%;
+  
+    border: none;
+  
+    outline: none;
+  
+    background: transparent;
+  }
+  
+  /* ==========================================
+     FEEDBACK CARD
+  ========================================== */
+  
+  .feedback-card {
+  
+    background: white;
+  
+    border-radius: 24px;
+  
+    padding: 24px;
+  
+    height: 100%;
+  
+    border: 1px solid #e2e8f0;
+  
+    box-shadow:
+      0 12px 25px rgba(15,23,42,.05);
+  
+    transition: .3s ease;
+  }
+  
+  .feedback-card:hover {
+  
+    transform: translateY(-6px);
+  
+    box-shadow:
+      0 20px 40px rgba(37,99,235,.12);
+  }
+  
+  .feedback-top {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    align-items: flex-start;
+  
+    margin-bottom: 20px;
+  }
+  
+  .feedback-top h5 {
+  
+    color: #0f172a;
+  
+    font-weight: 700;
+  
+    margin-bottom: 6px;
+  }
+  
+  .feedback-user {
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 8px;
+  
+    color: #64748b;
+  
+    font-size: .9rem;
+  }
+  
+  /* ==========================================
+     CATEGORY
+  ========================================== */
+  
+  .category-badge {
+  
+    padding: 7px 14px;
+  
+    border-radius: 999px;
+  
+    background: #dbeafe;
+  
+    color: #1d4ed8;
+  
+    font-size: .8rem;
+  
+    font-weight: 600;
+  }
+  
+  /* ==========================================
+     FEEDBACK MESSAGE
+  ========================================== */
+  
+  .feedback-message {
+  
+    background: #f8fafc;
+  
+    border-radius: 18px;
+  
+    padding: 18px;
+  
+    margin-bottom: 18px;
+  
+    position: relative;
+  }
+  
+  .feedback-message i {
+  
+    color: #2563eb;
+  
+    font-size: 1.2rem;
+  
+    margin-bottom: 10px;
+  
+    display: block;
+  }
+  
+  .feedback-message p {
+  
+    margin: 0;
+  
+    color: #334155;
+  
+    line-height: 1.6;
+  }
+  
+  /* ==========================================
+     INVESTMENT
+  ========================================== */
+  
+  .investment-summary {
+  
+    background: #eff6ff;
+  
+    border-radius: 16px;
+  
+    padding: 16px;
+  
+    margin-bottom: 18px;
+  }
+  
+  .investment-label {
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 8px;
+  
+    color: #2563eb;
+  
+    font-weight: 600;
+  
+    margin-bottom: 8px;
+  }
+  
+  .investment-name {
+  
+    color: #0f172a;
+  
+    font-weight: 700;
+  }
+  
+  /* ==========================================
+     FOOTER
+  ========================================== */
+  
+  .feedback-footer {
+  
+    margin-bottom: 18px;
+  }
+  
+  .feedback-date {
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 8px;
+  
+    color: #64748b;
+  
+    font-size: .9rem;
+  }
+  
+  .feedback-date i {
+  
+    color: #2563eb;
+  }
+  
+  /* ==========================================
+     ACTIONS
+  ========================================== */
+  
+  .feedback-actions {
+  
+    display: flex;
+  
+    gap: 10px;
+  }
+  
+  .btn-profile,
+  .btn-investment {
+  
+    flex: 1;
+  
+    border: none;
+  
+    border-radius: 12px;
+  
+    padding: 12px;
+  
+    font-weight: 600;
+  
+    transition: .3s ease;
+  }
+  
+  .btn-profile {
+  
+    background: #eff6ff;
+  
+    color: #2563eb;
+  }
+  
+  .btn-profile:hover {
+  
+    background: #dbeafe;
+  }
+  
+  .btn-investment {
+  
+    background: #dcfce7;
+  
+    color: #15803d;
+  }
+  
+  .btn-investment:hover:not(:disabled) {
+  
+    background: #bbf7d0;
+  }
+  
+  .btn-investment:disabled {
+  
+    opacity: .5;
+  
+    cursor: not-allowed;
+  }
+  
+  /* ==========================================
+     EMPTY STATE
+  ========================================== */
+  
+  .empty-state {
+  
+    background: white;
+  
+    border-radius: 24px;
+  
+    padding: 80px 20px;
+  
+    text-align: center;
+  
+    border: 1px solid #e2e8f0;
+  
+    box-shadow:
+      0 12px 25px rgba(15,23,42,.05);
+  }
+  
+  .empty-state i {
+  
+    font-size: 4rem;
+  
+    color: #94a3b8;
+  
+    margin-bottom: 15px;
+  }
+  
+  .empty-state h4 {
+  
+    font-weight: 700;
+  
+    margin-bottom: 10px;
+  }
+  
+  .empty-state p {
+  
+    color: #64748b;
+  }
+  
+  /* ==========================================
+     MODAL
+  ========================================== */
+  
+  .modal-content {
+  
+    border: none;
+  
+    border-radius: 24px;
+  
+    overflow: hidden;
+  
+    box-shadow:
+      0 25px 60px rgba(15,23,42,.15);
+  }
+  
+  .modal-header {
+  
+    border-bottom: 1px solid #f1f5f9;
+  }
+  
+  .modal-footer {
+  
+    border-top: 1px solid #f1f5f9;
+  }
+  
+  .modal-title {
+  
+    font-weight: 700;
+  }
+  
+  /* ==========================================
+     PROFILE ITEMS
+  ========================================== */
+  
+  .profile-item {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    align-items: center;
+  
+    padding: 14px 0;
+  
+    border-bottom: 1px solid #eef2f7;
+  }
+  
+  .profile-item:last-child {
+  
+    border-bottom: none;
+  }
+  
+  .profile-item strong {
+  
+    color: #0f172a;
+  }
+  
+  .profile-item span {
+  
+    color: #64748b;
+  
+    text-align: right;
+  }
+  
+  /* ==========================================
+     ANIMATION
+  ========================================== */
+  
+  .portfolio-header,
+  .feedback-card,
+  .filter-toolbar {
+  
+    animation: fadeUp .4s ease;
+  }
+  
+  @keyframes fadeUp {
+  
+    from {
+  
+      opacity: 0;
+  
+      transform: translateY(12px);
+    }
+  
+    to {
+  
+      opacity: 1;
+  
+      transform: translateY(0);
+    }
+  }
+  
+  /* ==========================================
+     RESPONSIVE
+  ========================================== */
+  
+  @media (max-width: 768px) {
+  
+    .feedback-actions {
+  
+      flex-direction: column;
+    }
+  
+    .feedback-top {
+  
+      flex-direction: column;
+  
+      gap: 12px;
+    }
+  
+    .filter-box {
+  
+      width: 100%;
+    }
+  
+    .portfolio-header {
+  
+      padding: 30px;
+    }
+  
+    .portfolio-header h1 {
+  
+      font-size: 1.9rem;
+    }
+  
+    .profile-item {
+
+        flex-direction: column;
+    
+        align-items: flex-start;
+    
+        gap: 6px;
+    }
+
+    .feedback-info-strip {
+  
+      align-items: flex-start;
+  
+      flex-direction: column;
+    }
+  }
+  
+  @media (max-width: 576px) {
+  
+    .portfolio-header {
+  
+      padding: 24px;
+    }
+  
+    .portfolio-header h1 {
+  
+      font-size: 1.7rem;
+    }
+  
+    .portfolio-tag {
+  
+      font-size: .75rem;
+  
+      padding: 7px 12px;
+    }
+  
+    .feedback-card {
+  
+      padding: 18px;
+    }
+  
+    .feedback-message {
+  
+      padding: 14px;
+    }
+  
+    .investment-summary {
+  
+      padding: 14px;
+    }
+  
+    .filter-box {
+  
+      height: 52px;
+    }
+  
+    .feedback-info-strip {
+  
+      padding: 14px 16px;
+    }
+  
+    .category-badge {
+  
+      font-size: .75rem;
+  
+      padding: 6px 12px;
+    }
+  }    

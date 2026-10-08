@@ -1,0 +1,573 @@
+/* =====================================
+   INVESTTRACK INVESTMENTS
+===================================== */
+
+:host {
+    display: block;
+  }
+  
+  body {
+    background: #f8fafc;
+  }
+  
+  /* =====================================
+     HERO HEADER
+  ===================================== */
+  
+  .portfolio-header {
+    background: linear-gradient(
+      135deg,
+      #0f172a,
+      #1e3a8a,
+      #2563eb
+    );
+  
+    color: white;
+  
+    border-radius: 28px;
+  
+    padding: 38px;
+  
+    margin-bottom: 25px;
+  
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .portfolio-header::before {
+    content: "";
+  
+    position: absolute;
+  
+    width: 320px;
+    height: 320px;
+  
+    right: -120px;
+    top: -120px;
+  
+    border-radius: 50%;
+  
+    background: rgba(255,255,255,.08);
+  }
+  
+  .portfolio-info {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .portfolio-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  
+    background: rgba(255,255,255,.12);
+  
+    padding: 8px 14px;
+  
+    border-radius: 30px;
+  
+    margin-bottom: 15px;
+  
+    font-size: .8rem;
+    font-weight: 600;
+  }
+  
+  .portfolio-header h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  
+  .portfolio-header p {
+    margin: 0;
+    opacity: .9;
+  }
+  
+  .header-stat {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .stat-card {
+    background: rgba(255,255,255,.12);
+  
+    backdrop-filter: blur(12px);
+  
+    padding: 18px 24px;
+  
+    border-radius: 18px;
+  
+    text-align: center;
+  }
+  
+  .stat-card span {
+    display: block;
+    font-size: .85rem;
+    opacity: .85;
+  }
+  
+  .stat-card strong {
+    font-size: 2rem;
+    font-weight: 800;
+  }
+  
+  /* =====================================
+     ALERT
+  ===================================== */
+  
+  .alert-warning {
+    border-radius: 18px;
+    border: none;
+  
+    box-shadow:
+      0 5px 15px rgba(245,158,11,.15);
+  }
+  
+  /* =====================================
+     AI ASSISTANT
+  ===================================== */
+  
+  .ai-search-wrapper {
+    background: white;
+  
+    border-radius: 24px;
+  
+    padding: 24px;
+  
+    margin-bottom: 25px;
+  
+    border: 1px solid #e2e8f0;
+  
+    box-shadow:
+      0 10px 25px rgba(15,23,42,.05);
+  }
+  
+  .ai-search-header {
+    margin-bottom: 15px;
+  }
+  
+  .ai-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  
+    font-weight: 700;
+  
+    color: #0f172a;
+  }
+  
+  .ai-title i {
+    width: 42px;
+    height: 42px;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    border-radius: 12px;
+  
+    color: white;
+  
+    background: linear-gradient(
+      135deg,
+      #2563eb,
+      #06b6d4
+    );
+  }
+  
+  .ai-search-wrapper .form-control {
+    height: 58px;
+  
+    border-radius: 15px;
+  
+    border: 1px solid #cbd5e1;
+  }
+  
+  .ai-search-wrapper .btn {
+    min-width: 70px;
+  
+    border-radius: 15px;
+  
+    background: linear-gradient(
+      135deg,
+      #2563eb,
+      #06b6d4
+    );
+  
+    border: none;
+  }
+  
+  .ai-result {
+    margin-top: 15px;
+  
+    background: #eff6ff;
+  
+    color: #1d4ed8;
+  
+    border-radius: 14px;
+  
+    padding: 12px 15px;
+  
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  /* =====================================
+     FILTERS
+  ===================================== */
+  
+  .filter-toolbar {
+    display: flex;
+    gap: 15px;
+  
+    margin-bottom: 30px;
+  }
+  
+  .search-box,
+  .filter-box {
+    flex: 1;
+  
+    background: white;
+  
+    border: 1px solid #e2e8f0;
+  
+    border-radius: 16px;
+  
+    height: 58px;
+  
+    padding: 0 18px;
+  
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  
+    box-shadow:
+      0 8px 20px rgba(15,23,42,.04);
+  }
+  
+  .search-box i,
+  .filter-box i {
+    color: #64748b;
+  }
+  
+  .search-box input,
+  .filter-box select {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+  }
+  
+  /* =====================================
+     SECTION TITLE
+  ===================================== */
+  
+  .portfolio-title {
+    margin-bottom: 20px;
+  }
+  
+  .portfolio-title h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  
+    font-size: 1.4rem;
+    font-weight: 800;
+  
+    color: #0f172a;
+  }
+  
+  .portfolio-title i {
+    color: #2563eb;
+  }
+  
+  /* =====================================
+     INVESTMENT CARD
+  ===================================== */
+  
+  .investment-card {
+    background: white;
+  
+    border-radius: 24px;
+  
+    padding: 22px;
+  
+    height: 100%;
+  
+    border: 1px solid #e2e8f0;
+  
+    transition: .3s ease;
+  
+    box-shadow:
+      0 10px 25px rgba(15,23,42,.05);
+  }
+  
+  .investment-card:hover {
+    transform: translateY(-8px);
+  
+    box-shadow:
+      0 20px 35px rgba(37,99,235,.12);
+  }
+  
+  .investment-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  
+    margin-bottom: 18px;
+  }
+  
+  .investment-top h5 {
+    font-weight: 700;
+    margin-bottom: 6px;
+  
+    color: #0f172a;
+  }
+  
+  .investment-type {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  
+    color: #64748b;
+  
+    font-size: .85rem;
+  }
+  
+  /* =====================================
+     STATUS
+  ===================================== */
+  
+  .status-pill {
+    padding: 6px 12px;
+  
+    border-radius: 50px;
+  
+    font-size: .8rem;
+  
+    font-weight: 700;
+  }
+  
+  .active-status {
+    background: #dcfce7;
+    color: #15803d;
+  }
+  
+  .sold-status {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+  
+  /* =====================================
+     MARKET
+  ===================================== */
+  
+  .investment-market {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  
+    color: #475569;
+  
+    margin-bottom: 15px;
+  }
+  
+  .investment-market i {
+    color: #2563eb;
+  }
+  
+  /* =====================================
+     DESCRIPTION
+  ===================================== */
+  
+  .investment-description {
+    color: #64748b;
+  
+    line-height: 1.6;
+  
+    min-height: 80px;
+  }
+  
+  /* =====================================
+     PRICES
+  ===================================== */
+  
+  .price-wrapper {
+    display: grid;
+  
+    grid-template-columns: 1fr 1fr;
+  
+    gap: 12px;
+  
+    margin-bottom: 18px;
+  }
+  
+  .price-item {
+    background: #f8fafc;
+  
+    border-radius: 14px;
+  
+    padding: 15px;
+  }
+  
+  .price-item span {
+    display: block;
+  
+    font-size: .8rem;
+  
+    color: #64748b;
+  
+    margin-bottom: 5px;
+  }
+  
+  .price-item strong {
+    color: #0f172a;
+  
+    font-size: 1.05rem;
+  }
+  
+  /* =====================================
+     DETAILS
+  ===================================== */
+  
+  .investment-meta {
+    display: flex;
+    flex-direction: column;
+  
+    gap: 10px;
+  
+    margin-bottom: 20px;
+  
+    color: #475569;
+  }
+  
+  .investment-meta div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .investment-meta i {
+    color: #2563eb;
+  }
+  
+  /* =====================================
+     ACTION BUTTONS
+  ===================================== */
+  
+  .investment-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-details,
+  .btn-feedback {
+    flex: 1;
+  
+    border: none;
+  
+    padding: 12px;
+  
+    border-radius: 12px;
+  
+    font-weight: 600;
+  
+    transition: .3s ease;
+  }
+  
+  .btn-details {
+    background: linear-gradient(
+      135deg,
+      #2563eb,
+      #3b82f6
+    );
+  
+    color: white;
+  }
+  
+  .btn-details:hover {
+    transform: translateY(-2px);
+  }
+  
+  .btn-feedback {
+    background: #eef2ff;
+  
+    color: #2563eb;
+  }
+  
+  .btn-feedback:hover:not(:disabled) {
+    background: #dbeafe;
+  }
+  
+  .btn-feedback:disabled {
+    opacity: .7;
+    cursor: not-allowed;
+  }
+  
+  /* =====================================
+     EMPTY STATE
+  ===================================== */
+  
+  .empty-state {
+    background: white;
+  
+    border-radius: 24px;
+  
+    text-align: center;
+  
+    padding: 80px 20px;
+  
+    box-shadow:
+      0 10px 25px rgba(15,23,42,.05);
+  }
+  
+  .empty-state i {
+    font-size: 4rem;
+    color: #94a3b8;
+  }
+  
+  .empty-state h4 {
+    margin-top: 15px;
+  
+    font-weight: 700;
+  
+    color: #0f172a;
+  }
+  
+  .empty-state p {
+    color: #64748b;
+  }
+  
+  /* =====================================
+     RESPONSIVE
+  ===================================== */
+  
+  @media (max-width: 768px) {
+  
+    .portfolio-header {
+      flex-direction: column;
+      gap: 20px;
+      text-align: center;
+    }
+  
+    .filter-toolbar {
+      flex-direction: column;
+    }
+  
+    .price-wrapper {
+      grid-template-columns: 1fr;
+    }
+  
+    .investment-actions {
+      flex-direction: column;
+    }
+  
+    .portfolio-header h1 {
+      font-size: 1.8rem;
+    }
+  }

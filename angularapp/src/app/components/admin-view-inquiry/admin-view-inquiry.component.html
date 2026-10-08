@@ -1,0 +1,404 @@
+<!-- ==========================================
+     INQUIRY CENTER HEADER
+========================================== -->
+
+<div class="portfolio-header">
+
+  <div class="portfolio-info">
+
+    <span class="portfolio-tag">
+
+      <i class="bi bi-headset"></i>
+
+      SUPPORT CENTER
+
+    </span>
+
+    <h1>Inquiry Management</h1>
+
+    <p>
+      Review customer questions, provide responses and manage support workflows.
+    </p>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     FILTER TOOLBAR
+========================================== -->
+
+<div class="filter-toolbar">
+
+  <div class="search-box">
+
+    <i class="bi bi-search"></i>
+
+    <input
+      type="text"
+      [(ngModel)]="searchName"
+      (input)="applyFilter()"
+      placeholder="Search by investment name">
+
+  </div>
+
+  <div class="filter-box">
+
+    <i class="bi bi-flag-fill"></i>
+
+    <select
+      [(ngModel)]="filterPriority"
+      (change)="applyFilter()">
+
+      <option value="">All Priorities</option>
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+
+    </select>
+
+  </div>
+
+  <div class="filter-box">
+
+    <i class="bi bi-funnel-fill"></i>
+
+    <select
+      [(ngModel)]="filterStatus"
+      (change)="applyFilter()">
+
+      <option value="">All Statuses</option>
+      <option value="PENDING">PENDING</option>
+      <option value="RESOLVED">RESOLVED</option>
+
+    </select>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     EMPTY STATE
+========================================== -->
+
+<div
+  *ngIf="filtered.length === 0"
+  class="empty-state">
+
+  <i class="bi bi-chat-square-text"></i>
+
+  <h4>No Inquiries Found</h4>
+
+  <p>
+    No inquiries match the selected filters.
+  </p>
+
+</div>
+
+<!-- ==========================================
+     INQUIRY CARDS
+========================================== -->
+
+<div
+  class="row g-4"
+  *ngIf="filtered.length > 0">
+
+  <div
+    class="col-xl-4 col-lg-6"
+    *ngFor="let inq of filtered">
+
+    <div class="investment-card inquiry-card">
+
+      <div class="investment-top">
+
+        <div>
+
+          <h5>
+
+            {{ inq.subject || inq.investment.name }}
+
+          </h5>
+
+          <div class="inquiry-user">
+
+            <i class="bi bi-person-circle"></i>
+
+            {{ inq.user.username }}
+
+            <small class="d-block text-muted">{{ inq.user.email }}</small>
+
+          </div>
+
+        </div>
+
+        <span
+          class="status-pill"
+          [ngClass]="{
+            'active-status': inq.status === 'RESOLVED',
+            'sold-status': inq.status !== 'RESOLVED'
+          }">
+
+          {{ inq.status }}
+
+        </span>
+
+      </div>
+
+      <div class="priority-tag">
+
+        <i class="bi bi-flag-fill"></i>
+
+        {{ inq.priority }}
+
+      </div>
+
+      <div class="message-box">
+
+        {{ inq.message }}
+
+      </div>
+
+      <div class="investment-meta">
+
+        <div>
+
+          <i class="bi bi-calendar3"></i>
+
+          {{ inq.inquiryDate | date:'medium' }}
+
+        </div>
+
+      </div>
+
+      <div class="response-box">
+
+        <strong>
+
+          <i class="bi bi-reply-fill me-2"></i>
+
+          Admin Response
+
+        </strong>
+
+        <p *ngIf="inq.adminResponse">
+
+          {{ inq.adminResponse }}
+
+        </p>
+
+        <p
+          *ngIf="!inq.adminResponse"
+          class="text-muted fst-italic">
+
+          No response yet
+
+        </p>
+
+      </div>
+
+      <div class="status-selector">
+
+        <select
+          class="form-select"
+          [value]="inq.status"
+          (change)="onStatusChange(inq, $any($event.target).value)">
+
+          <option value="PENDING">PENDING</option>
+          <option value="RESOLVED">RESOLVED</option>
+
+        </select>
+
+      </div>
+
+      <div class="investment-actions">
+
+        <button
+          class="btn-edit"
+          (click)="openResponseModal(inq)">
+
+          <i class="bi bi-chat-left-text-fill"></i>
+
+          Respond
+
+        </button>
+
+        <button
+          class="btn-delete"
+          (click)="confirmDelete(inq.inquiryId!)">
+
+          <i class="bi bi-trash-fill"></i>
+
+          Delete
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     RESPONSE MODAL
+========================================== -->
+
+<div
+  class="modal fade"
+  [class.show]="showResponseModal"
+  [style.display]="showResponseModal ? 'block' : 'none'"
+  tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h5 class="modal-title">
+
+          <i class="bi bi-chat-left-text-fill me-2"></i>
+
+          Respond To Inquiry
+
+        </h5>
+
+      </div>
+
+      <div class="modal-body">
+
+        <div class="mb-3">
+
+          <label class="form-label fw-semibold">
+
+            Admin Response
+
+          </label>
+
+          <textarea
+            class="form-control"
+            rows="5"
+            [(ngModel)]="adminResponseText">
+
+          </textarea>
+
+        </div>
+
+        <div>
+
+          <label class="form-label fw-semibold">
+
+            Status
+
+          </label>
+
+          <select
+            class="form-select"
+            [(ngModel)]="newStatus">
+
+            <option value="PENDING">PENDING</option>
+            <option value="RESOLVED">RESOLVED</option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button
+          class="btn btn-primary"
+          (click)="submitResponse()">
+
+          Submit Response
+
+        </button>
+
+        <button
+          class="btn btn-secondary"
+          (click)="cancelResponse()">
+
+          Cancel
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  *ngIf="showResponseModal"
+  class="modal-backdrop fade show">
+</div>
+
+<!-- ==========================================
+     DELETE MODAL
+========================================== -->
+
+<div
+  class="modal fade"
+  [class.show]="showDeleteModal"
+  [style.display]="showDeleteModal ? 'block' : 'none'"
+  tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content">
+
+      <div class="modal-body text-center p-5">
+
+        <i
+          class="bi bi-trash3-fill text-danger"
+          style="font-size:4rem">
+        </i>
+
+        <h4 class="mt-3">
+
+          Delete Inquiry?
+
+        </h4>
+
+        <p class="text-muted">
+
+          This action cannot be undone.
+
+        </p>
+
+        <div class="d-flex gap-2 justify-content-center mt-4">
+
+          <button
+            class="btn btn-danger"
+            (click)="onDelete()">
+
+            Delete
+
+          </button>
+
+          <button
+            class="btn btn-outline-secondary"
+            (click)="cancelDelete()">
+
+            Cancel
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  *ngIf="showDeleteModal"
+  class="modal-backdrop fade show">
+</div>

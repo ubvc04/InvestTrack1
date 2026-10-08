@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- springProperty resolves application.properties before appenders are created. -->
+    <springProperty scope="context"
+                    name="LOG_DIR"
+                    source="activity.logging.directory"
+                    defaultValue="logs"/>
+    <springProperty scope="context"
+                    name="MAX_FILE_SIZE"
+                    source="activity.logging.max-file-size"
+                    defaultValue="10MB"/>
+    <springProperty scope="context"
+                    name="MAX_HISTORY"
+                    source="activity.logging.max-history"
+                    defaultValue="30"/>
+    <springProperty scope="context"
+                    name="ACTIVITY_LOG_LEVEL"
+                    source="activity.logging.level"
+                    defaultValue="INFO"/>
+
+    <!-- Console -->
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+
+    </appender>
+
+    <!-- Application log -->
+    <appender name="APPLICATION"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_DIR}/application.log</file>
+
+        <rollingPolicy
+            class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <fileNamePattern>
+                ${LOG_DIR}/application.%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+
+    </appender>
+
+    <!-- User activity log -->
+    <appender name="USER_ACTIVITY"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_DIR}/user-activity.log</file>
+
+        <rollingPolicy
+            class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+            <fileNamePattern>
+                ${LOG_DIR}/user-activity.%d{yyyy-MM-dd}.%i.log.gz
+            </fileNamePattern>
+
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %msg%n</pattern>
+        </encoder>
+
+    </appender>
+
+    <!-- User activity logger -->
+    <logger name="USER_ACTIVITY"
+            level="${ACTIVITY_LOG_LEVEL}"
+            additivity="false">
+
+        <appender-ref ref="USER_ACTIVITY"/>
+
+    </logger>
+
+    <!-- Root logger -->
+    <root level="${logging.level.root:-INFO}">
+
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="APPLICATION"/>
+
+    </root>
+
+</configuration>

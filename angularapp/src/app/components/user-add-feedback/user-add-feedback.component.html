@@ -1,0 +1,312 @@
+<!-- ==========================================
+     HERO SECTION
+========================================== -->
+
+<div class="portfolio-header">
+
+    <div class="portfolio-info">
+  
+      <span class="portfolio-tag">
+  
+        <i class="bi bi-chat-heart-fill"></i>
+  
+        INVESTTRACK FEEDBACK
+  
+      </span>
+  
+      <h1>
+        {{ investmentFeedbackMode ? 'Investment Feedback' : 'Share Feedback' }}
+      </h1>
+  
+      <p>
+        Your feedback helps us improve the InvestTrack experience and deliver
+        better investment insights.
+      </p>
+  
+    </div>
+  
+    <div class="header-stat">
+  
+      <div class="stat-card">
+  
+        <span>Community Driven</span>
+  
+        <strong>100%</strong>
+  
+      </div>
+  
+    </div>
+  
+  </div>
+  
+  <!-- ==========================================
+       INVESTMENT SUMMARY
+  ========================================== -->
+  
+  <div
+    *ngIf="investmentFeedbackMode && investment"
+    class="investment-summary-card">
+  
+    <div class="summary-icon">
+  
+      <i class="bi bi-briefcase-fill"></i>
+  
+    </div>
+  
+    <div class="summary-content">
+  
+      <span class="summary-label">
+  
+        SELECTED INVESTMENT
+  
+      </span>
+  
+      <h4>
+  
+        {{ investment.name }}
+  
+      </h4>
+  
+      <span class="investment-type-badge">
+  
+        {{ investment.type }}
+  
+      </span>
+  
+    </div>
+  
+  </div>
+  
+  <!-- ==========================================
+       ALERTS
+  ========================================== -->
+  
+  <div
+    *ngIf="error"
+    class="alert alert-danger invest-alert">
+  
+    <i class="bi bi-exclamation-circle-fill me-2"></i>
+  
+    {{ error }}
+  
+  </div>
+  
+  <div
+    *ngIf="investmentFeedbackMode && feedbackStatusError"
+    class="alert alert-warning invest-alert">
+  
+    {{ feedbackStatusError }}
+  
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-warning ms-2"
+      (click)="retryFeedbackStatus()">
+  
+      Retry
+  
+    </button>
+  
+  </div>
+  
+  <div
+    *ngIf="investmentFeedbackMode && alreadySubmitted"
+    class="alert alert-info invest-alert">
+  
+    <i class="bi bi-info-circle-fill me-2"></i>
+  
+    You have already submitted feedback for this investment.
+  
+  </div>
+  
+  <!-- ==========================================
+       SUCCESS STATE
+  ========================================== -->
+  
+  <div
+    *ngIf="submitted"
+    class="success-container">
+  
+    <div class="success-card">
+  
+      <div class="success-circle">
+  
+        <i class="bi bi-check2-circle"></i>
+  
+      </div>
+  
+      <h2>Feedback Submitted</h2>
+  
+      <p>
+  
+        {{
+          investmentFeedbackMode
+            ? 'Thank you for sharing your investment feedback.'
+            : 'Thank you for helping improve InvestTrack.'
+        }}
+  
+      </p>
+  
+      <a
+        routerLink="/usernav/view-feedback"
+        class="btn btn-primary success-btn">
+  
+        <i class="bi bi-chat-heart-fill me-2"></i>
+  
+        View My Feedback
+  
+      </a>
+  
+    </div>
+  
+  </div>
+  
+  <!-- ==========================================
+       FEEDBACK FORM
+  ========================================== -->
+  
+  <div
+    class="feedback-form-card"
+    *ngIf="!submitted">
+  
+    <div class="section-title">
+  
+      <div class="section-icon">
+  
+        <i class="bi bi-pencil-square"></i>
+  
+      </div>
+  
+      <div>
+  
+        <h4>Feedback Details</h4>
+  
+        <p>
+          Tell us what you think and help us enhance the platform.
+        </p>
+  
+      </div>
+  
+    </div>
+  
+    <form (ngSubmit)="submit()">
+  
+      <!-- Feedback Type -->
+  
+      <div
+        class="mb-4"
+        *ngIf="!investmentFeedbackMode">
+  
+        <label class="form-label">
+  
+          Feedback Category
+  
+        </label>
+  
+        <select
+          class="form-select"
+          [(ngModel)]="feedbackType"
+          (ngModelChange)="onFeedbackTypeChange($event)"
+          name="feedbackType">
+  
+          <option value="Platform">
+            Platform
+          </option>
+  
+          <option value="Other">
+            Other
+          </option>
+  
+        </select>
+  
+      </div>
+  
+      <!-- Subject -->
+  
+      <div
+        class="mb-4"
+        *ngIf="!investmentFeedbackMode && feedbackType === 'Other'">
+  
+        <label class="form-label">
+  
+          Subject
+  
+        </label>
+  
+        <input
+          class="form-control"
+          [(ngModel)]="subject"
+          name="subject"
+          required
+          maxlength="255"
+          placeholder="Enter feedback subject">
+  
+      </div>
+  
+      <!-- Feedback Text -->
+  
+      <div class="mb-4">
+  
+        <label class="form-label">
+  
+          Your Feedback
+  
+        </label>
+  
+        <textarea
+          class="form-control feedback-textarea"
+          rows="6"
+          [(ngModel)]="feedbackText"
+          name="feedbackText"
+          required
+          minlength="10"
+          placeholder="Tell us about your experience, suggestion or concern...">
+        </textarea>
+  
+      </div>
+  
+      <!-- Info Box -->
+  
+      <div class="feedback-note">
+  
+        <i class="bi bi-lightbulb-fill"></i>
+  
+        <div>
+  
+          <strong>Your feedback matters.</strong>
+  
+          <p class="mb-0">
+            Every feedback submission helps improve investment experiences for all users.
+          </p>
+  
+        </div>
+  
+      </div>
+  
+      <!-- Buttons -->
+  
+      <div class="action-area">
+  
+        <a
+          routerLink="/usernav/view-feedback"
+          class="btn btn-outline-primary">
+  
+          View Feedback
+  
+        </a>
+  
+        <button
+          type="submit"
+          class="btn btn-primary feedback-submit-btn"
+          [disabled]="submitting || (investmentFeedbackMode && (feedbackStatusLoading || feedbackStatusError || alreadySubmitted || !investment))">
+  
+          <i class="bi bi-send-fill me-2"></i>
+  
+          Submit Feedback
+  
+        </button>
+  
+      </div>
+  
+    </form>
+  
+  </div>

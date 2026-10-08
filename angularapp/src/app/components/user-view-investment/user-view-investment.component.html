@@ -1,0 +1,340 @@
+<!-- ==========================================
+     HERO SECTION
+========================================== -->
+
+<div class="portfolio-header">
+
+  <div class="portfolio-info">
+
+    <span class="portfolio-tag">
+
+      <i class="bi bi-stars"></i>
+
+      INVESTTRACK INVESTMENTS
+
+    </span>
+
+    <h1>Investment Opportunities</h1>
+
+    <p>
+      Explore curated investment opportunities, analyze market data
+      and connect with our investment experts.
+    </p>
+
+  </div>
+
+  <div class="header-stat">
+
+    <div class="stat-card">
+
+      <span>Available Assets</span>
+
+      <strong>{{ filtered.length }}</strong>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     FEEDBACK STATUS
+========================================== -->
+
+<div
+  *ngIf="feedbackStatusError"
+  class="alert alert-warning shadow-sm border-0 rounded-4">
+
+  <div class="d-flex justify-content-between align-items-center">
+
+    <span>
+      {{ feedbackStatusError }}
+    </span>
+
+    <button
+      class="btn btn-warning btn-sm"
+      (click)="retryFeedbackStatus()">
+
+      <i class="bi bi-arrow-clockwise me-1"></i>
+
+      Retry
+
+    </button>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     AI ASSISTANT
+========================================== -->
+
+<div class="ai-search-wrapper">
+
+  <div class="ai-search-header">
+
+    <div class="ai-title">
+
+      <i class="bi bi-stars"></i>
+
+      <span>AI Investment Assistant</span>
+
+    </div>
+
+  </div>
+
+  <div class="input-group">
+
+    <input
+      class="form-control"
+      [(ngModel)]="aiSearch"
+      (keyup.enter)="runAiSearch()"
+      placeholder="Ask AI: growth stocks, mutual funds, low risk investments, crypto opportunities...">
+
+    <button
+      class="btn btn-primary"
+      (click)="runAiSearch()">
+
+      <i class="bi bi-arrow-right-circle-fill"></i>
+
+    </button>
+
+  </div>
+
+</div>
+<!-- ==========================================
+     FILTER TOOLBAR
+========================================== -->
+
+<div class="filter-toolbar">
+
+  <div class="search-box">
+
+    <i class="bi bi-search"></i>
+
+    <input
+      [(ngModel)]="search"
+      (input)="applyFilter()"
+      placeholder="Search investments">
+
+  </div>
+
+  <div class="filter-box">
+
+    <i class="bi bi-funnel"></i>
+
+    <select
+      [(ngModel)]="type"
+      (change)="applyFilter()">
+
+      <option value="">All Types</option>
+
+      <option
+        *ngFor="let item of types"
+        [value]="item">
+
+        {{ item }}
+
+      </option>
+
+    </select>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     TITLE
+========================================== -->
+
+<div class="portfolio-title">
+
+  <h3>
+
+    <i class="bi bi-briefcase-fill"></i>
+
+    Available Investment Assets
+
+  </h3>
+
+</div>
+
+<!-- ==========================================
+     LOADER
+========================================== -->
+
+<div
+  *ngIf="loading"
+  class="text-center py-5">
+
+  <div
+    class="spinner-border text-primary"
+    style="width:3rem;height:3rem">
+  </div>
+
+  <p class="text-muted mt-3">
+
+    Loading investment opportunities...
+
+  </p>
+
+</div>
+
+<!-- ==========================================
+     EMPTY STATE
+========================================== -->
+
+<div
+  *ngIf="!loading && filtered.length === 0"
+  class="empty-state">
+
+  <i class="bi bi-search-heart"></i>
+
+  <h4>No Investments Found</h4>
+
+  <p>
+    Try adjusting your filters or search criteria.
+  </p>
+
+</div>
+
+<!-- ==========================================
+     INVESTMENT GRID
+========================================== -->
+
+<div
+  class="row g-4"
+  *ngIf="!loading && filtered.length > 0">
+
+  <div
+    class="col-xl-4 col-lg-6"
+    *ngFor="let investment of filtered">
+
+    <div class="investment-card">
+
+      <div class="investment-top">
+
+        <div>
+
+          <h5>
+            {{ investment.name }}
+          </h5>
+
+          <span class="investment-type">
+
+            <i class="bi bi-pie-chart-fill"></i>
+
+            {{ investment.type }}
+
+          </span>
+
+        </div>
+
+        <span class="status-pill active-status">
+
+          {{ investment.status }}
+
+        </span>
+
+      </div>
+
+      <div class="investment-market mb-3">
+
+        <i class="bi bi-globe2"></i>
+
+        {{ investment.market || 'Global Market' }}
+
+      </div>
+
+      <p class="investment-description">
+
+        {{ investment.description }}
+
+      </p>
+
+      <div class="price-wrapper">
+
+        <div class="price-item">
+
+          <span>Current Price</span>
+
+          <strong>
+
+            {{ investment.currentPrice | currency }}
+
+          </strong>
+
+        </div>
+
+        <div class="price-item">
+
+          <span>Units</span>
+
+          <strong>
+
+            {{ investment.quantity }}
+
+          </strong>
+
+        </div>
+
+      </div>
+
+      <div class="investment-meta">
+
+        <div>
+      
+          <i class="bi bi-buildings"></i>
+      
+          {{ investment.symbol || 'N/A' }}
+      
+        </div>
+      
+        <div>
+      
+          <i class="bi bi-calendar3"></i>
+      
+          {{ investment.purchaseDate | date:'mediumDate' }}
+      
+        </div>
+      
+      </div>
+      
+      <!-- ACTIONS -->
+      
+      <div class="investment-actions">
+      
+        <button
+          class="btn-details"
+          (click)="inquire(investment)">
+      
+          <i class="bi bi-chat-left-text-fill"></i>
+      
+          Inquiry
+      
+        </button>
+      
+        <button
+          class="btn-feedback"
+          (click)="giveFeedback(investment)"
+          [disabled]="feedbackStatusLoading ||
+                      !!feedbackStatusError ||
+                      hasSubmittedFeedback(investment)">
+      
+          <i class="bi bi-chat-heart-fill"></i>
+      
+          {{
+            hasSubmittedFeedback(investment)
+              ? 'Submitted'
+              : 'Feedback'
+          }}
+      
+        </button>
+      
+      </div>
+      
+      </div>
+      
+      </div>
+      
+      </div>

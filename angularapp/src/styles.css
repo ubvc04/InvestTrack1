@@ -1,0 +1,434 @@
+/* ==================================================
+   INVESTTRACK GLOBAL THEME
+================================================== */
+
+:root {
+  --it-ink: #10233f;
+  --it-muted: #6f829d;
+  --it-primary: #246bfe;
+  --it-primary-deep: #173b8f;
+  --it-cyan: #24c8d9;
+
+  --it-surface: rgba(255,255,255,.88);
+  --it-border: rgba(152,177,211,.28);
+
+  --it-shadow:
+    0 18px 55px rgba(31,65,112,.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+
+  min-height: 100vh;
+
+  font-family:
+    'Segoe UI',
+    Tahoma,
+    Geneva,
+    Verdana,
+    sans-serif;
+
+  color: var(--it-ink);
+
+  overflow-x: hidden;
+
+  background:
+    radial-gradient(
+      circle at 8% 5%,
+      rgba(36,107,254,.10),
+      transparent 28rem
+    ),
+
+    radial-gradient(
+      circle at 92% 22%,
+      rgba(36,200,217,.09),
+      transparent 25rem
+    ),
+
+    #f4f7fc;
+}
+
+/* ==================================================
+   FLOATING BACKGROUND
+================================================== */
+
+body::before,
+body::after {
+
+  content: "";
+
+  position: fixed;
+
+  width: 30rem;
+  height: 30rem;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  z-index: -1;
+
+  animation:
+    it-drift 18s ease-in-out infinite alternate;
+}
+
+body::before {
+
+  right: -14rem;
+  top: 18%;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(36,107,254,.08),
+      transparent 65%
+    );
+}
+
+body::after {
+
+  left: -17rem;
+  top: 62%;
+
+  animation-delay: -7s;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(36,200,217,.07),
+      transparent 65%
+    );
+}
+
+/* ==================================================
+   NAVBAR BASE ONLY
+================================================== */
+
+.navbar {
+  min-height: 72px;
+}
+
+.navbar-brand {
+  text-decoration: none;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+/* ==================================================
+   CARDS
+================================================== */
+
+.card {
+
+  border: none;
+
+  border-radius: 12px;
+
+  box-shadow:
+    var(--it-shadow);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+.card:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 24px 65px rgba(31,65,112,.16);
+}
+
+.card-header {
+
+  font-weight: 600;
+
+  border-radius:
+    12px 12px 0 0 !important;
+}
+
+/* ==================================================
+   TABLES
+================================================== */
+
+.table thead th {
+
+  background: #0d6efd;
+
+  color: white;
+
+  font-weight: 600;
+
+  border: none;
+}
+
+.table-hover tbody tr:hover {
+  background: #e8f0fe;
+}
+
+.table tbody tr {
+  transition: .2s ease;
+}
+
+.table tbody tr:hover {
+  transform: translateX(2px);
+}
+
+.table-responsive,
+.table-wrap {
+  border-radius: 12px;
+}
+
+/* ==================================================
+   BUTTONS
+================================================== */
+
+.btn {
+
+  border-radius: 6px;
+
+  font-weight: 500;
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.btn:hover:not(:disabled) {
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 8px 20px rgba(36,107,254,.20);
+}
+
+/* ==================================================
+   FORMS
+================================================== */
+
+.form-control:focus,
+.form-select:focus {
+
+  border-color:
+    var(--it-primary);
+
+  box-shadow:
+    0 0 0 .2rem rgba(36,107,254,.16);
+}
+
+/* ==================================================
+   BADGES
+================================================== */
+
+.badge {
+
+  padding: 5px 10px;
+
+  border-radius: 20px;
+
+  font-size: .8rem;
+}
+
+/* ==================================================
+   AUTH PAGES
+================================================== */
+
+.auth-wrapper {
+
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.auth-card {
+
+  width: 100%;
+  max-width: 440px;
+
+  padding: 2.5rem;
+
+  border-radius: 16px;
+
+  background:
+    rgba(255,255,255,.95);
+
+  box-shadow:
+    0 8px 32px rgba(0,0,0,.20);
+}
+
+.auth-title {
+
+  text-align: center;
+
+  color: #0d6efd;
+
+  font-size: 2rem;
+
+  font-weight: 700;
+
+  margin-bottom: .25rem;
+}
+
+.auth-subtitle {
+
+  text-align: center;
+
+  color: #6c757d;
+
+  margin-bottom: 1.5rem;
+
+  font-size: .95rem;
+}
+
+/* ==================================================
+   STATS
+================================================== */
+
+.stat-card {
+
+  padding: 1.5rem;
+
+  border-radius: 12px;
+
+  text-align: center;
+
+  color: white;
+}
+
+.stat-card .stat-number {
+
+  font-size: 2.5rem;
+
+  font-weight: 700;
+}
+
+.stat-card .stat-label {
+
+  font-size: .9rem;
+
+  opacity: .85;
+}
+
+/* ==================================================
+   MODALS
+================================================== */
+
+.modal-header {
+
+  color: white;
+
+  background: #0d6efd;
+
+  border-radius: 8px 8px 0 0;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+/* ==================================================
+   EMPTY STATES
+================================================== */
+
+.empty-state {
+
+  text-align: center;
+
+  color: #6c757d;
+
+  padding: 3rem 1rem;
+}
+
+.empty-state i {
+
+  font-size: 3rem;
+
+  color: #adb5bd;
+
+  margin-bottom: 1rem;
+}
+
+/* ==================================================
+   AI SEARCH
+================================================== */
+
+.ai-search-box {
+
+  padding: 1rem 1.25rem;
+
+  margin-bottom: 1rem;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #667eea 0%,
+      #764ba2 100%
+    );
+}
+
+.ai-search-box label {
+
+  color: white;
+
+  font-weight: 600;
+}
+
+.ai-result-note {
+
+  padding: .5rem 1rem;
+
+  border-left: 4px solid #0d6efd;
+
+  border-radius: 4px;
+
+  background: #e8f4fd;
+
+  color: #0d6efd;
+
+  font-size: .9rem;
+}
+
+/* ==================================================
+   APP LEVEL ANIMATION
+================================================== */
+
+app-adminnav,
+app-usernav {
+  display: block;
+  min-height: 100vh;
+}
+
+router-outlet + * {
+  display: block;
+  animation: pageFade 0.35s ease;
+}
+
+@keyframes pageFade {
+
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+}

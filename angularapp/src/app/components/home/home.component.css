@@ -1,0 +1,778 @@
+/* ==========================================
+   PAGE
+========================================== */
+
+.container-fluid {
+    animation: fadeIn .5s ease;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* ==========================================
+     MARKET HERO
+  ========================================== */
+  
+  .market-hero {
+  
+    position: relative;
+  
+    min-height: 380px;
+  
+    border-radius: 32px;
+  
+    overflow: hidden;
+  
+    margin-bottom: 40px;
+  
+    background:
+      linear-gradient(
+        135deg,
+        #0f172a,
+        #1e40af,
+        #2563eb
+      );
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .market-hero::before {
+  
+    content: "";
+  
+    position: absolute;
+  
+    width: 500px;
+    height: 500px;
+  
+    background: rgba(255,255,255,.08);
+  
+    border-radius: 50%;
+  
+    top: -250px;
+    right: -150px;
+  }
+  
+  .market-hero::after {
+  
+    content: "";
+  
+    position: absolute;
+  
+    width: 350px;
+    height: 350px;
+  
+    background: rgba(255,255,255,.05);
+  
+    border-radius: 50%;
+  
+    bottom: -150px;
+    left: -100px;
+  }
+  
+  .hero-content {
+  
+    position: relative;
+    z-index: 2;
+  
+    text-align: center;
+  
+    color: white;
+  
+    max-width: 850px;
+  
+    padding: 40px;
+  }
+  
+  .hero-badge {
+  
+    display: inline-flex;
+  
+    align-items: center;
+  
+    gap: 10px;
+  
+    padding: 10px 20px;
+  
+    border-radius: 50px;
+  
+    background: rgba(255,255,255,.15);
+  
+    backdrop-filter: blur(12px);
+  
+    margin-bottom: 25px;
+  
+    font-size: .9rem;
+  
+    letter-spacing: 1px;
+  
+    font-weight: 600;
+  }
+  
+  .hero-content h1 {
+  
+    font-size: 3.2rem;
+  
+    font-weight: 800;
+  
+    margin-bottom: 20px;
+  }
+  
+  .hero-content h1 span {
+  
+    color: #93c5fd;
+  }
+  
+  .hero-content p {
+  
+    font-size: 1.2rem;
+  
+    opacity: .95;
+  
+    max-width: 700px;
+  
+    margin: auto;
+  }
+  
+  .role-pill {
+  
+    margin-top: 30px;
+  
+    display: inline-flex;
+  
+    align-items: center;
+  
+    gap: 10px;
+  
+    padding: 12px 24px;
+  
+    border-radius: 50px;
+  
+    background: rgba(255,255,255,.15);
+  
+    backdrop-filter: blur(12px);
+  
+    font-weight: 600;
+  }
+  
+  /* ==========================================
+     SECTION HEADER
+  ========================================== */
+  
+  .section-heading {
+  
+    text-align: center;
+  
+    margin-bottom: 35px;
+  }
+  
+  .section-heading h2 {
+  
+    font-size: 2.2rem;
+  
+    font-weight: 800;
+  
+    color: #0f172a;
+  
+    margin-bottom: 10px;
+  }
+  
+  .section-heading p {
+  
+    color: #64748b;
+  
+    font-size: 1rem;
+  }
+  
+  /* ==========================================
+     MARKET CARDS
+  ========================================== */
+  
+  .market-card {
+  
+    background: white;
+  
+    border-radius: 28px;
+  
+    padding: 30px;
+  
+    text-align: center;
+  
+    box-shadow:
+      0 15px 35px rgba(15,23,42,.06);
+  
+    transition: .35s ease;
+  
+    height: 100%;
+  }
+  
+  .market-card:hover {
+  
+    transform: translateY(-8px);
+  
+    box-shadow:
+      0 25px 40px rgba(37,99,235,.15);
+  }
+  
+  .market-card i {
+  
+    font-size: 2.5rem;
+  
+    margin-bottom: 15px;
+  }
+  
+  .market-card h4 {
+  
+    font-weight: 700;
+  
+    color: #0f172a;
+  
+    margin-bottom: 15px;
+  }
+  
+  .market-card h3 {
+  
+    font-size: 2rem;
+  
+    font-weight: 800;
+  }
+  
+  .market-card span {
+  
+    color: #64748b;
+  }
+  
+  .stocks i,
+  .stocks h3 {
+    color: #16a34a;
+  }
+  
+  .funds i,
+  .funds h3 {
+    color: #2563eb;
+  }
+  
+  .estate i,
+  .estate h3 {
+    color: #7c3aed;
+  }
+  
+  .gold i,
+  .gold h3 {
+    color: #d97706;
+  }
+
+
+ /* ==========================================
+   AI INVESTMENT ASSISTANT
+========================================== */
+
+.ai-investment-card {
+
+  background: white;
+
+  border-radius: 30px;
+
+  padding: 32px;
+
+  border: 1px solid #e2e8f0;
+
+  box-shadow:
+    0 15px 35px rgba(15,23,42,.06);
+
+  transition: .3s ease;
+}
+
+.ai-investment-card:hover {
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 25px 45px rgba(37,99,235,.10);
+}
+
+.ai-card-header {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+  margin-bottom: 24px;
+}
+
+.ai-icon {
+
+  width: 60px;
+
+  height: 60px;
+
+  border-radius: 18px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #06b6d4
+    );
+
+  color: white;
+
+  font-size: 1.35rem;
+
+  box-shadow:
+    0 10px 25px rgba(37,99,235,.20);
+}
+
+.ai-card-header h3 {
+
+  margin: 0;
+
+  color: #0f172a;
+
+  font-size: 1.4rem;
+
+  font-weight: 800;
+}
+
+.ai-card-header p {
+
+  margin: 4px 0 0;
+
+  color: #64748b;
+
+  font-size: .95rem;
+}
+
+.ai-search-group {
+
+  border: 1px solid #dbe4f0;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  background: #f8fafc;
+}
+
+.ai-search-group .form-control {
+
+  border: none;
+
+  min-height: 72px;
+
+  font-size: 1.05rem;
+
+  padding-left: 22px;
+
+  background: transparent;
+
+  box-shadow: none;
+}
+
+.ai-search-group .form-control:focus {
+
+  box-shadow: none;
+
+  background: transparent;
+}
+
+.ai-search-group .form-control::placeholder {
+
+  color: #94a3b8;
+}
+
+.ai-search-btn {
+
+  width: 90px;
+
+  border: none;
+
+  color: white;
+
+  font-size: 1.25rem;
+
+  border-radius: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #06b6d4
+    );
+
+  transition: .3s ease;
+}
+
+.ai-search-btn:hover {
+
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1d4ed8,
+      #0891b2
+    );
+}
+
+.ai-search-btn i {
+
+  font-size: 1.2rem;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 768px) {
+
+  .ai-investment-card {
+
+    padding: 24px;
+  }
+
+  .ai-card-header {
+
+    flex-direction: column;
+
+    text-align: center;
+
+    gap: 12px;
+  }
+
+  .ai-search-group .form-control {
+
+    min-height: 60px;
+
+    font-size: .95rem;
+  }
+
+  .ai-search-btn {
+
+    width: 70px;
+  }
+}
+
+@media (max-width: 576px) {
+
+  .ai-investment-card {
+
+    padding: 20px;
+  }
+
+  .ai-icon {
+
+    width: 50px;
+
+    height: 50px;
+
+    font-size: 1.1rem;
+  }
+
+  .ai-card-header h3 {
+
+    font-size: 1.15rem;
+  }
+} 
+  /* ==========================================
+     JOURNEY CARD
+  ========================================== */
+  
+  .journey-card {
+  
+    background: white;
+  
+    border-radius: 30px;
+  
+    padding: 40px;
+  
+    text-align: center;
+  
+    box-shadow:
+      0 15px 35px rgba(15,23,42,.06);
+  }
+  
+  .journey-card h2 {
+  
+    color: #0f172a;
+  
+    font-weight: 800;
+  
+    margin-bottom: 10px;
+  }
+  
+  .journey-card p {
+  
+    color: #64748b;
+  
+    margin-bottom: 35px;
+  }
+  
+  .journey-flow {
+  
+    display: flex;
+  
+    justify-content: center;
+  
+    align-items: center;
+  
+    flex-wrap: wrap;
+  
+    gap: 10px;
+  }
+  
+  .step {
+  
+    display: flex;
+  
+    flex-direction: column;
+  
+    align-items: center;
+  
+    min-width: 120px;
+  }
+  
+  .step-icon {
+  
+    width: 70px;
+  
+    height: 70px;
+  
+    border-radius: 50%;
+  
+    background:
+      linear-gradient(
+        135deg,
+        #2563eb,
+        #06b6d4
+      );
+  
+    display: flex;
+  
+    align-items: center;
+  
+    justify-content: center;
+  
+    color: white;
+  
+    font-size: 1.5rem;
+  
+    margin-bottom: 10px;
+  }
+  
+  .step span {
+  
+    font-weight: 600;
+  
+    color: #0f172a;
+  }
+  
+  .connector {
+  
+    width: 60px;
+  
+    height: 3px;
+  
+    background: #cbd5e1;
+  
+    border-radius: 50px;
+  }
+  
+  /* ==========================================
+     HIGHLIGHTS
+  ========================================== */
+  
+  .highlights-wrapper {
+  
+    display: flex;
+  
+    flex-wrap: wrap;
+  
+    gap: 15px;
+  
+    justify-content: center;
+  }
+  
+  .highlight-chip {
+  
+    background: white;
+  
+    padding: 15px 22px;
+  
+    border-radius: 50px;
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 10px;
+  
+    font-weight: 600;
+  
+    color: #0f172a;
+  
+    box-shadow:
+      0 8px 20px rgba(15,23,42,.06);
+  
+    transition: .3s ease;
+  }
+  
+  .highlight-chip:hover {
+  
+    transform: translateY(-4px);
+  
+    background: #eff6ff;
+  }
+  
+  .highlight-chip i {
+  
+    color: #2563eb;
+  }
+  
+  /* ==========================================
+     INVESTOR INSIGHT
+  ========================================== */
+  
+  .insight-card {
+  
+    background:
+      linear-gradient(
+        135deg,
+        #0f172a,
+        #1e293b
+      );
+  
+    border-radius: 30px;
+  
+    padding: 60px 40px;
+  
+    text-align: center;
+  
+    color: white;
+  }
+  
+  .quote-icon {
+  
+    font-size: 3rem;
+  
+    color: #60a5fa;
+  
+    margin-bottom: 20px;
+  }
+  
+  .insight-card h3 {
+  
+    font-weight: 800;
+  
+    margin-bottom: 20px;
+  }
+  
+  .insight-card p {
+  
+    font-size: 1.3rem;
+  
+    max-width: 800px;
+  
+    margin: auto;
+  
+    line-height: 1.8;
+  }
+  
+  .insight-card span {
+  
+    display: block;
+  
+    margin-top: 25px;
+  
+    color: #93c5fd;
+  
+    font-weight: 700;
+  }
+  
+  /* ==========================================
+     RESPONSIVE
+  ========================================== */
+  
+  @media (max-width: 992px) {
+  
+    .hero-content h1 {
+  
+      font-size: 2.4rem;
+    }
+  
+    .journey-flow {
+  
+      flex-direction: column;
+    }
+  
+    .connector {
+  
+      width: 3px;
+  
+      height: 40px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+  
+    .market-hero {
+  
+      min-height: auto;
+  
+      padding: 60px 20px;
+    }
+  
+    .hero-content h1 {
+  
+      font-size: 2rem;
+    }
+  
+    .hero-content p {
+  
+      font-size: 1rem;
+    }
+  
+    .section-heading h2 {
+  
+      font-size: 1.8rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+  
+    .market-card,
+    .journey-card,
+    .insight-card {
+  
+      padding: 25px;
+    }
+  
+    .hero-content h1 {
+  
+      font-size: 1.7rem;
+    }
+  
+    .role-pill {
+  
+      padding: 10px 16px;
+    }
+  }
+  

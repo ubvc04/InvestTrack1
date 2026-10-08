@@ -1,0 +1,566 @@
+/* ==========================================
+   PAGE
+========================================== */
+
+:host {
+    display: block;
+  }
+  
+  /* ==========================================
+     HEADER
+  ========================================== */
+  
+  .portfolio-header {
+  
+    background:
+      linear-gradient(
+        135deg,
+        #0f172a,
+        #1e3a8a,
+        #2563eb
+      );
+  
+    border-radius: 28px;
+  
+    padding: 40px;
+  
+    margin-bottom: 25px;
+  
+    color: white;
+  
+    position: relative;
+  
+    overflow: hidden;
+  }
+  
+  .portfolio-header::before {
+  
+    content: "";
+  
+    position: absolute;
+  
+    width: 320px;
+    height: 320px;
+  
+    border-radius: 50%;
+  
+    background: rgba(255,255,255,.06);
+  
+    right: -120px;
+    top: -120px;
+  }
+  
+  .portfolio-info {
+  
+    position: relative;
+  
+    z-index: 2;
+  }
+  
+  .portfolio-tag {
+  
+    display: inline-flex;
+  
+    align-items: center;
+  
+    gap: 8px;
+  
+    padding: 8px 15px;
+  
+    border-radius: 50px;
+  
+    background: rgba(255,255,255,.15);
+  
+    margin-bottom: 15px;
+  
+    font-size: .82rem;
+  
+    font-weight: 600;
+  }
+  
+  .portfolio-header h1 {
+  
+    font-size: 2.3rem;
+  
+    font-weight: 800;
+  
+    margin-bottom: 10px;
+  }
+  
+  .portfolio-header p {
+  
+    margin: 0;
+  
+    opacity: .9;
+  }
+  
+  /* ==========================================
+     FILTER TOOLBAR
+  ========================================== */
+  
+  .filter-toolbar {
+  
+    display: flex;
+  
+    gap: 14px;
+  
+    margin-bottom: 30px;
+  
+    flex-wrap: wrap;
+  }
+  
+  .search-box,
+  .filter-box {
+  
+    flex: 1;
+  
+    min-width: 220px;
+  
+    height: 58px;
+  
+    background: white;
+  
+    border-radius: 16px;
+  
+    padding: 0 18px;
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 12px;
+  
+    border: 1px solid #e2e8f0;
+  
+    box-shadow:
+      0 10px 20px rgba(15,23,42,.05);
+  }
+  
+  .search-box i,
+  .filter-box i {
+  
+    color: #2563eb;
+  
+    font-size: 1rem;
+  }
+  
+  .search-box input,
+  .filter-box select {
+  
+    width: 100%;
+  
+    border: none;
+  
+    outline: none;
+  
+    background: transparent;
+  }
+  
+  /* ==========================================
+     INQUIRY CARD
+  ========================================== */
+  
+  .inquiry-card {
+  
+    background: white;
+  
+    border-radius: 24px;
+  
+    padding: 24px;
+  
+    height: 100%;
+  
+    border: 1px solid #e2e8f0;
+  
+    box-shadow:
+      0 12px 28px rgba(15,23,42,.06);
+  
+    transition: .3s ease;
+  }
+  
+  .inquiry-card:hover {
+  
+    transform: translateY(-6px);
+  
+    box-shadow:
+      0 20px 40px rgba(37,99,235,.12);
+  }
+  
+  .investment-top {
+  
+    display: flex;
+  
+    justify-content: space-between;
+  
+    align-items: flex-start;
+  
+    margin-bottom: 18px;
+  }
+  
+  .investment-top h5 {
+  
+    margin-bottom: 8px;
+  
+    font-weight: 700;
+  
+    color: #0f172a;
+  }
+  
+  .inquiry-user {
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 6px;
+  
+    color: #64748b;
+  
+    font-size: .88rem;
+  }
+  
+  /* ==========================================
+     PRIORITY
+  ========================================== */
+  
+  .priority-tag {
+  
+    display: inline-flex;
+  
+    align-items: center;
+  
+    gap: 8px;
+  
+    padding: 8px 14px;
+  
+    border-radius: 12px;
+  
+    background: #eff6ff;
+  
+    color: #2563eb;
+  
+    font-size: .85rem;
+  
+    font-weight: 600;
+  
+    margin-bottom: 18px;
+  }
+  
+  /* ==========================================
+     MESSAGE
+  ========================================== */
+  
+  .message-box {
+  
+    padding: 16px;
+  
+    border-radius: 16px;
+  
+    background: #f8fafc;
+  
+    color: #334155;
+  
+    line-height: 1.6;
+  
+    margin-bottom: 18px;
+  
+    min-height: 90px;
+  }
+  
+  /* ==========================================
+     STATUS
+  ========================================== */
+  
+  .status-pill {
+  
+    padding: 6px 14px;
+  
+    border-radius: 50px;
+  
+    font-size: .8rem;
+  
+    font-weight: 600;
+  }
+  
+  .active-status {
+  
+    background: #dcfce7;
+  
+    color: #15803d;
+  }
+  
+  .sold-status {
+  
+    background: #fee2e2;
+  
+    color: #b91c1c;
+  }
+  
+  /* ==========================================
+     META
+  ========================================== */
+  
+  .investment-meta {
+  
+    margin-bottom: 18px;
+  
+    color: #475569;
+  }
+  
+  .investment-meta div {
+  
+    display: flex;
+  
+    align-items: center;
+  
+    gap: 8px;
+  }
+  
+  .investment-meta i {
+  
+    color: #2563eb;
+  }
+  
+  /* ==========================================
+     RESPONSE
+  ========================================== */
+  
+  .response-box {
+  
+    background: #f8fafc;
+  
+    border-radius: 16px;
+  
+    padding: 16px;
+  
+    margin-bottom: 18px;
+  }
+  
+  .response-box strong {
+  
+    display: block;
+  
+    margin-bottom: 10px;
+  
+    color: #0f172a;
+  }
+  
+  .response-box p {
+  
+    margin: 0;
+  
+    color: #64748b;
+  }
+  
+  /* ==========================================
+     STATUS DROPDOWN
+  ========================================== */
+  
+  .status-selector {
+  
+    margin-bottom: 18px;
+  }
+  
+  .status-selector .form-select {
+  
+    border-radius: 12px;
+  
+    height: 48px;
+  
+    border: 1px solid #dbe4ee;
+  }
+  
+  /* ==========================================
+     BUTTONS
+  ========================================== */
+  
+  .investment-actions {
+  
+    display: flex;
+  
+    gap: 10px;
+  }
+  
+  .btn-edit,
+  .btn-delete {
+  
+    flex: 1;
+  
+    border: none;
+  
+    border-radius: 12px;
+  
+    padding: 12px;
+  
+    font-weight: 600;
+  
+    transition: .3s ease;
+  }
+  
+  .btn-edit {
+  
+    background: #eff6ff;
+  
+    color: #2563eb;
+  }
+  
+  .btn-edit:hover {
+  
+    background: #dbeafe;
+  }
+  
+  .btn-delete {
+  
+    background: #fee2e2;
+  
+    color: #dc2626;
+  }
+  
+  .btn-delete:hover {
+  
+    background: #fecaca;
+  }
+  
+  /* ==========================================
+     EMPTY STATE
+  ========================================== */
+  
+  .empty-state {
+  
+    background: white;
+  
+    border-radius: 24px;
+  
+    padding: 80px 20px;
+  
+    text-align: center;
+  
+    box-shadow:
+      0 12px 25px rgba(15,23,42,.05);
+  }
+  
+  .empty-state i {
+  
+    font-size: 4rem;
+  
+    color: #94a3b8;
+  
+    margin-bottom: 15px;
+  }
+  
+  .empty-state h4 {
+  
+    margin-bottom: 10px;
+  
+    font-weight: 700;
+  }
+  
+  .empty-state p {
+  
+    color: #64748b;
+  }
+  
+  /* ==========================================
+     MODALS
+  ========================================== */
+  
+  .modal-content {
+  
+    border: none;
+  
+    border-radius: 24px;
+  
+    overflow: hidden;
+  
+    box-shadow:
+      0 25px 60px rgba(15,23,42,.15);
+  }
+  
+  .modal-header {
+  
+    border-bottom: 1px solid #f1f5f9;
+  }
+  
+  .modal-footer {
+  
+    border-top: 1px solid #f1f5f9;
+  }
+  
+  .modal-title {
+  
+    font-weight: 700;
+  }
+  
+  .modal textarea {
+  
+    border-radius: 14px;
+  
+    resize: none;
+  }
+  
+  .modal .form-select {
+  
+    border-radius: 14px;
+  }
+  
+  /* ==========================================
+     ANIMATION
+  ========================================== */
+  
+  .portfolio-header,
+  .filter-toolbar,
+  .inquiry-card {
+  
+    animation: fadeUp .4s ease;
+  }
+  
+  @keyframes fadeUp {
+  
+    from {
+  
+      opacity: 0;
+  
+      transform: translateY(12px);
+    }
+  
+    to {
+  
+      opacity: 1;
+  
+      transform: translateY(0);
+    }
+  }
+  
+  /* ==========================================
+     MOBILE
+  ========================================== */
+  
+  @media (max-width: 768px) {
+  
+    .filter-toolbar {
+  
+      flex-direction: column;
+    }
+  
+    .investment-actions {
+  
+      flex-direction: column;
+    }
+  
+    .investment-top {
+  
+      flex-direction: column;
+  
+      gap: 12px;
+    }
+  
+    .portfolio-header {
+  
+      padding: 30px;
+    }
+  
+    .portfolio-header h1 {
+  
+      font-size: 1.9rem;
+    }
+  }
