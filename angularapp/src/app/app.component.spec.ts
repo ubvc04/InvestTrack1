@@ -20,10 +20,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('angularapp');
   });
 
-  it('should render the router outlet', () => {
+  it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('router-outlet')).toBeTruthy();
+    expect(compiled.querySelector('.content span')?.textContent).toContain('angularapp app is running!');
   });
 });

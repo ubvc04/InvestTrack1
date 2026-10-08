@@ -2,7 +2,7 @@ import { User } from './user.model';
 
 describe('UserModel', () => {
 
-  it('frontend_User_model_should_create_an_instance', () => {
+  fit('frontend_User_model_should_create_an_instance', () => {
     const user: User = {
       email: 'testuser@example.com',
       password: 'testpassword',

@@ -1,31 +1,6 @@
-const fs = require('fs');
 const puppeteer = require('puppeteer');
-
-// Prefer the Chromium bundled with Puppeteer; otherwise fall back to a locally
-// installed Chrome so `ng test` also works on machines without Puppeteer binaries.
-function resolveChromeBin() {
-  const candidates = [];
-  try {
-    candidates.push(puppeteer.executablePath());
-  } catch (error) {
-    // Puppeteer browser was not downloaded - keep going with the other candidates.
-  }
-  candidates.push(
-    process.env.CHROME_BIN,
-    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-    '/usr/bin/chromium-browser',
-    '/usr/bin/google-chrome',
-    '/usr/bin/chromium'
-  );
-  return candidates.find(candidate => candidate && fs.existsSync(candidate));
-}
-
-const chromeBin = resolveChromeBin();
-if (chromeBin) {
-  process.env.CHROME_BIN = chromeBin;
-}
-
+// Uncomment the below line if you need to set the CHROME_BIN environment variable to Puppeteer's executable path
+process.env.CHROME_BIN = puppeteer.executablePath();
 module.exports = function (config) {
   config.set({
     basePath: '',
@@ -51,13 +26,13 @@ module.exports = function (config) {
       suppressFailed: false, // Do not print information about failed tests
       suppressPassed: false, // Do not print information about passed tests
       suppressSkipped: true, // Do not print information about skipped tests
-      showSpecTiming: false, // Print the time elapsed per spec
+      showSpecTiming: false, // Print the time elapsed for each spec
       failFast: false, // Test would finish with error when a first fail occurs
       suppressColor: true, // Ensure color is suppressed in specReporter
       prefixes: {
-        success: 'SUCCESS-', // Override prefix for passed test (default: '✓ ')
-        failure: 'FAILED-', // Override prefix for failed test (default: '✗ ')
-        skipped: 'SKIPPED-' // Override prefix for skipped test (default: '-')
+        success: 'SUCCESS-', // Override prefix for passed tests, default is '✓ '
+        failure: 'FAILED-', // Override prefix for failed tests, default is '✗ '
+        skipped: 'SKIPPED-' // Override prefix for skipped tests, default is '- '
       }
     },
     reporters: ['spec'],
@@ -71,15 +46,15 @@ module.exports = function (config) {
     browsers: ['CustomChromeHeadless'],
     customLaunchers: {
       CustomChromeHeadless: {
-        base: 'ChromeHeadless',
+        base: 'Chrome',
         flags: [
           '--headless',
           '--disable-gpu',
           '--remote-debugging-port=9222',
           '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage'
-        ]
+          '--disable-setuid-sandbox'
+        ],
+        executablePath: '/usr/bin/chromium-browser'
       },
     },
     singleRun: true,

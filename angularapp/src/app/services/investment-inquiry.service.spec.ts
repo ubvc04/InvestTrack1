@@ -12,7 +12,7 @@ describe('InvestmentInquiryService', () => {
     service = TestBed.inject(InvestmentInquiryService);
   });
 
-  it('frontend_should_create_investment_inquiry_service', () => {
+  fit('frontend_should_create_investment_inquiry_service', () => {
     expect((service as any)).toBeTruthy();
   });
 });

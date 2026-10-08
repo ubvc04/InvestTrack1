@@ -17,11 +17,7 @@ build/
 out/
  
 test/
-
-# Keep the backend test sources versioned (the generic "test/" rule above
-# would otherwise ignore springapp/src/test)
-!springapp/src/test/
-
+ 
 # Maven
  
 .mvn/timing.properties

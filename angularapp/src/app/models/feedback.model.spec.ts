@@ -2,7 +2,7 @@ import { Feedback } from './feedback.model';
 
 describe('FeedbackModel', () => {
 
-  it('frontend_Feedback_model_should_create_an_instance', () => {
+  fit('frontend_Feedback_model_should_create_an_instance', () => {
     const feedback: Feedback = {
       feedbackId: 1, // Optional, included for testing
       feedbackText: 'Great investment platform!',
