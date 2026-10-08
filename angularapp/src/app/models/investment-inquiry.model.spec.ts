@@ -2,7 +2,7 @@ import { InvestmentInquiry } from './investment-inquiry.model';
 
 describe('InvestmentInquiryModel', () => {
 
-  fit('frontend_InvestmentInquiry_model_should_create_an_instance', () => {
+  it('frontend_InvestmentInquiry_model_should_create_an_instance', () => {
     const inquiry: InvestmentInquiry = {
       inquiryId: 1, // Optional, included for testing
       user: {

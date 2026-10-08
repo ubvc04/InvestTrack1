@@ -53,6 +53,14 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/verify-otp")
                         .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/forgot-password/send-otp")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/forgot-password/verify-otp")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/phone/send-otp")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/phone/verify-otp")
+                        .permitAll()
 
                         // Public Investment APIs
                         .requestMatchers(HttpMethod.GET, "/api/investments").permitAll()
@@ -60,6 +68,8 @@ public class SecurityConfig {
 
                         // Change Password
                         .requestMatchers(HttpMethod.PUT, "/api/change-password")
+                        .hasAnyRole("Admin", "SuperAdmin", "User")
+                        .requestMatchers(HttpMethod.PUT, "/api/forgot-password/change-password")
                         .hasAnyRole("Admin", "SuperAdmin", "User")
 
                         .requestMatchers("/api/admins")

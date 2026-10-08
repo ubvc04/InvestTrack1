@@ -26,6 +26,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { UserViewInquiriesComponent } from './components/user-view-inquiries/user-view-inquiries.component';
 import { HomeComponent } from './components/home/home.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { SuperAdminManagementComponent } from './components/super-admin-management/super-admin-management.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
@@ -53,6 +54,7 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     UserViewInquiriesComponent,
     HomeComponent,
     ChangePasswordComponent,
+    ForgotPasswordComponent,
     SuperAdminManagementComponent,
   ],
 

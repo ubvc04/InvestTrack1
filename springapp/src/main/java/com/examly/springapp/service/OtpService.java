@@ -1,30 +1,39 @@
 package com.examly.springapp.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class OtpService {
 
-    private final Map<String, String> otpStorage =
-            new HashMap<>();
+    private record OtpCode(String code, Instant expiresAt, int attempts) {}
 
-    private final Set<String> verifiedEmails =
-            new HashSet<>();
+    private final Map<String, OtpCode> otpStorage = new ConcurrentHashMap<>();
+
+    private final Set<String> verifiedEmails = ConcurrentHashMap.newKeySet();
+
+    private final SecureRandom secureRandom = new SecureRandom();
+
+    @Value("${app.otp.expiration-minutes:5}")
+    private long expirationMinutes;
+
+    @Value("${app.otp.max-attempts:5}")
+    private int maxAttempts;
 
     public String generateOtp(String email) {
         String normalizedEmail = normalize(email);
 
-        String otp = String.valueOf(
-                100000 + new Random().nextInt(900000));
+        String otp = String.format("%06d", secureRandom.nextInt(1_000_000));
 
-        otpStorage.put(normalizedEmail, otp);
+        otpStorage.put(normalizedEmail,
+                new OtpCode(otp, Instant.now().plusSeconds(expirationMinutes * 60), 0));
 
         return otp;
     }
@@ -33,14 +42,25 @@ public class OtpService {
             String email,
             String otp) {
 
-        boolean valid = otp != null
-                && otp.equals(otpStorage.get(normalize(email)));
+        String normalizedEmail = normalize(email);
+        OtpCode stored = otpStorage.get(normalizedEmail);
 
-        if (valid) {
-            verifiedEmails.add(normalize(email));
+        if (stored == null || !Instant.now().isBefore(stored.expiresAt())) {
+            otpStorage.remove(normalizedEmail);
+            return false;
+        }
+        if (stored.attempts() >= maxAttempts) {
+            otpStorage.remove(normalizedEmail);
+            return false;
+        }
+        if (otp == null || !otp.equals(stored.code())) {
+            otpStorage.put(normalizedEmail,
+                    new OtpCode(stored.code(), stored.expiresAt(), stored.attempts() + 1));
+            return false;
         }
 
-        return valid;
+        verifiedEmails.add(normalizedEmail);
+        return true;
     }
 
     public boolean isVerified(String email) {

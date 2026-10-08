@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { User } from 'src/app/models/user.model';
@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/services/auth.service';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
-export class SignupComponent {
+export class SignupComponent implements OnDestroy {
 
   signupForm: FormGroup;
   errorMessage = '';
@@ -21,6 +21,14 @@ export class SignupComponent {
   otpSent = false;
   otpVerified = false;
   otpMessage = '';
+
+  phoneOtp = '';
+  phoneOtpSent = false;
+  phoneOtpVerified = false;
+  phoneOtpMessage = '';
+  phoneOtpLoading = false;
+  resendCooldown = 0;
+  private cooldownTimer: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -35,6 +43,22 @@ export class SignupComponent {
       confirmPassword: ['', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]]
     }, { validators: this.passwordMatchValidator });
+
+    // Changing the phone number invalidates any previously verified phone OTP.
+    this.signupForm.get('mobileNumber')?.valueChanges.subscribe(() => {
+      if (this.phoneOtpVerified || this.phoneOtpSent) {
+        this.phoneOtpVerified = false;
+        this.phoneOtpSent = false;
+        this.phoneOtp = '';
+        this.phoneOtpMessage = '';
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.cooldownTimer) {
+      clearInterval(this.cooldownTimer);
+    }
   }
 
   passwordMatchValidator(group: AbstractControl) {
@@ -65,8 +89,8 @@ export class SignupComponent {
         this.otpSent = true;
         this.otpMessage = 'OTP sent successfully';
       },
-      error: () => {
-        this.errorMessage = 'Failed to send OTP';
+      error: err => {
+        this.errorMessage = this.extractError(err, 'Failed to send OTP');
       }
     });
   }
@@ -93,12 +117,66 @@ export class SignupComponent {
 
         this.errorMessage = '';
       },
-      error: () => {
+      error: err => {
 
         this.otpVerified = false;
 
         this.errorMessage =
-          'Invalid OTP';
+          this.extractError(err, 'Invalid OTP');
+      }
+    });
+  }
+
+  sendPhoneOtp(): void {
+    const phone = this.signupForm.value.mobileNumber;
+
+    if (!phone || this.mobileNumber?.invalid) {
+      this.errorMessage = 'Enter a valid 10-digit mobile number before requesting OTP';
+      return;
+    }
+
+    this.errorMessage = '';
+    this.phoneOtpMessage = '';
+    this.phoneOtpVerified = false;
+    this.phoneOtp = '';
+    this.phoneOtpLoading = true;
+
+    this.authService.sendPhoneOtp(phone).subscribe({
+      next: () => {
+        this.phoneOtpLoading = false;
+        this.phoneOtpSent = true;
+        this.phoneOtpMessage = 'OTP sent to your mobile number.';
+        this.startResendCooldown();
+      },
+      error: err => {
+        this.phoneOtpLoading = false;
+        this.errorMessage = this.extractError(err, 'Unable to send phone OTP. Please try again.');
+      }
+    });
+  }
+
+  verifyPhoneOtp(): void {
+    const phone = this.signupForm.value.mobileNumber;
+
+    if (!this.phoneOtp) {
+      this.errorMessage = 'Enter the OTP sent to your mobile number';
+      return;
+    }
+
+    this.errorMessage = '';
+    this.phoneOtpLoading = true;
+
+    this.authService.verifyPhoneOtp(phone, this.phoneOtp).subscribe({
+      next: () => {
+        this.phoneOtpLoading = false;
+        this.phoneOtpVerified = true;
+        this.phoneOtpMessage = '';
+        this.errorMessage = '';
+      },
+      error: err => {
+        this.phoneOtpLoading = false;
+        this.phoneOtpVerified = false;
+        this.errorMessage = this.extractError(err, 'Invalid or expired OTP.');
       }
     });
   }
@@ -114,6 +192,11 @@ export class SignupComponent {
       this.errorMessage =
         'Please verify OTP before registration';
 
+      return;
+    }
+
+    if (!this.phoneOtpVerified) {
+      this.errorMessage = 'Please verify your mobile number with OTP before registration';
       return;
     }
 
@@ -135,12 +218,40 @@ export class SignupComponent {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage =
-          err?.error?.error ||
-          err?.error?.message ||
-          'Registration failed. Please try again.';
+        this.phoneOtpVerified = false;
+        this.errorMessage = this.extractError(err, 'Registration failed. Please try again.');
       }
     });
+  }
+
+  private startResendCooldown(): void {
+    if (this.cooldownTimer) {
+      clearInterval(this.cooldownTimer);
+    }
+    this.resendCooldown = 60;
+    this.cooldownTimer = setInterval(() => {
+      this.resendCooldown--;
+      if (this.resendCooldown <= 0) {
+        clearInterval(this.cooldownTimer);
+        this.cooldownTimer = null;
+      }
+    }, 1000);
+  }
+
+  private extractError(err: any, fallback: string): string {
+    if (typeof err?.error === 'string' && err.error.trim()) {
+      return err.error;
+    }
+    if (typeof err?.error?.error === 'string' && err.error.error.trim()) {
+      return err.error.error;
+    }
+    if (typeof err?.error?.message === 'string' && err.error.message.trim()) {
+      return err.error.message;
+    }
+    if (err?.status === 0) {
+      return 'Network error. Please check your connection and try again.';
+    }
+    return fallback;
   }
 
   onModalOk(): void {

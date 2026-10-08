@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UsernavComponent } from './usernav.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 describe('UsernavComponent', () => {
   let component: UsernavComponent;
@@ -8,7 +11,8 @@ describe('UsernavComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [UsernavComponent]
+      declarations: [UsernavComponent],
+      imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([]), FormsModule, ReactiveFormsModule]
     });
     fixture = TestBed.createComponent(UsernavComponent);
     component = fixture.componentInstance;

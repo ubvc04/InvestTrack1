@@ -16,10 +16,15 @@ export class ChangePasswordComponent {
   message = '';
   error = '';
 
+  // True when the session was created through the Forgot Password OTP flow.
+  readonly isRecoverySession: boolean;
+
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) {
+    this.isRecoverySession = this.authService.isPasswordRecoverySession();
+  }
 
   changePassword(): void {
 
@@ -38,20 +43,24 @@ export class ChangePasswordComponent {
       return;
     }
 
-    // Prevent using same password
-    if (this.oldPassword === this.newPassword) {
+    if (!this.authService.isPasswordRecoverySession() && this.oldPassword === this.newPassword) {
       this.error = 'New password cannot be the same as old password';
       return;
     }
 
-    const payload = {
-      userId: this.authService.getUserId(),
-      oldPassword: this.oldPassword,
-      newPassword: this.newPassword,
-      confirmPassword: this.confirmPassword
-    };
+    const request = this.authService.isPasswordRecoverySession()
+      ? this.authService.changeForgottenPassword({
+          newPassword: this.newPassword,
+          confirmPassword: this.confirmPassword
+        })
+      : this.authService.changePassword({
+          userId: this.authService.getUserId(),
+          oldPassword: this.oldPassword,
+          newPassword: this.newPassword,
+          confirmPassword: this.confirmPassword
+        });
 
-    this.authService.changePassword(payload).subscribe({
+    request.subscribe({
 
       next: () => {
 

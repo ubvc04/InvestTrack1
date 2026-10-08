@@ -20,5 +20,16 @@ export const authGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
+  // The backend rejects every authenticated call until the password is changed,
+  // so keep the user on the change-password page while that requirement stands.
+  if (authService.mustChangePasswordRequired() && !state.url.endsWith('/change-password')) {
+    router.navigate([
+      authService.getUserRole() === 'User'
+        ? '/usernav/change-password'
+        : '/adminnav/change-password'
+    ]);
+    return false;
+  }
+
   return true;
 };

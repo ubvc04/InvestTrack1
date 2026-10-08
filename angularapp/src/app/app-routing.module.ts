@@ -23,6 +23,7 @@ import { UserViewInvestmentComponent } from './components/user-view-investment/u
 
 import { authGuard } from './guards/auth.guard';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { SuperAdminManagementComponent } from './components/super-admin-management/super-admin-management.component';
 
 const routes: Routes = [
@@ -33,6 +34,7 @@ const routes: Routes = [
   // Public Routes
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
 
   // Admin Routes
   {

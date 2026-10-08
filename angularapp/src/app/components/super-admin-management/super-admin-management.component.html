@@ -30,10 +30,36 @@
           <div *ngIf="otpVerified" class="alert alert-success">
             <i class="bi bi-patch-check-fill me-2"></i>Email verified successfully
           </div>
+          <input class="form-control mb-2" formControlName="mobileNumber" placeholder="Mobile Number">
+          <button class="btn btn-outline-primary w-100 mb-3" type="button"
+            (click)="sendPhoneOtp()" [disabled]="phoneOtpLoading || resendCooldown > 0">
+            <span *ngIf="phoneOtpLoading" class="spinner-border spinner-border-sm me-2"></span>
+            <i *ngIf="!phoneOtpLoading" class="bi bi-chat-sms me-2"></i>
+            <ng-container *ngIf="resendCooldown > 0; else sendPhoneLabel">
+              Resend Phone OTP in {{ resendCooldown }}s
+            </ng-container>
+            <ng-template #sendPhoneLabel>
+              {{ phoneOtpSent ? 'Resend Phone OTP' : 'Send Phone OTP' }}
+            </ng-template>
+          </button>
+          <div *ngIf="phoneOtpSent && !phoneOtpVerified" class="mb-3">
+            <input class="form-control mb-2" [(ngModel)]="phoneOtp"
+              [ngModelOptions]="{standalone: true}" maxlength="6" inputmode="numeric"
+              placeholder="Enter OTP received by SMS">
+            <button class="btn btn-outline-success w-100" type="button" (click)="verifyPhoneOtp()"
+              [disabled]="phoneOtpLoading">
+              <span *ngIf="phoneOtpLoading" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!phoneOtpLoading" class="bi bi-check-circle me-2"></i>Verify Phone OTP
+            </button>
+          </div>
+          <div *ngIf="phoneOtpMessage" class="alert alert-info">{{ phoneOtpMessage }}</div>
+          <div *ngIf="phoneOtpVerified" class="alert alert-success">
+            <i class="bi bi-patch-check-fill me-2"></i>Phone number verified successfully
+          </div>
           <input class="form-control mb-3" formControlName="password" type="password" placeholder="Password">
           <input class="form-control mb-3" formControlName="confirmPassword" type="password" placeholder="Confirm Password">
-          <input class="form-control mb-3" formControlName="mobileNumber" placeholder="Mobile Number">
-          <button class="btn btn-primary" type="submit" [disabled]="adminForm.invalid || !otpVerified">
+          <button class="btn btn-primary" type="submit"
+            [disabled]="adminForm.invalid || !otpVerified || !phoneOtpVerified">
             Create Admin
           </button>
         </form>

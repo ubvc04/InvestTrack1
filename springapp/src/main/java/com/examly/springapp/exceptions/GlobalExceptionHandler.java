@@ -1,10 +1,14 @@
 package com.examly.springapp.exceptions;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Locale;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -73,6 +77,25 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(403)
                 .body(ex.getMessage());
+    }
+
+    /**
+     * Unique constraints (for example the unique email column) must never leak
+     * SQL/ORM internals to the client.
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrityViolation(
+            DataIntegrityViolationException ex) {
+
+        String cause = String.valueOf(ex.getMostSpecificCause().getMessage())
+                .toLowerCase(Locale.ROOT);
+
+        if (cause.contains("duplicate") && cause.contains("user")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("An account with that email already exists");
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body("The request conflicts with existing data");
     }
 
     @ExceptionHandler(RuntimeException.class)

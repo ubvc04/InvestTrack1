@@ -235,6 +235,68 @@
 
       </div>
 
+      <!-- Phone OTP Verification -->
+
+      <div class="mb-3">
+
+        <button type="button" class="btn btn-outline-primary w-100" (click)="sendPhoneOtp()"
+          [disabled]="phoneOtpLoading || resendCooldown > 0">
+
+          <span *ngIf="phoneOtpLoading" class="spinner-border spinner-border-sm me-2"></span>
+          <i *ngIf="!phoneOtpLoading" class="bi bi-chat-sms me-2"></i>
+
+          <ng-container *ngIf="resendCooldown > 0; else sendPhoneLabel">
+            Resend OTP in {{ resendCooldown }}s
+          </ng-container>
+          <ng-template #sendPhoneLabel>
+            {{ phoneOtpSent ? 'Resend Phone OTP' : 'Send Phone OTP' }}
+          </ng-template>
+
+        </button>
+
+      </div>
+
+      <div *ngIf="phoneOtpSent && !phoneOtpVerified" class="mb-3">
+
+        <label class="form-label fw-semibold">
+          Enter Phone OTP *
+        </label>
+
+        <div class="input-group-modern">
+
+          <span class="input-icon">
+            <i class="bi bi-shield-check"></i>
+          </span>
+
+          <input type="text" class="form-control" [(ngModel)]="phoneOtp" [ngModelOptions]="{standalone: true}"
+            maxlength="6" inputmode="numeric" placeholder="Enter OTP received by SMS">
+
+        </div>
+
+        <button type="button" class="btn btn-success w-100 mt-2" (click)="verifyPhoneOtp()"
+          [disabled]="phoneOtpLoading">
+
+          <span *ngIf="phoneOtpLoading" class="spinner-border spinner-border-sm me-2"></span>
+          <i *ngIf="!phoneOtpLoading" class="bi bi-check-circle me-2"></i>
+          Verify Phone OTP
+
+        </button>
+
+      </div>
+
+      <div *ngIf="phoneOtpMessage" class="alert alert-info">
+
+        {{ phoneOtpMessage }}
+
+      </div>
+
+      <div *ngIf="phoneOtpVerified" class="alert alert-success">
+
+        <i class="bi bi-patch-check-fill me-2"></i>
+        Phone number verified successfully
+
+      </div>
+
       <!-- Backend Error -->
 
       <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center">
@@ -248,7 +310,7 @@
       <!-- Submit -->
 
       <button type="submit" class="btn btn-primary signup-btn w-100 mb-3"
-        [disabled]="signupForm.invalid || loading || !otpVerified">
+        [disabled]="signupForm.invalid || loading || !otpVerified || !phoneOtpVerified">
         
         <span *ngIf="loading" class="spinner-border spinner-border-sm me-2">
         </span>

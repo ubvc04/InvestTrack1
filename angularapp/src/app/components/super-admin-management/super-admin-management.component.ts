@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { User } from 'src/app/models/user.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   selector: 'app-super-admin-management',
   templateUrl: './super-admin-management.component.html'
 })
-export class SuperAdminManagementComponent implements OnInit {
+export class SuperAdminManagementComponent implements OnInit, OnDestroy {
   adminForm: FormGroup;
   admins: User[] = [];
   message = '';
@@ -18,6 +18,14 @@ export class SuperAdminManagementComponent implements OnInit {
   otpVerified = false;
   otpMessage = '';
   otpLoading = false;
+
+  phoneOtp = '';
+  phoneOtpSent = false;
+  phoneOtpVerified = false;
+  phoneOtpMessage = '';
+  phoneOtpLoading = false;
+  resendCooldown = 0;
+  private cooldownTimer: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -31,9 +39,25 @@ export class SuperAdminManagementComponent implements OnInit {
       confirmPassword: ['', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]]
     }, { validators: this.passwordMatchValidator });
+
+    // Changing the Admin phone number invalidates a previously verified phone OTP.
+    this.adminForm.get('mobileNumber')?.valueChanges.subscribe(() => {
+      if (this.phoneOtpVerified || this.phoneOtpSent) {
+        this.phoneOtpVerified = false;
+        this.phoneOtpSent = false;
+        this.phoneOtp = '';
+        this.phoneOtpMessage = '';
+      }
+    });
   }
 
   ngOnInit(): void { this.loadData(); }
+
+  ngOnDestroy(): void {
+    if (this.cooldownTimer) {
+      clearInterval(this.cooldownTimer);
+    }
+  }
 
   passwordMatchValidator(group: AbstractControl) {
     return group.get('password')?.value === group.get('confirmPassword')?.value
@@ -67,7 +91,7 @@ export class SuperAdminManagementComponent implements OnInit {
       },
       error: err => {
         this.otpLoading = false;
-        this.errorMessage = err?.error?.message || 'Unable to send OTP.';
+        this.errorMessage = this.extractError(err, 'Unable to send OTP.');
       }
     });
   }
@@ -85,9 +109,59 @@ export class SuperAdminManagementComponent implements OnInit {
         this.otpMessage = 'Admin email verified successfully.';
         this.errorMessage = '';
       },
-      error: () => {
+      error: err => {
         this.otpVerified = false;
-        this.errorMessage = 'Invalid OTP.';
+        this.errorMessage = this.extractError(err, 'Invalid OTP.');
+      }
+    });
+  }
+
+  sendPhoneOtp(): void {
+    const phone = this.adminForm.get('mobileNumber')?.value;
+    if (!phone || this.adminForm.get('mobileNumber')?.invalid) {
+      this.errorMessage = 'Enter a valid Admin mobile number before requesting OTP.';
+      return;
+    }
+
+    this.errorMessage = '';
+    this.phoneOtpMessage = '';
+    this.phoneOtpVerified = false;
+    this.phoneOtp = '';
+    this.phoneOtpLoading = true;
+    this.authService.sendPhoneOtp(phone).subscribe({
+      next: () => {
+        this.phoneOtpLoading = false;
+        this.phoneOtpSent = true;
+        this.phoneOtpMessage = 'OTP sent to the Admin mobile number.';
+        this.startResendCooldown();
+      },
+      error: err => {
+        this.phoneOtpLoading = false;
+        this.errorMessage = this.extractError(err, 'Unable to send phone OTP.');
+      }
+    });
+  }
+
+  verifyPhoneOtp(): void {
+    const phone = this.adminForm.get('mobileNumber')?.value;
+    if (!this.phoneOtp) {
+      this.errorMessage = 'Enter the OTP sent to the Admin mobile number.';
+      return;
+    }
+
+    this.errorMessage = '';
+    this.phoneOtpLoading = true;
+    this.authService.verifyPhoneOtp(phone, this.phoneOtp).subscribe({
+      next: () => {
+        this.phoneOtpLoading = false;
+        this.phoneOtpVerified = true;
+        this.phoneOtpMessage = '';
+        this.errorMessage = '';
+      },
+      error: err => {
+        this.phoneOtpLoading = false;
+        this.phoneOtpVerified = false;
+        this.errorMessage = this.extractError(err, 'Invalid or expired phone OTP.');
       }
     });
   }
@@ -103,6 +177,10 @@ export class SuperAdminManagementComponent implements OnInit {
       this.errorMessage = 'Verify the Admin email before creating the account.';
       return;
     }
+    if (!this.phoneOtpVerified) {
+      this.errorMessage = 'Verify the Admin phone number with OTP before creating the account.';
+      return;
+    }
     const user: User = { ...this.adminForm.value, userRole: 'Admin' };
     this.authService.createAdmin(user).subscribe({
       next: () => {
@@ -112,10 +190,48 @@ export class SuperAdminManagementComponent implements OnInit {
         this.otpSent = false;
         this.otpVerified = false;
         this.otpMessage = '';
+        this.phoneOtp = '';
+        this.phoneOtpSent = false;
+        this.phoneOtpVerified = false;
+        this.phoneOtpMessage = '';
         this.loadData();
       },
-      error: err => this.handleManagementError(err)
+      error: err => {
+        // The backend consumes the verified phone number, so it must be re-verified.
+        this.phoneOtpVerified = false;
+        this.handleManagementError(err);
+      }
     });
+  }
+
+  private startResendCooldown(): void {
+    if (this.cooldownTimer) {
+      clearInterval(this.cooldownTimer);
+    }
+    this.resendCooldown = 60;
+    this.cooldownTimer = setInterval(() => {
+      this.resendCooldown--;
+      if (this.resendCooldown <= 0) {
+        clearInterval(this.cooldownTimer);
+        this.cooldownTimer = null;
+      }
+    }, 1000);
+  }
+
+  private extractError(err: any, fallback: string): string {
+    if (typeof err?.error === 'string' && err.error.trim()) {
+      return err.error;
+    }
+    if (typeof err?.error?.error === 'string' && err.error.error.trim()) {
+      return err.error.error;
+    }
+    if (typeof err?.error?.message === 'string' && err.error.message.trim()) {
+      return err.error.message;
+    }
+    if (err?.status === 0) {
+      return 'Network error. Please check your connection and try again.';
+    }
+    return fallback;
   }
 
   private handleManagementError(err: any): void {

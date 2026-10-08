@@ -13,7 +13,7 @@ describe('AuthService', () => {
     service = TestBed.inject(AuthService);
   });
 
-  fit('frontend_should_create_auth_service', () => {
+  it('frontend_should_create_auth_service', () => {
     expect(service).toBeTruthy();
   });
 });

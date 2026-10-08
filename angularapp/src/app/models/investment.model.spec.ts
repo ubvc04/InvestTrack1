@@ -1,7 +1,7 @@
 import { Investment } from './investment.model';
 
 describe('InvestmentModel', () => {
-  fit('frontend_Investment_model_should_create_an_instance', () => {
+  it('frontend_Investment_model_should_create_an_instance', () => {
     const investment: Investment = {
       investmentId: 1, // Optional, can be omitted for new investments
       name: 'Tech Stocks Portfolio',

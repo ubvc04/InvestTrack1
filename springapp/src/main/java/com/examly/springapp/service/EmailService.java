@@ -40,6 +40,15 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    public void sendPasswordRecoveryOtpEmail(String email, String otp) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("InvestTrack Password Recovery OTP");
+        message.setText("Your InvestTrack password recovery OTP is: " + otp
+                + "\n\nThis OTP expires soon and must not be shared.");
+        mailSender.send(message);
+    }
+
     public void sendInquiryStatusUpdateEmail(User user, InvestmentInquiry inquiry,
                                               String previousStatus, String currentStatus) {
         if (user == null || user.getEmail() == null || user.getEmail().isBlank()) {
