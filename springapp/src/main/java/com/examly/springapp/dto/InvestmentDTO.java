@@ -21,5 +21,6 @@ public record InvestmentDTO(
         @NotNull @DecimalMin(value = "0.0", inclusive = false) Double currentPrice,
         @NotNull @Min(1) Integer quantity,
         @NotBlank @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$") String purchaseDate,
-        @NotBlank String status) {
+        @NotBlank @Pattern(regexp = "(?i)Active|Sold",
+                message = "Investment status must be Active or Sold") String status) {
 }

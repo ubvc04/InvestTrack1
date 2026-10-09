@@ -13,6 +13,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "feedbacks", uniqueConstraints = @UniqueConstraint(
         name = "uk_feedback_investment_user_once",
@@ -52,6 +54,14 @@ public class Feedback {
     @Column
     private Long investmentFeedbackUserId;
 
+    /** Administrative response to this feedback (set through the admin respond endpoint). */
+    @Column(columnDefinition = "TEXT")
+    @Size(max = 4000)
+    private String adminResponse;
+
+    @Column
+    private LocalDateTime responseDate;
+
     public Feedback() {}
 
     public Long getFeedbackId() { return feedbackId; }
@@ -79,4 +89,10 @@ public class Feedback {
     public void setInvestmentFeedbackUserId(Long investmentFeedbackUserId) {
         this.investmentFeedbackUserId = investmentFeedbackUserId;
     }
+
+    public String getAdminResponse() { return adminResponse; }
+    public void setAdminResponse(String adminResponse) { this.adminResponse = adminResponse; }
+
+    public LocalDateTime getResponseDate() { return responseDate; }
+    public void setResponseDate(LocalDateTime responseDate) { this.responseDate = responseDate; }
 }

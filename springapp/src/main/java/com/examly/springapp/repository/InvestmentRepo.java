@@ -14,6 +14,9 @@ public interface InvestmentRepo extends JpaRepository<Investment, Long> {
     List<Investment> findByNameContainingIgnoreCase(String keyword);
     Optional<Investment> findBySymbol(String symbol);
 
+    /** Case-insensitive lookup used for backend uniqueness validation. */
+    Optional<Investment> findBySymbolIgnoreCase(String symbol);
+
     // Seed tracking: used by the startup seeder to insert only missing records.
     List<Investment> findBySeedKeyIn(Collection<String> seedKeys);
     List<Investment> findBySymbolIn(Collection<String> symbols);

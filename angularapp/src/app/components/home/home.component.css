@@ -182,14 +182,14 @@
   
     font-weight: 800;
   
-    color: #0f172a;
+    color: var(--it-ink);
   
     margin-bottom: 10px;
   }
   
   .section-heading p {
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     font-size: 1rem;
   }
@@ -200,7 +200,7 @@
   
   .market-card {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 28px;
   
@@ -235,7 +235,7 @@
   
     font-weight: 700;
   
-    color: #0f172a;
+    color: var(--it-ink);
   
     margin-bottom: 15px;
   }
@@ -249,7 +249,7 @@
   
   .market-card span {
   
-    color: #64748b;
+    color: var(--it-text-muted);
   }
   
   .stocks i,
@@ -259,7 +259,7 @@
   
   .funds i,
   .funds h3 {
-    color: #2563eb;
+    color: var(--it-primary);
   }
   
   .estate i,
@@ -279,13 +279,13 @@
 
 .ai-investment-card {
 
-  background: white;
+  background: var(--it-card-bg);
 
   border-radius: 30px;
 
   padding: 32px;
 
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--it-border-strong);
 
   box-shadow:
     0 15px 35px rgba(15,23,42,.06);
@@ -345,7 +345,7 @@
 
   margin: 0;
 
-  color: #0f172a;
+  color: var(--it-ink);
 
   font-size: 1.4rem;
 
@@ -356,20 +356,20 @@
 
   margin: 4px 0 0;
 
-  color: #64748b;
+  color: var(--it-text-muted);
 
   font-size: .95rem;
 }
 
 .ai-search-group {
 
-  border: 1px solid #dbe4f0;
+  border: 1px solid var(--it-border-strong);
 
   border-radius: 20px;
 
   overflow: hidden;
 
-  background: #f8fafc;
+  background: var(--it-surface-2);
 }
 
 .ai-search-group .form-control {
@@ -396,7 +396,7 @@
 
 .ai-search-group .form-control::placeholder {
 
-  color: #94a3b8;
+  color: var(--it-text-muted);
 }
 
 .ai-search-btn {
@@ -498,7 +498,7 @@
   
   .journey-card {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 30px;
   
@@ -512,7 +512,7 @@
   
   .journey-card h2 {
   
-    color: #0f172a;
+    color: var(--it-ink);
   
     font-weight: 800;
   
@@ -521,7 +521,7 @@
   
   .journey-card p {
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     margin-bottom: 35px;
   }
@@ -582,7 +582,7 @@
   
     font-weight: 600;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .connector {
@@ -613,7 +613,7 @@
   
   .highlight-chip {
   
-    background: white;
+    background: var(--it-card-bg);
   
     padding: 15px 22px;
   
@@ -627,7 +627,7 @@
   
     font-weight: 600;
   
-    color: #0f172a;
+    color: var(--it-ink);
   
     box-shadow:
       0 8px 20px rgba(15,23,42,.06);
@@ -639,12 +639,12 @@
   
     transform: translateY(-4px);
   
-    background: #eff6ff;
+    background: var(--it-tint-bg);
   }
   
   .highlight-chip i {
   
-    color: #2563eb;
+    color: var(--it-primary);
   }
   
   /* ==========================================

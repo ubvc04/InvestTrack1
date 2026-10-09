@@ -30,6 +30,8 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { SuperAdminManagementComponent } from './components/super-admin-management/super-admin-management.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { ThemeToggleComponent } from './components/shared/theme-toggle/theme-toggle.component';
+import { NotificationBellComponent } from './components/shared/notification-bell/notification-bell.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     ChangePasswordComponent,
     ForgotPasswordComponent,
     SuperAdminManagementComponent,
+    ThemeToggleComponent,
+    NotificationBellComponent,
   ],
 
 

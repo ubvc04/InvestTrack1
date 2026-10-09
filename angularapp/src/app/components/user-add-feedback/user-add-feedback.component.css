@@ -7,7 +7,7 @@
   }
   
   body {
-    background: #f8fafc;
+    background: var(--it-surface-2);
   }
   
   /* =====================================
@@ -149,7 +149,7 @@
   
   .investment-summary-card {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 24px;
   
@@ -162,7 +162,7 @@
   
     gap: 18px;
   
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--it-border-strong);
   
     box-shadow:
       0 10px 25px rgba(15,23,42,.05);
@@ -199,7 +199,7 @@
   
     letter-spacing: 1px;
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     margin-bottom: 6px;
   }
@@ -210,14 +210,14 @@
   
     font-weight: 700;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .investment-type-badge {
   
-    background: #eff6ff;
+    background: var(--it-tint-bg);
   
-    color: #2563eb;
+    color: var(--it-primary);
   
     border-radius: 999px;
   
@@ -234,13 +234,13 @@
   
   .feedback-form-card {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 28px;
   
     padding: 32px;
   
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--it-border-strong);
   
     box-shadow:
       0 20px 40px rgba(15,23,42,.06);
@@ -291,14 +291,14 @@
   
     font-weight: 700;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .section-title p {
   
     margin: 4px 0 0;
   
-    color: #64748b;
+    color: var(--it-text-muted);
   }
   
   /* =====================================
@@ -309,7 +309,7 @@
   
     font-weight: 600;
   
-    color: #334155;
+    color: var(--it-ink);
   
     margin-bottom: 8px;
   }
@@ -319,7 +319,7 @@
   
     border-radius: 14px;
   
-    border: 1px solid #dbe4f0;
+    border: 1px solid var(--it-border-strong);
   
     min-height: 56px;
   
@@ -348,7 +348,7 @@
   
   .feedback-note {
   
-    background: #eff6ff;
+    background: var(--it-tint-bg);
   
     border: 1px solid #bfdbfe;
   
@@ -367,7 +367,7 @@
   
   .feedback-note i {
   
-    color: #2563eb;
+    color: var(--it-primary);
   
     font-size: 1.3rem;
   }
@@ -376,14 +376,14 @@
   
     display: block;
   
-    color: #1d4ed8;
+    color: var(--it-primary);
   
     margin-bottom: 4px;
   }
   
   .feedback-note p {
   
-    color: #64748b;
+    color: var(--it-text-muted);
   }
   
   /* =====================================
@@ -464,7 +464,7 @@
   
     width: 100%;
   
-    background: white;
+    background: var(--it-card-bg);
   
     text-align: center;
   
@@ -505,12 +505,12 @@
   
     font-weight: 800;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .success-card p {
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     max-width: 500px;
   

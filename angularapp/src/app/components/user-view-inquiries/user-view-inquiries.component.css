@@ -7,7 +7,7 @@
   }
   
   body {
-    background: #f8fafc;
+    background: var(--it-surface-2);
   }
   
   /* =====================================
@@ -177,13 +177,13 @@
   
   .inquiry-card {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 24px;
   
     padding: 24px;
   
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--it-border-strong);
   
     height: 100%;
   
@@ -218,7 +218,7 @@
   
     font-weight: 700;
   
-    color: #0f172a;
+    color: var(--it-ink);
   
     margin-bottom: 6px;
   }
@@ -227,11 +227,11 @@
   
     font-size: .85rem;
   
-    color: #64748b;
+    color: var(--it-text-muted);
   }
   
   .inquiry-date i {
-    color: #2563eb;
+    color: var(--it-primary);
   }
   
   /* =====================================
@@ -253,15 +253,15 @@
   .status-approved,
   .status-resolved {
   
-    background: #dcfce7;
+    background: var(--it-success-soft-bg);
   
-    color: #15803d;
+    color: var(--it-success-soft-fg);
   }
   
   .badge-warning,
   .status-pending {
   
-    background: #fef3c7;
+    background: var(--it-warning-soft-bg);
   
     color: #b45309;
   }
@@ -269,9 +269,9 @@
   .badge-danger,
   .status-rejected {
   
-    background: #fee2e2;
+    background: var(--it-danger-soft-bg);
   
-    color: #b91c1c;
+    color: var(--it-danger-soft-fg);
   }
   
   /* =====================================
@@ -293,7 +293,7 @@
   
     letter-spacing: .8px;
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     margin-bottom: 8px;
   }
@@ -302,7 +302,7 @@
   
     margin: 0;
   
-    color: #334155;
+    color: var(--it-ink);
   
     line-height: 1.7;
   }
@@ -322,7 +322,7 @@
   
   .priority-label {
   
-    color: #475569;
+    color: var(--it-text-muted);
   
     font-weight: 600;
   }
@@ -340,23 +340,23 @@
   
   .high-priority {
   
-    background: #fee2e2;
+    background: var(--it-danger-soft-bg);
   
     color: #dc2626;
   }
   
   .medium-priority {
   
-    background: #fef3c7;
+    background: var(--it-warning-soft-bg);
   
     color: #b45309;
   }
   
   .low-priority {
   
-    background: #dcfce7;
+    background: var(--it-success-soft-bg);
   
-    color: #15803d;
+    color: var(--it-success-soft-fg);
   }
   
   /* =====================================
@@ -365,13 +365,13 @@
   
   .response-card {
   
-    background: #f8fafc;
+    background: var(--it-surface-2);
   
     border-radius: 18px;
   
     padding: 18px;
   
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--it-border-strong);
   }
   
   .response-header {
@@ -384,14 +384,14 @@
   
     font-weight: 700;
   
-    color: #2563eb;
+    color: var(--it-primary);
   }
   
   .response-card p {
   
     margin: 0;
   
-    color: #475569;
+    color: var(--it-text-muted);
   
     line-height: 1.7;
   }
@@ -402,7 +402,7 @@
   
   .empty-state {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 24px;
   
@@ -418,7 +418,7 @@
   
     font-size: 4rem;
   
-    color: #94a3b8;
+    color: var(--it-text-muted);
   
     margin-bottom: 15px;
   }
@@ -427,12 +427,12 @@
   
     font-weight: 700;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .empty-state p {
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     margin-bottom: 24px;
   }

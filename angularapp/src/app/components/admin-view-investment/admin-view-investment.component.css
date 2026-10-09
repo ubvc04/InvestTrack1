@@ -7,7 +7,7 @@
   }
   
   body {
-    background: #f6f8fc;
+    background: var(--it-page-bg);
   }
   
   /* =====================================
@@ -107,9 +107,9 @@
   
     border: none;
   
-    background: white;
+    background: var(--it-card-bg);
   
-    color: #2563eb;
+    color: var(--it-primary);
   
     padding: 14px 24px;
   
@@ -131,7 +131,7 @@
   
   .ai-search-wrapper {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 24px;
   
@@ -139,7 +139,7 @@
   
     margin-bottom: 25px;
   
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--it-border-strong);
   
     box-shadow:
       0 10px 25px rgba(15,23,42,.05);
@@ -160,7 +160,7 @@
   
     font-weight: 700;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .ai-title i {
@@ -195,7 +195,7 @@
   
     border-radius: 15px;
   
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--it-border-strong);
   }
   
   .ai-search-wrapper .btn {
@@ -209,13 +209,13 @@
   
     margin-top: 15px;
   
-    background: #eff6ff;
+    background: var(--it-tint-bg);
   
     padding: 12px 15px;
   
     border-radius: 12px;
   
-    color: #1e40af;
+    color: var(--it-primary-deep);
   
     display: flex;
   
@@ -242,7 +242,7 @@
   
     flex: 1;
   
-    background: white;
+    background: var(--it-card-bg);
   
     height: 58px;
   
@@ -256,7 +256,7 @@
   
     gap: 12px;
   
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--it-border-strong);
   
     box-shadow:
       0 8px 20px rgba(15,23,42,.04);
@@ -265,7 +265,7 @@
   .search-box i,
   .filter-box i {
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     font-size: 1rem;
   }
@@ -303,12 +303,12 @@
   
     font-weight: 800;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .portfolio-title i {
   
-    color: #2563eb;
+    color: var(--it-primary);
   }
   
   /* =====================================
@@ -317,7 +317,7 @@
   
   .investment-card {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 22px;
   
@@ -325,7 +325,7 @@
   
     height: 100%;
   
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--it-border-strong);
   
     transition: .3s ease;
   
@@ -358,7 +358,7 @@
   
     font-weight: 700;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .investment-type {
@@ -369,7 +369,7 @@
   
     gap: 6px;
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     font-size: .85rem;
   }
@@ -391,16 +391,16 @@
   
   .active-status {
   
-    background: #dcfce7;
+    background: var(--it-success-soft-bg);
   
-    color: #15803d;
+    color: var(--it-success-soft-fg);
   }
   
   .sold-status {
   
-    background: #fee2e2;
+    background: var(--it-danger-soft-bg);
   
-    color: #b91c1c;
+    color: var(--it-danger-soft-fg);
   }
   
   /* =====================================
@@ -420,7 +420,7 @@
   
   .price-item {
   
-    background: #f8fafc;
+    background: var(--it-surface-2);
   
     border-radius: 14px;
   
@@ -433,7 +433,7 @@
   
     font-size: .8rem;
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     margin-bottom: 5px;
   }
@@ -442,7 +442,7 @@
   
     font-size: 1.1rem;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   /* =====================================
@@ -459,7 +459,7 @@
   
     margin-bottom: 20px;
   
-    color: #475569;
+    color: var(--it-text-muted);
   }
   
   .investment-meta div {
@@ -473,7 +473,7 @@
   
   .investment-meta i {
   
-    color: #2563eb;
+    color: var(--it-primary);
   }
   
   /* =====================================
@@ -517,14 +517,14 @@
   
   .btn-delete {
   
-    background: #fee2e2;
+    background: var(--it-danger-soft-bg);
   
     color: #dc2626;
   }
   
   .btn-delete:hover {
   
-    background: #fecaca;
+    background: var(--it-danger-soft-bg);
   }
   
   /* =====================================
@@ -533,7 +533,7 @@
   
   .empty-state {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 22px;
   
@@ -546,7 +546,7 @@
   
     font-size: 4rem;
   
-    color: #94a3b8;
+    color: var(--it-text-muted);
   }
   
   .empty-state h4 {

@@ -79,11 +79,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/investments")
                         .hasAnyRole("Admin", "SuperAdmin")
 
+                        // AI search — read-only over the public investment catalogue, so every
+                        // authenticated role (User included) can run it. Matching percentages are
+                        // calculated by the backend, never by the client.
                         .requestMatchers(HttpMethod.POST, "/api/ai/search")
-                        .hasAnyRole("Admin", "SuperAdmin")
+                        .hasAnyRole("Admin", "SuperAdmin", "User")
 
                         .requestMatchers(HttpMethod.POST, "/api/ai/search/detailed")
-                        .hasAnyRole("Admin", "SuperAdmin")
+                        .hasAnyRole("Admin", "SuperAdmin", "User")
 
                         .requestMatchers(HttpMethod.PUT, "/api/investments/**")
                         .hasAnyRole("Admin", "SuperAdmin")
@@ -102,6 +105,15 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/api/feedback")
                         .hasAnyRole("Admin", "SuperAdmin")
+
+                        // Administrative response to a feedback entry (admin workflow only)
+                        .requestMatchers(HttpMethod.PUT, "/api/feedback/{feedbackId}/respond")
+                        .hasAnyRole("Admin", "SuperAdmin")
+
+                        // Notifications — every endpoint resolves the recipient from the JWT
+                        // subject, so no caller can read or modify another user's notifications.
+                        .requestMatchers("/api/notifications", "/api/notifications/**")
+                        .hasAnyRole("User", "Admin", "SuperAdmin")
 
                         // User APIs
                         .requestMatchers(HttpMethod.GET, "/api/inquiries/user/**")

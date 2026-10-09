@@ -187,23 +187,51 @@
         </div>
   
         <!-- FEEDBACK CONTENT -->
-  
+
         <div class="feedback-content">
-  
+
           <label>
-  
+
             Feedback Message
-  
+
           </label>
-  
+
           <p>
-  
+
             {{ feedback.feedbackText }}
-  
+
           </p>
-  
+
         </div>
-  
+
+        <!-- ADMIN RESPONSE (shown when an administrator has replied) -->
+
+        <div
+          *ngIf="feedback.adminResponse"
+          class="admin-response">
+
+          <div class="admin-response-head">
+
+            <i class="bi bi-patch-check-fill"></i>
+
+            <strong>Response from InvestTrack</strong>
+
+            <small *ngIf="feedback.responseDate">
+
+              {{ feedback.responseDate | date:'mediumDate' }}
+
+            </small>
+
+          </div>
+
+          <p>
+
+            {{ feedback.adminResponse }}
+
+          </p>
+
+        </div>
+
         <!-- FOOTER -->
   
         <div class="feedback-footer">

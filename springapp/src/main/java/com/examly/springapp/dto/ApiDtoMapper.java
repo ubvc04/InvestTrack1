@@ -64,7 +64,7 @@ public final class ApiDtoMapper {
         return new FeedbackDTO(f.getFeedbackId(), f.getFeedbackText(), f.getDate(),
                 f.getUser() == null ? null : toUserResponse(f.getUser()),
                 f.getInvestment() == null ? null : toInvestmentResponse(f.getInvestment()),
-                f.getCategory(), f.getSubject());
+                f.getCategory(), f.getSubject(), f.getAdminResponse(), f.getResponseDate());
     }
 
     public static InvestmentInquiry toInquiry(InvestmentInquiryDTO dto) {

@@ -2,6 +2,7 @@ package com.examly.springapp.controller;
 
 import com.examly.springapp.dto.ApiDtoMapper;
 import com.examly.springapp.dto.FeedbackDTO;
+import com.examly.springapp.dto.RespondToFeedbackDTO;
 import com.examly.springapp.model.Feedback;
 import com.examly.springapp.model.User;
 import com.examly.springapp.repository.UserRepo;
@@ -66,6 +67,23 @@ public class FeedbackController {
         requireAccess(feedback.getUser(), authentication);
         feedbackService.deleteFeedback(feedbackId);
         return ResponseEntity.ok(Map.of("message", "Feedback deleted successfully"));
+    }
+
+    /**
+     * Administrative response to a feedback entry. Restricted to Admin/SuperAdmin both by
+     * SecurityConfig and here, so the authorization is visible at the endpoint itself.
+     * The responding user is never taken from the request body.
+     */
+    @PutMapping("/{feedbackId}/respond")
+    public ResponseEntity<FeedbackDTO> respondToFeedback(
+            @PathVariable Long feedbackId,
+            @Valid @RequestBody RespondToFeedbackDTO request,
+            Authentication authentication) {
+        if (!isAdmin(authentication)) {
+            throw new IllegalStateException("Only administrators can respond to feedback");
+        }
+        return ResponseEntity.ok(ApiDtoMapper.toFeedbackResponse(
+                feedbackService.respondToFeedback(feedbackId, request.adminResponse())));
     }
 
     private User currentUser(Authentication authentication) {

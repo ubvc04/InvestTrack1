@@ -118,7 +118,7 @@
   
     height: 58px;
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 16px;
   
@@ -130,7 +130,7 @@
   
     gap: 12px;
   
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--it-border-strong);
   
     box-shadow:
       0 10px 20px rgba(15,23,42,.05);
@@ -139,7 +139,7 @@
   .search-box i,
   .filter-box i {
   
-    color: #2563eb;
+    color: var(--it-primary);
   
     font-size: 1rem;
   }
@@ -162,7 +162,7 @@
   
   .inquiry-card {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 24px;
   
@@ -170,7 +170,7 @@
   
     height: 100%;
   
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--it-border-strong);
   
     box-shadow:
       0 12px 28px rgba(15,23,42,.06);
@@ -203,7 +203,7 @@
   
     font-weight: 700;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .inquiry-user {
@@ -214,7 +214,7 @@
   
     gap: 6px;
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     font-size: .88rem;
   }
@@ -235,9 +235,9 @@
   
     border-radius: 12px;
   
-    background: #eff6ff;
+    background: var(--it-tint-bg);
   
-    color: #2563eb;
+    color: var(--it-primary);
   
     font-size: .85rem;
   
@@ -256,9 +256,9 @@
   
     border-radius: 16px;
   
-    background: #f8fafc;
+    background: var(--it-surface-2);
   
-    color: #334155;
+    color: var(--it-ink);
   
     line-height: 1.6;
   
@@ -284,16 +284,16 @@
   
   .active-status {
   
-    background: #dcfce7;
+    background: var(--it-success-soft-bg);
   
-    color: #15803d;
+    color: var(--it-success-soft-fg);
   }
   
   .sold-status {
   
-    background: #fee2e2;
+    background: var(--it-danger-soft-bg);
   
-    color: #b91c1c;
+    color: var(--it-danger-soft-fg);
   }
   
   /* ==========================================
@@ -304,7 +304,7 @@
   
     margin-bottom: 18px;
   
-    color: #475569;
+    color: var(--it-text-muted);
   }
   
   .investment-meta div {
@@ -318,7 +318,7 @@
   
   .investment-meta i {
   
-    color: #2563eb;
+    color: var(--it-primary);
   }
   
   /* ==========================================
@@ -327,7 +327,7 @@
   
   .response-box {
   
-    background: #f8fafc;
+    background: var(--it-surface-2);
   
     border-radius: 16px;
   
@@ -342,14 +342,14 @@
   
     margin-bottom: 10px;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .response-box p {
   
     margin: 0;
   
-    color: #64748b;
+    color: var(--it-text-muted);
   }
   
   /* ==========================================
@@ -367,7 +367,7 @@
   
     height: 48px;
   
-    border: 1px solid #dbe4ee;
+    border: 1px solid var(--it-border-strong);
   }
   
   /* ==========================================
@@ -399,26 +399,26 @@
   
   .btn-edit {
   
-    background: #eff6ff;
+    background: var(--it-tint-bg);
   
-    color: #2563eb;
+    color: var(--it-primary);
   }
   
   .btn-edit:hover {
   
-    background: #dbeafe;
+    background: var(--it-info-soft-bg);
   }
   
   .btn-delete {
   
-    background: #fee2e2;
+    background: var(--it-danger-soft-bg);
   
     color: #dc2626;
   }
   
   .btn-delete:hover {
   
-    background: #fecaca;
+    background: var(--it-danger-soft-bg);
   }
   
   /* ==========================================
@@ -427,7 +427,7 @@
   
   .empty-state {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 24px;
   
@@ -443,7 +443,7 @@
   
     font-size: 4rem;
   
-    color: #94a3b8;
+    color: var(--it-text-muted);
   
     margin-bottom: 15px;
   }
@@ -457,7 +457,7 @@
   
   .empty-state p {
   
-    color: #64748b;
+    color: var(--it-text-muted);
   }
   
   /* ==========================================
@@ -478,12 +478,12 @@
   
   .modal-header {
   
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--it-border-strong);
   }
   
   .modal-footer {
   
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--it-border-strong);
   }
   
   .modal-title {

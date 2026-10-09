@@ -135,7 +135,7 @@
   font-size: 2.3rem;
   font-weight: 800;
 
-  color: #0f172a;
+  color: var(--it-ink);
 
   letter-spacing: -0.03em;
 
@@ -143,7 +143,7 @@
 }
 
 .auth-subtitle {
-  color: #64748b;
+  color: var(--it-text-muted);
   font-size: 0.95rem;
 }
 
@@ -154,7 +154,7 @@
 .form-label {
   display: block;
 
-  color: #334155;
+  color: var(--it-ink);
 
   font-size: 0.9rem;
 
@@ -191,7 +191,7 @@
 
   transform: translateY(-50%);
 
-  color: #94a3b8;
+  color: var(--it-text-muted);
 
   font-size: 1rem;
 
@@ -216,13 +216,13 @@
     translateY(-50%)
     scale(0.92);
 
-  background: #fff;
+  background: var(--it-card-bg);
 
   border-radius: 50%;
 
   border: 1px solid #dbeafe;
 
-  color: #2563eb;
+  color: var(--it-primary);
 
   box-shadow:
     0 8px 20px rgba(37, 99, 235, 0.15);
@@ -243,22 +243,22 @@
 
   border-radius: 16px;
 
-  border: 1px solid #dbe4f0;
+  border: 1px solid var(--it-border-strong);
 
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--it-card-bg);
 
-  color: #0f172a;
+  color: var(--it-ink);
 
   transition: all 0.25s ease;
 }
 
 .form-control::placeholder {
-  color: #94a3b8;
+  color: var(--it-text-muted);
 }
 
 .form-control:focus,
 .form-select:focus {
-  background: #ffffff;
+  background: var(--it-card-bg);
 
   border-color: #2563eb;
 
@@ -276,7 +276,7 @@
 .is-invalid {
   border-color: #ef4444 !important;
 
-  background: #fffafa;
+  background: var(--it-surface-2);
 
   box-shadow:
     0 0 0 4px rgba(239, 68, 68, 0.08) !important;
@@ -359,7 +359,7 @@
 
   border: 1px solid #fecdd3;
 
-  background: #fff1f2;
+  background: var(--it-danger-soft-bg);
 
   color: #be123c;
 
@@ -371,7 +371,7 @@
 ================================================== */
 
 .login-link {
-  color: #2563eb;
+  color: var(--it-primary);
 
   text-decoration: none;
 
@@ -395,7 +395,7 @@
 
   overflow: hidden;
 
-  background: rgba(255, 255, 255, 0.96);
+  background: var(--it-surface);
 
   backdrop-filter: blur(20px);
 

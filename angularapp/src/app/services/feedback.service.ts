@@ -46,4 +46,15 @@ deleteFeedback(feedbackId: number): Observable<any> {
   return this.http.delete(`${this.apiUrl}/api/feedback/${feedbackId}`,
     { headers: this.getHeaders() });
 }
+
+/**
+ * Sends an administrator response to a feedback entry (Admin / SuperAdmin only).
+ * The backend notifies the feedback owner and stores the response + response date.
+ */
+respondToFeedback(feedbackId: number, adminResponse: string): Observable<Feedback> {
+  return this.http.put<Feedback>(
+    `${this.apiUrl}/api/feedback/${feedbackId}/respond`,
+    { adminResponse },
+    { headers: this.getHeaders() });
+}
 }

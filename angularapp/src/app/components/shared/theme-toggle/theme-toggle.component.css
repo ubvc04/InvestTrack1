@@ -1,0 +1,43 @@
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--it-border);
+  border-radius: 50px;
+  background: var(--it-surface);
+  color: var(--it-ink);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--it-primary);
+  color: var(--it-primary);
+}
+
+.theme-toggle-btn:focus-visible {
+  outline: 2px solid var(--it-primary);
+  outline-offset: 2px;
+}
+
+.theme-toggle-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.theme-toggle-text {
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 576px) {
+  .theme-toggle-text {
+    display: none;
+  }
+
+  .theme-toggle-btn {
+    padding: 0.45rem 0.6rem;
+  }
+}

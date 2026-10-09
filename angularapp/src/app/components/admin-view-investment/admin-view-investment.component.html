@@ -81,7 +81,18 @@
   </div>
 
   <div
-    *ngIf="aiResultActive"
+    *ngIf="aiError"
+    class="ai-error"
+    role="alert">
+
+    <i class="bi bi-exclamation-triangle-fill"></i>
+
+    <span>{{ aiError }}</span>
+
+  </div>
+
+  <div
+    *ngIf="aiResultActive && !aiError"
     class="ai-result">
 
     <i class="bi bi-magic"></i>
@@ -89,6 +100,345 @@
     Showing AI results for
 
     <strong>{{ aiQuery }}</strong>
+
+    <button
+      type="button"
+      class="ai-exit-inline"
+      (click)="clearAiSearch()">
+      Show all investments
+    </button>
+
+  </div>
+
+</div>
+
+<!-- ==========================================
+     AI SUGGESTION PANEL + AI MATCH RESULTS
+     (separate state: the normal list below
+      stays untouched until you exit)
+========================================== -->
+
+<div
+  *ngIf="aiLoading"
+  class="ai-loading"
+  role="status">
+
+  <span class="spinner-border spinner-border-sm"></span>
+
+  <span>
+    Analyzing your query and scoring every investment…
+  </span>
+
+</div>
+
+<div
+  *ngIf="aiResultActive && !aiLoading && aiResponse"
+  class="ai-results-section">
+
+  <div class="ai-results-header">
+
+    <h3>
+      <i class="bi bi-stars"></i>
+      AI Match Results
+    </h3>
+
+    <button
+      type="button"
+      class="ai-exit-btn"
+      (click)="clearAiSearch()">
+
+      <i class="bi bi-list-ul"></i>
+
+      Show all investments
+
+    </button>
+
+  </div>
+
+  <p class="ai-overview">{{ aiResponse.overview }}</p>
+
+  <!-- Suggestion / analysis panel (above the results) -->
+
+  <div class="ai-panel">
+
+    <div class="ai-panel-item">
+
+      <span class="ai-panel-label">
+        <i class="bi bi-bullseye"></i>
+        Your objective
+      </span>
+
+      <p>{{ aiResponse.analysis.objective }}</p>
+
+    </div>
+
+    <div class="ai-panel-item">
+
+      <span class="ai-panel-label">
+        <i class="bi bi-trophy"></i>
+        Best matches
+      </span>
+
+      <p>{{ aiResponse.analysis.bestMatches }}</p>
+
+    </div>
+
+    <div class="ai-panel-item">
+
+      <span class="ai-panel-label">
+        <i class="bi bi-check2-circle"></i>
+        Why they match
+      </span>
+
+      <p>{{ aiResponse.analysis.whyTheyMatch }}</p>
+
+    </div>
+
+    <div class="ai-panel-item">
+
+      <span class="ai-panel-label">
+        <i class="bi bi-info-circle"></i>
+        Things to consider
+      </span>
+
+      <p>{{ aiResponse.analysis.thingsToConsider }}</p>
+
+    </div>
+
+    <div class="ai-panel-item ai-panel-wide">
+
+      <span class="ai-panel-label">
+        <i class="bi bi-funnel"></i>
+        Refine your search
+      </span>
+
+      <p>{{ aiResponse.analysis.refineSuggestion }}</p>
+
+    </div>
+
+  </div>
+
+  <div class="ai-criteria-chips">
+
+    <span
+      class="ai-chip"
+      *ngFor="let criterion of aiResponse.analysis.requestedCriteria">
+
+      <i class="bi bi-check2"></i>
+      {{ criterion }}
+
+    </span>
+
+    <span
+      class="ai-chip ai-chip-unverified"
+      *ngFor="let criterion of aiResponse.analysis.unverifiedCriteria">
+
+      <i class="bi bi-question-circle"></i>
+      {{ criterion }} — not stored
+
+    </span>
+
+    <span class="ai-chip ai-chip-meta">
+      {{ aiResponse.evaluatedCount }} records evaluated · threshold {{ aiResponse.threshold }}% ·
+      engine: {{ aiResponse.engine === 'gemini-criteria' ? 'Gemini interpretation' : 'deterministic fallback' }}
+    </span>
+
+  </div>
+
+  <!-- Empty state: nothing reached the threshold -->
+
+  <div
+    *ngIf="aiResults.length === 0"
+    class="ai-empty">
+
+    <i class="bi bi-search"></i>
+
+    <h4>No investment reached the {{ aiResponse.threshold }}% match threshold</h4>
+
+    <p>{{ aiResponse.analysis.refineSuggestion }}</p>
+
+  </div>
+
+  <!-- AI result cards -->
+
+  <div
+    class="row g-4"
+    *ngIf="aiResults.length > 0">
+
+    <div
+      class="col-xl-4 col-lg-6"
+      *ngFor="let result of aiResults">
+
+      <div class="investment-card ai-card">
+
+        <div class="ai-match-top">
+
+          <span class="ai-match-badge">
+
+            <i class="bi bi-graph-up-arrow"></i>
+
+            AI Match {{ result.matchPercentage }}%
+
+          </span>
+
+          <span
+            class="ai-confidence"
+            title="Share of your request that could be verified from the stored investment data">
+            Confidence {{ result.confidence }}%
+          </span>
+
+        </div>
+
+        <div
+          class="ai-match-bar"
+          role="progressbar"
+          aria-label="AI match percentage"
+          [attr.aria-valuenow]="result.matchPercentage"
+          aria-valuemin="0"
+          aria-valuemax="100">
+
+          <div
+            class="ai-match-bar-fill"
+            [style.width.%]="result.matchPercentage">
+          </div>
+
+        </div>
+
+        <div class="investment-top">
+
+          <div>
+
+            <h5>{{ result.investment.name }}</h5>
+
+            <span class="investment-type">
+              <i class="bi bi-pie-chart-fill"></i>
+              {{ result.investment.type }}
+            </span>
+
+          </div>
+
+          <span
+            class="status-pill"
+            [ngClass]="{
+              'active-status': result.investment.status === 'Active',
+              'sold-status': result.investment.status === 'Sold'
+            }">
+            {{ result.investment.status }}
+          </span>
+
+        </div>
+
+        <div class="price-wrapper">
+
+          <div class="price-item">
+            <span>Purchase</span>
+            <strong>₹{{ result.investment.purchasePrice }}</strong>
+          </div>
+
+          <div class="price-item">
+            <span>Current</span>
+            <strong>₹{{ result.investment.currentPrice }}</strong>
+          </div>
+
+        </div>
+
+        <div class="investment-meta">
+
+          <div>
+            <i class="bi bi-box-seam"></i>
+            Qty: {{ result.investment.quantity }}
+          </div>
+
+          <div>
+            <i class="bi bi-calendar3"></i>
+            {{ result.investment.purchaseDate }}
+          </div>
+
+          <div *ngIf="result.investment.symbol">
+            <i class="bi bi-buildings"></i>
+            {{ result.investment.symbol }}
+          </div>
+
+        </div>
+
+        <p class="ai-explanation">{{ result.explanation }}</p>
+
+        <button
+          type="button"
+          class="ai-details-toggle"
+          (click)="toggleAiDetails(result.investment.investmentId)"
+          [attr.aria-expanded]="isAiDetailsOpen(result.investment.investmentId)">
+
+          <i
+            class="bi"
+            [ngClass]="isAiDetailsOpen(result.investment.investmentId) ? 'bi-chevron-up' : 'bi-chevron-down'">
+          </i>
+
+          {{ isAiDetailsOpen(result.investment.investmentId) ? 'Hide' : 'Why this score' }}
+
+        </button>
+
+        <ul
+          class="ai-criteria-list"
+          *ngIf="isAiDetailsOpen(result.investment.investmentId)">
+
+          <li
+            *ngFor="let criterion of result.criteria"
+            [ngClass]="{
+              'ai-criterion-match': criterion.state === 'MATCH',
+              'ai-criterion-mismatch': criterion.state === 'MISMATCH',
+              'ai-criterion-unverified': criterion.state === 'UNVERIFIABLE'
+            }">
+
+            <span class="ai-criterion-head">
+
+              <strong>{{ criterion.criterion }}</strong>
+
+              <span class="ai-criterion-state">
+                {{ criterionStateLabel(criterion.state) }}
+              </span>
+
+            </span>
+
+            <span class="ai-criterion-evidence">
+              {{ criterion.evidence }}
+            </span>
+
+            <span class="ai-criterion-weight">
+              Weight {{ criterion.weight }}
+            </span>
+
+          </li>
+
+        </ul>
+
+        <div class="investment-actions">
+
+          <button
+            class="btn-edit"
+            (click)="editInvestment(result.investment.investmentId!)">
+
+            <i class="bi bi-pencil-fill"></i>
+
+            Edit
+
+          </button>
+
+          <button
+            class="btn-delete"
+            (click)="confirmDelete(result.investment.investmentId!)">
+
+            <i class="bi bi-trash-fill"></i>
+
+            Delete
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 
@@ -140,7 +490,9 @@
      SECTION TITLE
 ========================================== -->
 
-<div class="portfolio-title">
+<div
+  class="portfolio-title"
+  *ngIf="!aiResultActive || aiLoading">
 
   <h3>
 
@@ -157,7 +509,7 @@
 ========================================== -->
 
 <div
-  *ngIf="filteredInvestments.length === 0"
+  *ngIf="(!aiResultActive || aiLoading) && filteredInvestments.length === 0"
   class="empty-state">
 
   <i class="bi bi-folder2-open"></i>
@@ -176,7 +528,7 @@
 
 <div
   class="row g-4"
-  *ngIf="filteredInvestments.length > 0">
+  *ngIf="(!aiResultActive || aiLoading) && filteredInvestments.length > 0">
 
   <div
     class="col-xl-4 col-lg-6"

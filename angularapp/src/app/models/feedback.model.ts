@@ -9,4 +9,7 @@ export interface Feedback {
   investment?: Investment;
   category: string;
   subject?: string;
+  /** Administrator response, populated only for the owner after an admin responds. */
+  adminResponse?: string;
+  responseDate?: string;
 }

@@ -27,7 +27,7 @@ rows.forEach((r, i) => {
   if (!(typeof r.currentPrice === 'number' && r.currentPrice > 0)) problems.push(`${at}: bad currentPrice`);
   if (!(Number.isInteger(r.quantity) && r.quantity >= 1)) problems.push(`${at}: bad quantity`);
   if (typeof r.purchaseDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(r.purchaseDate)) problems.push(`${at}: bad purchaseDate`);
-  if (!r.status) problems.push(`${at}: missing status`);
+  if (!['Active', 'Sold'].includes(r.status)) problems.push(`${at}: status must be Active or Sold (found ${r.status})`);
   if (r.symbol && r.symbol.length > 30) problems.push(`${at}: symbol too long`);
 
   if (seedKeys.has(r.seedKey)) problems.push(`${at}: duplicate seedKey ${r.seedKey}`);

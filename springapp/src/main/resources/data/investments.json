@@ -19,7 +19,7 @@
       "currentPrice": 285.32,
       "quantity": 19,
       "purchaseDate": "2023-05-15",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-stock-002",
@@ -51,7 +51,7 @@
       "currentPrice": 618.39,
       "quantity": 32,
       "purchaseDate": "2020-02-10",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-stock-004",
@@ -147,7 +147,7 @@
       "currentPrice": 89.93,
       "quantity": 75,
       "purchaseDate": "2016-12-06",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-stock-010",
@@ -227,7 +227,7 @@
       "currentPrice": 60.58,
       "quantity": 388,
       "purchaseDate": "2020-06-17",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-stock-015",
@@ -323,7 +323,7 @@
       "currentPrice": 35.32,
       "quantity": 497,
       "purchaseDate": "2022-07-08",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-stock-021",
@@ -419,7 +419,7 @@
       "currentPrice": 1214.85,
       "quantity": 13,
       "purchaseDate": "2023-07-07",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-stock-027",
@@ -499,7 +499,7 @@
       "currentPrice": 343.95,
       "quantity": 35,
       "purchaseDate": "2015-01-20",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-stock-032",
@@ -563,7 +563,7 @@
       "currentPrice": 38.27,
       "quantity": 624,
       "purchaseDate": "2023-06-20",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-stock-036",
@@ -595,7 +595,7 @@
       "currentPrice": 592.5,
       "quantity": 35,
       "purchaseDate": "2023-11-14",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-stock-038",
@@ -867,7 +867,7 @@
       "currentPrice": 29.89,
       "quantity": 490,
       "purchaseDate": "2022-08-24",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-stock-055",
@@ -995,7 +995,7 @@
       "currentPrice": 593.7,
       "quantity": 22,
       "purchaseDate": "2023-10-23",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-stock-063",
@@ -1181,13 +1181,13 @@
       "market": "Fixed Income (Sample)",
       "assetClass": "Fixed Income",
       "currency": "USD",
-      "description": "Demo fixed-income line item: Harborstone Foods Note 2027 (Sample) (DEMO-CB-04) — a fictional fixed-rate corporate note from Harborstone Foods, a food producer supplying packaged groceries and chilled products; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from positions that have reached their sample maturity date. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
+      "description": "Demo fixed-income line item: Harborstone Foods Note 2027 (Sample) (DEMO-CB-04) — a fictional fixed-rate corporate note from Harborstone Foods, a food producer supplying packaged groceries and chilled products; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from sample positions that have been disposed of. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
       "type": "Bond",
       "purchasePrice": 101.06,
       "currentPrice": 101.02,
       "quantity": 40,
       "purchaseDate": "2025-03-27",
-      "status": "Matured"
+      "status": "Sold"
     },
     {
       "seedKey": "seed-v1-bond-005",
@@ -1267,7 +1267,7 @@
       "currentPrice": 87.63,
       "quantity": 29,
       "purchaseDate": "2016-04-02",
-      "status": "Matured"
+      "status": "Sold"
     },
     {
       "seedKey": "seed-v1-bond-010",
@@ -1283,7 +1283,7 @@
       "currentPrice": 91.15,
       "quantity": 151,
       "purchaseDate": "2020-04-03",
-      "status": "Matured"
+      "status": "Sold"
     },
     {
       "seedKey": "seed-v1-bond-011",
@@ -1309,13 +1309,13 @@
       "market": "Fixed Income (Sample)",
       "assetClass": "Fixed Income",
       "currency": "USD",
-      "description": "Catalogue record for fixed-income search testing: Everfield AgriCo Debenture 2033 (Sample) (DEMO-CB-12) — a fictional fixed-rate corporate debenture from Everfield AgriCo, a agricultural business trading grains, seeds and fertiliser inputs; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from positions that have reached their sample maturity date. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
+      "description": "Catalogue record for fixed-income search testing: Everfield AgriCo Debenture 2033 (Sample) (DEMO-CB-12) — a fictional fixed-rate corporate debenture from Everfield AgriCo, a agricultural business trading grains, seeds and fertiliser inputs; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from sample positions that have been disposed of. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
       "type": "Bond",
       "purchasePrice": 105.78,
       "currentPrice": 109.62,
       "quantity": 173,
       "purchaseDate": "2022-03-20",
-      "status": "Matured"
+      "status": "Sold"
     },
     {
       "seedKey": "seed-v1-bond-013",
@@ -1427,7 +1427,7 @@
       "currentPrice": 103.99,
       "quantity": 94,
       "purchaseDate": "2016-09-05",
-      "status": "Matured"
+      "status": "Sold"
     },
     {
       "seedKey": "seed-v1-bond-020",
@@ -1437,13 +1437,13 @@
       "market": "Fixed Income (Sample)",
       "assetClass": "Fixed Income",
       "currency": "USD",
-      "description": "Illustrative bond position used for demo data: Illustrative 5-Year Treasury Note 2028 (Sample) (DEMO-GOV-02) — a fictional sovereign 5-Year government security modelled on treasury note structures; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from positions that have reached their sample maturity date. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
+      "description": "Illustrative bond position used for demo data: Illustrative 5-Year Treasury Note 2028 (Sample) (DEMO-GOV-02) — a fictional sovereign 5-Year government security modelled on treasury note structures; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from sample positions that have been disposed of. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
       "type": "Bond",
       "purchasePrice": 88.42,
       "currentPrice": 91.61,
       "quantity": 216,
       "purchaseDate": "2023-11-07",
-      "status": "Matured"
+      "status": "Sold"
     },
     {
       "seedKey": "seed-v1-bond-021",
@@ -1459,7 +1459,7 @@
       "currentPrice": 107.77,
       "quantity": 37,
       "purchaseDate": "2021-03-01",
-      "status": "Matured"
+      "status": "Sold"
     },
     {
       "seedKey": "seed-v1-bond-022",
@@ -1475,7 +1475,7 @@
       "currentPrice": 98.58,
       "quantity": 164,
       "purchaseDate": "2024-04-04",
-      "status": "Matured"
+      "status": "Sold"
     },
     {
       "seedKey": "seed-v1-bond-023",
@@ -1565,7 +1565,7 @@
       "market": "Fixed Income (Sample)",
       "assetClass": "Fixed Income",
       "currency": "USD",
-      "description": "Demo fixed-income line item: Illustrative 30-Year Treasury Note 2036 (Sample) (DEMO-GOV-10) — a fictional sovereign 30-Year government security modelled on treasury note structures; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from positions that have reached their sample maturity date. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
+      "description": "Demo fixed-income line item: Illustrative 30-Year Treasury Note 2036 (Sample) (DEMO-GOV-10) — a fictional sovereign 30-Year government security modelled on treasury note structures; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from sample positions that have been disposed of. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
       "type": "Bond",
       "purchasePrice": 98.27,
       "currentPrice": 102.16,
@@ -1693,7 +1693,7 @@
       "market": "Fixed Income (Sample)",
       "assetClass": "Fixed Income",
       "currency": "USD",
-      "description": "Catalogue record for fixed-income search testing: Sample Municipal Revenue Bond Fairview County Road Fund 2029 (DEMO-MUNI-06) — a fictional municipal revenue obligation funding highway resurfacing and bridge maintenance work; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from positions that have reached their sample maturity date. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
+      "description": "Catalogue record for fixed-income search testing: Sample Municipal Revenue Bond Fairview County Road Fund 2029 (DEMO-MUNI-06) — a fictional municipal revenue obligation funding highway resurfacing and bridge maintenance work; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from sample positions that have been disposed of. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
       "type": "Bond",
       "purchasePrice": 89.14,
       "currentPrice": 89.46,
@@ -1715,7 +1715,7 @@
       "currentPrice": 99.09,
       "quantity": 77,
       "purchaseDate": "2026-03-30",
-      "status": "Matured"
+      "status": "Sold"
     },
     {
       "seedKey": "seed-v1-bond-038",
@@ -1821,13 +1821,13 @@
       "market": "Fixed Income (Sample)",
       "assetClass": "Fixed Income",
       "currency": "USD",
-      "description": "Illustrative bond position used for demo data: Illustrative Indexed Savings Note (Sample) (DEMO-ILB-04) — a fictional inflation-sensitive debt instrument where retail-style note whose value tracks a price index; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from positions that have reached their sample maturity date. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
+      "description": "Illustrative bond position used for demo data: Illustrative Indexed Savings Note (Sample) (DEMO-ILB-04) — a fictional inflation-sensitive debt instrument where retail-style note whose value tracks a price index; every amount on this row is a fictional demo figure. Status values distinguish live demo holdings from sample positions that have been disposed of. This is a fictional demonstration instrument created for testing only; it is not a genuine, officially issued security, and every price shown is a fictional sample value rather than a market quote.",
       "type": "Bond",
       "purchasePrice": 103.96,
       "currentPrice": 100.95,
       "quantity": 181,
       "purchaseDate": "2026-06-11",
-      "status": "Matured"
+      "status": "Sold"
     },
     {
       "seedKey": "seed-v1-bond-045",
@@ -2067,7 +2067,7 @@
       "currentPrice": 4223.88,
       "quantity": 1,
       "purchaseDate": "2025-05-18",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-commodity-015",
@@ -2403,7 +2403,7 @@
       "currentPrice": 1487.71,
       "quantity": 7,
       "purchaseDate": "2020-11-28",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-crypto-001",
@@ -2461,7 +2461,7 @@
       "market": "Digital Assets",
       "assetClass": "Cryptocurrency",
       "currency": "USD",
-      "description": "Demo digital-asset line item: Cardano (Sample Holding) (ADA) — a demo wallet holding of Cardano, proof-of-stake blockchain asset with a research-led design process. Status values cover active demo holdings as well as suspended or closed sample positions. All prices shown are fictional sample values prepared for demonstration only; they are not live market quotes, verified valuations, or predictions of future returns.",
+      "description": "Demo digital-asset line item: Cardano (Sample Holding) (ADA) — a demo wallet holding of Cardano, proof-of-stake blockchain asset with a research-led design process. Status values cover active demo holdings as well as sold sample positions. All prices shown are fictional sample values prepared for demonstration only; they are not live market quotes, verified valuations, or predictions of future returns.",
       "type": "Cryptocurrency",
       "purchasePrice": 18744.78,
       "currentPrice": 37714.25,
@@ -2589,7 +2589,7 @@
       "market": "Digital Assets",
       "assetClass": "Cryptocurrency",
       "currency": "USD",
-      "description": "Catalogue record for digital-asset search testing: Shiba Inu (Sample Holding) (SHIB) — a demo wallet holding of Shiba Inu, ethereum-based token with a large retail following. Status values cover active demo holdings as well as suspended or closed sample positions. All prices shown are fictional sample values prepared for demonstration only; they are not live market quotes, verified valuations, or predictions of future returns.",
+      "description": "Catalogue record for digital-asset search testing: Shiba Inu (Sample Holding) (SHIB) — a demo wallet holding of Shiba Inu, ethereum-based token with a large retail following. Status values cover active demo holdings as well as sold sample positions. All prices shown are fictional sample values prepared for demonstration only; they are not live market quotes, verified valuations, or predictions of future returns.",
       "type": "Cryptocurrency",
       "purchasePrice": 32384.8,
       "currentPrice": 22782.47,
@@ -2659,7 +2659,7 @@
       "currentPrice": 63810.74,
       "quantity": 1,
       "purchaseDate": "2023-02-02",
-      "status": "Suspended"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-crypto-017",
@@ -2717,7 +2717,7 @@
       "market": "Digital Assets",
       "assetClass": "Cryptocurrency",
       "currency": "USD",
-      "description": "Illustrative token position used for demo data: Uniswap (Sample Holding) (UNI) — a demo wallet holding of Uniswap, governance token of a major decentralised exchange protocol. Status values cover active demo holdings as well as suspended or closed sample positions. All prices shown are fictional sample values prepared for demonstration only; they are not live market quotes, verified valuations, or predictions of future returns.",
+      "description": "Illustrative token position used for demo data: Uniswap (Sample Holding) (UNI) — a demo wallet holding of Uniswap, governance token of a major decentralised exchange protocol. Status values cover active demo holdings as well as sold sample positions. All prices shown are fictional sample values prepared for demonstration only; they are not live market quotes, verified valuations, or predictions of future returns.",
       "type": "Cryptocurrency",
       "purchasePrice": 18437.53,
       "currentPrice": 18365.34,
@@ -2845,7 +2845,7 @@
       "market": "Digital Assets",
       "assetClass": "Cryptocurrency",
       "currency": "USD",
-      "description": "Demo digital-asset line item: Neo (Sample Holding) (NEO) — a demo wallet holding of Neo, blockchain asset often described as a smart economy platform. Status values cover active demo holdings as well as suspended or closed sample positions. All prices shown are fictional sample values prepared for demonstration only; they are not live market quotes, verified valuations, or predictions of future returns.",
+      "description": "Demo digital-asset line item: Neo (Sample Holding) (NEO) — a demo wallet holding of Neo, blockchain asset often described as a smart economy platform. Status values cover active demo holdings as well as sold sample positions. All prices shown are fictional sample values prepared for demonstration only; they are not live market quotes, verified valuations, or predictions of future returns.",
       "type": "Cryptocurrency",
       "purchasePrice": 8903.92,
       "currentPrice": 11176.74,
@@ -3011,7 +3011,7 @@
       "currentPrice": 354.31,
       "quantity": 8,
       "purchaseDate": "2022-07-25",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-etf-004",
@@ -3251,7 +3251,7 @@
       "currentPrice": 85.42,
       "quantity": 211,
       "purchaseDate": "2018-05-20",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-etf-019",
@@ -3283,7 +3283,7 @@
       "currentPrice": 166.16,
       "quantity": 52,
       "purchaseDate": "2020-03-09",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-etf-021",
@@ -3347,7 +3347,7 @@
       "currentPrice": 99.24,
       "quantity": 210,
       "purchaseDate": "2017-08-10",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-etf-025",
@@ -3443,7 +3443,7 @@
       "currentPrice": 393.45,
       "quantity": 12,
       "purchaseDate": "2015-09-01",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-etf-031",
@@ -3555,7 +3555,7 @@
       "currentPrice": 833.02,
       "quantity": 25,
       "purchaseDate": "2021-04-24",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-etf-038",
@@ -3603,7 +3603,7 @@
       "currentPrice": 75.91,
       "quantity": 283,
       "purchaseDate": "2022-04-01",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-etf-041",
@@ -3827,7 +3827,7 @@
       "currentPrice": 391.11,
       "quantity": 40,
       "purchaseDate": "2017-12-03",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-mutual-fund-001",
@@ -3875,7 +3875,7 @@
       "currentPrice": 143.18,
       "quantity": 41,
       "purchaseDate": "2017-01-22",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-mutual-fund-004",
@@ -3971,7 +3971,7 @@
       "currentPrice": 166.49,
       "quantity": 128,
       "purchaseDate": "2026-02-03",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-mutual-fund-010",
@@ -4147,7 +4147,7 @@
       "currentPrice": 110.1,
       "quantity": 159,
       "purchaseDate": "2021-02-23",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-mutual-fund-021",
@@ -4211,7 +4211,7 @@
       "currentPrice": 140.44,
       "quantity": 79,
       "purchaseDate": "2020-08-17",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-mutual-fund-025",
@@ -4291,7 +4291,7 @@
       "currentPrice": 130.26,
       "quantity": 60,
       "purchaseDate": "2015-11-03",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-mutual-fund-030",
@@ -4371,7 +4371,7 @@
       "currentPrice": 475.89,
       "quantity": 34,
       "purchaseDate": "2022-12-11",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-mutual-fund-035",
@@ -4419,7 +4419,7 @@
       "currentPrice": 15.67,
       "quantity": 1110,
       "purchaseDate": "2018-05-25",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-mutual-fund-038",
@@ -4515,7 +4515,7 @@
       "currentPrice": 141.42,
       "quantity": 116,
       "purchaseDate": "2015-09-26",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-real-estate-004",
@@ -4531,7 +4531,7 @@
       "currentPrice": 159.08,
       "quantity": 50,
       "purchaseDate": "2024-12-01",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-real-estate-005",
@@ -4755,7 +4755,7 @@
       "currentPrice": 66.62,
       "quantity": 50,
       "purchaseDate": "2020-01-29",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-real-estate-019",
@@ -4787,7 +4787,7 @@
       "currentPrice": 142.18,
       "quantity": 102,
       "purchaseDate": "2020-09-25",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-real-estate-021",
@@ -4867,7 +4867,7 @@
       "currentPrice": 50.65,
       "quantity": 297,
       "purchaseDate": "2019-03-06",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-real-estate-026",
@@ -5011,7 +5011,7 @@
       "currentPrice": 407.36,
       "quantity": 25,
       "purchaseDate": "2016-06-15",
-      "status": "Pending"
+      "status": "Active"
     },
     {
       "seedKey": "seed-v1-real-estate-035",

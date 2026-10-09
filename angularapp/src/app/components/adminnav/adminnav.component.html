@@ -155,93 +155,12 @@
       </ul>
 
 
-<!-- NOTIFICATION BELL -->
-<!-- 
-<div class="dropdown me-4">
-
-  <button
-    class="admin-notification"
-    type="button"
-    data-bs-toggle="dropdown"
-    aria-expanded="false">
-
-    <i class="bi bi-bell-fill"></i>
-
-    <span
-      *ngIf="openInquiries > 0"
-      class="admin-badge">
-
-      {{ openInquiries }}
-
-    </span>
-
-  </button>
-
-  <ul
-  class="dropdown-menu dropdown-menu-end notification-dropdown">
-
-  <li class="notification-title">
-
-    <i class="bi bi-bell-fill me-2"></i>
-
-    Notifications
-
-  </li>
-
-  <li>
-    <hr class="dropdown-divider">
-  </li>
-
-  <li *ngIf="notifications.length === 0">
-
-    <div class="empty-notification">
-
-      <i class="bi bi-check-circle-fill"></i>
-
-      <span>No New Notifications</span>
-
-    </div>
-
-  </li>
-
-  <li
-    *ngFor="let notification of notifications">
-
-    <a
-      class="dropdown-item notification-item"
-      (click)="goToInquiries()">
-
-      <div class="notification-icon">
-
-        <i class="bi bi-life-preserver"></i>
-
+      <!-- Theme switch + notifications (shared components) -->
+      <div class="nav-actions">
+        <app-theme-toggle></app-theme-toggle>
+        <app-notification-bell></app-notification-bell>
       </div>
 
-      <div>
-
-        <strong>
-
-          {{ notification.username }}
-
-        </strong>
-
-        <div class="small text-muted">
-
-          submitted an inquiry for
-
-          {{ notification.investmentName }}
-
-        </div>
-
-      </div>
-
-    </a>
-
-  </li>
-
-</ul>
-
-</div> -->
 
       <!-- Profile -->
 

@@ -171,7 +171,7 @@
   
     text-decoration: none;
   
-    color: #2563eb;
+    color: var(--it-primary);
   
     font-weight: 600;
   
@@ -184,7 +184,7 @@
   
   .back-link:hover {
   
-    color: #1d4ed8;
+    color: var(--it-primary);
   
     transform: translateX(-3px);
   }
@@ -195,9 +195,9 @@
   
   .investment-summary-card {
   
-    background: white;
+    background: var(--it-card-bg);
   
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--it-border-strong);
   
     border-radius: 24px;
   
@@ -243,7 +243,7 @@
   
     font-weight: 700;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .summary-badges {
@@ -259,9 +259,9 @@
   
     border-radius: 999px;
   
-    background: #eff6ff;
+    background: var(--it-tint-bg);
   
-    color: #1d4ed8;
+    color: var(--it-primary);
   
     font-size: .85rem;
   
@@ -274,9 +274,9 @@
   
     border-radius: 999px;
   
-    background: #dcfce7;
+    background: var(--it-success-soft-bg);
   
-    color: #15803d;
+    color: var(--it-success-soft-fg);
   
     font-weight: 700;
   
@@ -289,7 +289,7 @@
   
     letter-spacing: 1px;
   
-    color: #64748b;
+    color: var(--it-text-muted);
   }
   
   /* =====================================
@@ -298,13 +298,13 @@
   
   .inquiry-card {
   
-    background: white;
+    background: var(--it-card-bg);
   
     border-radius: 28px;
   
     padding: 32px;
   
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--it-border-strong);
   
     box-shadow:
       0 20px 40px rgba(15,23,42,.06);
@@ -351,7 +351,7 @@
   
     margin: 0;
   
-    color: #0f172a;
+    color: var(--it-ink);
   
     font-weight: 700;
   }
@@ -360,7 +360,7 @@
   
     margin: 2px 0 0;
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     font-size: .9rem;
   }
@@ -373,7 +373,7 @@
   
     font-weight: 600;
   
-    color: #334155;
+    color: var(--it-ink);
   
     margin-bottom: 8px;
   }
@@ -381,7 +381,7 @@
   .form-control,
   .form-select {
   
-    border: 1px solid #dbe4f0;
+    border: 1px solid var(--it-border-strong);
   
     border-radius: 14px;
   
@@ -418,7 +418,7 @@
   
   .priority-card {
   
-    background: #eff6ff;
+    background: var(--it-tint-bg);
   
     border: 1px solid #bfdbfe;
   
@@ -433,7 +433,7 @@
   
   .priority-card i {
   
-    color: #2563eb;
+    color: var(--it-primary);
   
     font-size: 1.2rem;
   }
@@ -442,14 +442,14 @@
   
     display: block;
   
-    color: #1d4ed8;
+    color: var(--it-primary);
   
     margin-bottom: 4px;
   }
   
   .priority-card p {
   
-    color: #64748b;
+    color: var(--it-text-muted);
   }
   
   /* =====================================
@@ -520,7 +520,7 @@
   
   .success-card {
   
-    background: white;
+    background: var(--it-card-bg);
   
     width: 100%;
   
@@ -565,12 +565,12 @@
   
     font-weight: 800;
   
-    color: #0f172a;
+    color: var(--it-ink);
   }
   
   .success-card p {
   
-    color: #64748b;
+    color: var(--it-text-muted);
   
     max-width: 500px;
   

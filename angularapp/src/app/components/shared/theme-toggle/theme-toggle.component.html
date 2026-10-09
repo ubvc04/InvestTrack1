@@ -1,0 +1,17 @@
+<button
+  type="button"
+  class="theme-toggle-btn"
+  (click)="toggle()"
+  [attr.aria-label]="label"
+  [attr.title]="label"
+  [attr.aria-pressed]="isDark">
+
+  <i
+    class="bi theme-toggle-icon"
+    [ngClass]="isDark ? 'bi-moon-stars-fill' : 'bi-brightness-high-fill'"
+    aria-hidden="true">
+  </i>
+
+  <span class="theme-toggle-text">{{ isDark ? 'Dark' : 'Light' }}</span>
+
+</button>

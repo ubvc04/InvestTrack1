@@ -156,6 +156,28 @@
 
       </div>
 
+      <!-- Existing administrator response (if any) -->
+
+      <div
+        *ngIf="fb.adminResponse"
+        class="response-preview">
+
+        <i class="bi bi-check-circle-fill"></i>
+
+        <div class="response-preview-body">
+
+          <strong>Response sent</strong>
+
+          <p>{{ fb.adminResponse }}</p>
+
+          <small *ngIf="fb.responseDate">
+            {{ fb.responseDate | date:'mediumDate' }}
+          </small>
+
+        </div>
+
+      </div>
+
       <!-- Footer -->
 
       <div class="feedback-footer">
@@ -196,6 +218,16 @@
         </button>
 
       </div>
+
+      <button
+        class="btn-respond"
+        (click)="openRespond(fb)">
+
+        <i class="bi bi-reply-fill"></i>
+
+        {{ fb.adminResponse ? 'Edit Response' : 'Respond' }}
+
+      </button>
 
     </div>
 
@@ -390,5 +422,126 @@
 
 <div
   *ngIf="showInvestmentModal"
+  class="modal-backdrop fade show">
+</div>
+
+<!-- ==========================================
+     RESPOND TO FEEDBACK MODAL
+========================================== -->
+
+<div
+  class="modal fade"
+  [class.show]="showRespondModal"
+  [style.display]="showRespondModal ? 'block' : 'none'"
+  tabindex="-1">
+
+  <div class="modal-dialog modal-dialog-centered">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h5 class="modal-title">
+
+          <i class="bi bi-reply-fill me-2"></i>
+
+          Respond to Feedback
+
+        </h5>
+
+      </div>
+
+      <div class="modal-body">
+
+        <p class="respond-context">
+
+          {{ selectedFeedback?.subject || 'General Feedback' }}
+
+          <span *ngIf="selectedFeedback?.user?.username">
+            — from {{ selectedFeedback?.user?.username }}
+          </span>
+
+        </p>
+
+        <blockquote class="respond-quote">
+
+          {{ selectedFeedback?.feedbackText }}
+
+        </blockquote>
+
+        <label class="form-label" for="adminRespondText">
+
+          Your response
+
+        </label>
+
+        <textarea
+          id="adminRespondText"
+          class="form-control"
+          rows="4"
+          [(ngModel)]="respondText"
+          [disabled]="responding"
+          placeholder="Write a helpful response for the user...">
+        </textarea>
+
+        <div
+          *ngIf="respondError"
+          class="respond-error"
+          role="alert">
+
+          <i class="bi bi-exclamation-triangle-fill"></i>
+
+          {{ respondError }}
+
+        </div>
+
+        <div
+          *ngIf="respondSuccess"
+          class="respond-success"
+          role="status">
+
+          <i class="bi bi-check-circle-fill"></i>
+
+          {{ respondSuccess }}
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button
+          class="btn btn-secondary"
+          (click)="closeRespond()"
+          [disabled]="responding">
+
+          {{ respondSuccess ? 'Close' : 'Cancel' }}
+
+        </button>
+
+        <button
+          class="btn btn-primary"
+          (click)="submitRespond()"
+          [disabled]="responding || !respondText.trim()">
+
+          <span
+            *ngIf="responding"
+            class="spinner-border spinner-border-sm me-1">
+          </span>
+
+          {{ responding ? 'Sending...' : 'Send Response' }}
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  *ngIf="showRespondModal"
   class="modal-backdrop fade show">
 </div>

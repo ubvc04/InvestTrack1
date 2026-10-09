@@ -1,6 +1,7 @@
 package com.examly.springapp.config;
 
 import com.examly.springapp.model.Investment;
+import com.examly.springapp.model.InvestmentStatus;
 import com.examly.springapp.repository.InvestmentRepo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -190,7 +191,10 @@ public class InvestmentSeedInitializer implements CommandLineRunner {
         if (isBlank(name) || name.length() > 120) errors.add(where + ": name is required (max 120 chars)");
         if (isBlank(description) || description.length() > 4000) errors.add(where + ": description is required (max 4000 chars)");
         if (isBlank(type)) errors.add(where + ": type is required");
-        if (isBlank(status)) errors.add(where + ": status is required");
+        String canonicalStatus = InvestmentStatus.canonicalize(status);
+        if (canonicalStatus == null) {
+            errors.add(where + ": status must be Active or Sold (found '" + status + "')");
+        }
         if (isBlank(purchaseDate) || !DATE_PATTERN.matcher(purchaseDate).matches()) {
             errors.add(where + ": purchaseDate must match yyyy-MM-dd");
         }
@@ -227,7 +231,7 @@ public class InvestmentSeedInitializer implements CommandLineRunner {
         investment.setCurrentPrice(currentPrice);
         investment.setQuantity(quantity);
         investment.setPurchaseDate(purchaseDate);
-        investment.setStatus(status);
+        investment.setStatus(canonicalStatus);
         return investment;
     }
 

@@ -131,7 +131,7 @@ const CONTEXTS = {
     'Seeded so fixed-income queries, status filtering and semantic ranking have debt instruments to compare.',
     'Quantity represents a demonstration face-amount lot rather than an actual settled trade.',
     'The record gives search useful vocabulary around duration, issuer sector and maturity year.',
-    'Status values distinguish live demo holdings from positions that have reached their sample maturity date.',
+    'Status values distinguish live demo holdings from sample positions that have been disposed of.',
     'All amounts are fictional demonstration figures and imply no coupon, yield or credit quality.'
   ],
   Commodity: [
@@ -151,7 +151,7 @@ const CONTEXTS = {
     'Seeded so crypto queries, status filters and ranking logic all have token records to work with.',
     'Valuation figures are static sample numbers that make portfolio totals look plausible in the demo UI.',
     'The record distinguishes a sample holding from an exchange listing and implies no listing status.',
-    'Status values cover active demo holdings as well as suspended or closed sample positions.',
+    'Status values cover active demo holdings as well as sold sample positions.',
     'Included to support natural-language search over blockchain, token and digital-currency wording.'
   ],
   ETF: [
@@ -631,17 +631,12 @@ function randomPurchaseDate() {
 
 function randomStatus(type, index) {
   const r = rand();
-  if (type === 'Bond') {
-    return r < 0.6 ? 'Active' : r < 0.82 ? 'Matured' : 'Sold';
-  }
-  if (type === 'Cryptocurrency') {
-    return r < 0.7 ? 'Active' : r < 0.9 ? 'Sold' : 'Suspended';
-  }
-  if (type === 'Commodity') {
-    return r < 0.72 ? 'Active' : r < 0.92 ? 'Sold' : 'Pending';
-  }
-  if (index % 17 === 3) return 'Pending';
-  return r < 0.7 ? 'Active' : r < 0.91 ? 'Sold' : 'Pending';
+  // Only the supported permanent statuses exist: Active (held) and Sold (disposed).
+  if (type === 'Bond') return r < 0.78 ? 'Active' : 'Sold';
+  if (type === 'Cryptocurrency') return r < 0.8 ? 'Active' : 'Sold';
+  if (type === 'Commodity') return r < 0.82 ? 'Active' : 'Sold';
+  if (index % 17 === 3) return 'Active';
+  return r < 0.7 ? 'Active' : 'Sold';
 }
 
 const counters = {};
@@ -701,7 +696,7 @@ function addRecord(type, name, symbol, exchange, focus, demoInstrument) {
   if (!(record.currentPrice > 0)) errors.push(`bad currentPrice: ${name}`);
   if (!(record.quantity >= 1)) errors.push(`bad quantity: ${name}`);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(record.purchaseDate)) errors.push(`bad date: ${name}`);
-  if (!record.status) errors.push(`bad status: ${name}`);
+  if (!['Active', 'Sold'].includes(record.status)) errors.push(`bad status: ${record.status} (${name})`);
 
   records.push(record);
   return record;
