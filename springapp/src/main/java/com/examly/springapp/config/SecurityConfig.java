@@ -69,8 +69,12 @@ public class SecurityConfig {
                         // Change Password
                         .requestMatchers(HttpMethod.PUT, "/api/change-password")
                         .hasAnyRole("Admin", "SuperAdmin", "User")
+
+                        // Forgotten-password reset: authorized by the server-validated,
+                        // time-limited reset grant issued only after successful OTP
+                        // verification — never by a login session or client-supplied ID.
                         .requestMatchers(HttpMethod.PUT, "/api/forgot-password/change-password")
-                        .hasAnyRole("Admin", "SuperAdmin", "User")
+                        .permitAll()
 
                         .requestMatchers("/api/admins")
                         .hasRole("SuperAdmin")

@@ -10,9 +10,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,8 +27,15 @@ public class PasswordRecoveryService {
 
     private record RecoveryCode(String code, Instant expiresAt, int attempts) {}
 
+    /**
+     * Reset authorization issued after a successful OTP verification. The opaque
+     * token is returned to the client and bound server-side to the account email,
+     * so completing the reset proves ownership without creating a login session.
+     */
+    private record ResetGrant(String token, Instant expiresAt) {}
+
     private final Map<String, RecoveryCode> recoveryCodes = new ConcurrentHashMap<>();
-    private final Map<String, Instant> verifiedRecoveries = new ConcurrentHashMap<>();
+    private final Map<String, ResetGrant> resetGrants = new ConcurrentHashMap<>();
     private final Map<String, Instant> lastSentAt = new ConcurrentHashMap<>();
     private final UserRepo userRepo;
     private final EmailService emailService;
@@ -84,7 +94,15 @@ public class PasswordRecoveryService {
         }
     }
 
-    public User verifyOtp(String email, String code) {
+    /**
+     * Verifies the recovery OTP (expiry, attempt limit, account association) and,
+     * on success, issues a short-lived reset authorization for that account.
+     * No login session or JWT is created here — the caller receives only the
+     * opaque reset token needed to complete the password update.
+     *
+     * @return the reset authorization token bound to this account
+     */
+    public String verifyOtp(String email, String code) {
         String normalizedEmail = normalize(email);
         RecoveryCode stored = recoveryCodes.get(normalizedEmail);
         if (stored == null || !Instant.now().isBefore(stored.expiresAt())) {
@@ -101,26 +119,53 @@ public class PasswordRecoveryService {
             throw new IllegalArgumentException("OTP is invalid or expired");
         }
         recoveryCodes.remove(normalizedEmail);
-        verifiedRecoveries.put(normalizedEmail, Instant.now().plusSeconds(expirationMinutes * 60));
-        User user = userRepo.findByEmail(normalizedEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Account no longer exists"));
-        user.setMustChangePassword(true);
-        return userRepo.save(user);
+        if (userRepo.findByEmail(normalizedEmail).isEmpty()) {
+            throw new IllegalArgumentException("Account no longer exists");
+        }
+        return issueResetGrant(normalizedEmail);
     }
 
-    public void changePassword(String email, String newPassword) {
+    private String issueResetGrant(String normalizedEmail) {
+        byte[] randomBytes = new byte[32];
+        secureRandom.nextBytes(randomBytes);
+        String token = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+        // One active grant per account: re-verifying the OTP replaces the old grant.
+        resetGrants.put(normalizedEmail,
+                new ResetGrant(token, Instant.now().plusSeconds(expirationMinutes * 60)));
+        return token;
+    }
+
+    /**
+     * Completes the reset after OTP verification: validates the server-held,
+     * time-limited grant for the account, hashes the new password with BCrypt,
+     * then invalidates the grant and any outstanding OTP so it cannot be reused.
+     */
+    public void resetPasswordWithGrant(String email, String resetToken, String newPassword) {
+        if (resetToken == null || resetToken.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Password reset authorization is required");
+        }
         String normalizedEmail = normalize(email);
-        Instant expiresAt = verifiedRecoveries.get(normalizedEmail);
-        if (expiresAt == null || Instant.now().isAfter(expiresAt)) {
-            verifiedRecoveries.remove(normalizedEmail);
-            throw new IllegalStateException("Password recovery session is invalid or expired");
+        ResetGrant grant = resetGrants.get(normalizedEmail);
+        if (grant == null || !Instant.now().isBefore(grant.expiresAt())) {
+            resetGrants.remove(normalizedEmail);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Password reset session is invalid or expired. Please verify the OTP again.");
+        }
+        if (!MessageDigest.isEqual(
+                grant.token().getBytes(StandardCharsets.UTF_8),
+                resetToken.trim().getBytes(StandardCharsets.UTF_8))) {
+            // Wrong token for this account; the legitimate grant is left untouched.
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Password reset session is invalid or expired. Please verify the OTP again.");
         }
         User user = userRepo.findByEmail(normalizedEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Account no longer exists"));
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setMustChangePassword(false);
         userRepo.save(user);
-        verifiedRecoveries.remove(normalizedEmail);
+        // Invalidate the reset authorization and any still-outstanding recovery OTP.
+        resetGrants.remove(normalizedEmail);
         recoveryCodes.remove(normalizedEmail);
         lastSentAt.remove(normalizedEmail);
     }

@@ -61,19 +61,23 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/api/forgot-password/send-otp`, { email });
   }
 
-  verifyForgotPasswordOtp(email: string, otp: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(
+  verifyForgotPasswordOtp(email: string, otp: string): Observable<{ message: string; resetToken: string }> {
+    // Verifying the OTP does not log the user in; the backend returns a
+    // short-lived reset authorization used to set the new password on the
+    // same page. No JWT or session is stored here.
+    return this.http.post<{ message: string; resetToken: string }>(
       `${this.apiUrl}/api/forgot-password/verify-otp`, { email, otp }
-    ).pipe(tap(response => {
-      this.storeLoginResponse(response);
-      localStorage.setItem('passwordRecoverySession', 'true');
-    }));
+    );
   }
 
-  changeForgottenPassword(data: { newPassword: string; confirmPassword: string }): Observable<any> {
-    return this.http.put(`${this.apiUrl}/api/forgot-password/change-password`, data, {
-      headers: { Authorization: `Bearer ${this.getToken()}` }
-    });
+  changeForgottenPassword(data: {
+    email: string;
+    resetToken: string;
+    newPassword: string;
+    confirmPassword: string;
+  }): Observable<any> {
+    // Authorized by the server-validated reset grant, not by a JWT session.
+    return this.http.put(`${this.apiUrl}/api/forgot-password/change-password`, data);
   }
 
   sendPhoneOtp(phoneNumber: string): Observable<any> {

@@ -43,22 +43,17 @@ export class ChangePasswordComponent {
       return;
     }
 
-    if (!this.authService.isPasswordRecoverySession() && this.oldPassword === this.newPassword) {
+    if (this.oldPassword === this.newPassword) {
       this.error = 'New password cannot be the same as old password';
       return;
     }
 
-    const request = this.authService.isPasswordRecoverySession()
-      ? this.authService.changeForgottenPassword({
-          newPassword: this.newPassword,
-          confirmPassword: this.confirmPassword
-        })
-      : this.authService.changePassword({
-          userId: this.authService.getUserId(),
-          oldPassword: this.oldPassword,
-          newPassword: this.newPassword,
-          confirmPassword: this.confirmPassword
-        });
+    const request = this.authService.changePassword({
+      userId: this.authService.getUserId(),
+      oldPassword: this.oldPassword,
+      newPassword: this.newPassword,
+      confirmPassword: this.confirmPassword
+    });
 
     request.subscribe({
 

@@ -10,8 +10,14 @@ export class ForgotPasswordComponent implements OnDestroy {
   email = '';
   otp = '';
   otpSent = false;
+  otpVerified = false;
+  resetToken = '';
+  newPassword = '';
+  confirmPassword = '';
   loading = false;
+  updating = false;
   message = '';
+  success = '';
   error = '';
   resendCooldown = 0;
   private cooldownTimer: any = null;
@@ -47,7 +53,7 @@ export class ForgotPasswordComponent implements OnDestroy {
   }
 
   resendOtp(): void {
-    if (this.resendCooldown > 0 || this.loading) {
+    if (this.resendCooldown > 0 || this.loading || this.otpVerified) {
       return;
     }
     this.sendOtp();
@@ -64,16 +70,59 @@ export class ForgotPasswordComponent implements OnDestroy {
       next: response => {
         this.loading = false;
         this.otp = '';
-        // The backend already issued the JWT and flagged mustChangePassword.
-        this.message = 'You logged in using OTP. For security, please change your password.';
-        const changePasswordUrl = response.userRole === 'User'
-          ? '/usernav/change-password'
-          : '/adminnav/change-password';
-        setTimeout(() => this.router.navigate([changePasswordUrl]), 1500);
+        // No login happens here: the backend only issued a short-lived reset
+        // authorization. The password fields below stay hidden until this point.
+        this.otpVerified = true;
+        this.resetToken = response.resetToken;
+        this.message = 'OTP verified. Set a new password below.';
       },
       error: err => {
         this.loading = false;
         this.error = this.extractError(err, 'Invalid or expired OTP.');
+      }
+    });
+  }
+
+  updatePassword(): void {
+    this.error = '';
+    this.success = '';
+    if (!this.otpVerified || !this.resetToken) {
+      this.error = 'Verify the OTP first.';
+      return;
+    }
+    if (this.newPassword !== this.confirmPassword) {
+      this.error = 'Passwords do not match';
+      return;
+    }
+    if (this.newPassword.length < 8) {
+      this.error = 'Password must be at least 8 characters long';
+      return;
+    }
+    this.updating = true;
+    this.authService.changeForgottenPassword({
+      email: this.email,
+      resetToken: this.resetToken,
+      newPassword: this.newPassword,
+      confirmPassword: this.confirmPassword
+    }).subscribe({
+      next: () => {
+        this.updating = false;
+        this.resetToken = '';
+        this.newPassword = '';
+        this.confirmPassword = '';
+        this.success = 'Password updated successfully. Redirecting to Login...';
+        // The user logs in manually with the new password; no auto-login.
+        setTimeout(() => this.router.navigate(['/login']), 2000);
+      },
+      error: err => {
+        this.updating = false;
+        const message = this.extractError(err, 'Unable to update the password.');
+        this.error = message;
+        // The reset grant expired or was already used — require a fresh OTP round.
+        if (message.toLowerCase().includes('expired')) {
+          this.otpVerified = false;
+          this.resetToken = '';
+        }
       }
     });
   }

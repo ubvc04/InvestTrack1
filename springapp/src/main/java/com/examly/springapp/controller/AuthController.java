@@ -107,21 +107,24 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password/verify-otp")
-    public ResponseEntity<LoginResponseDTO> verifyForgotPasswordOtp(
+    public ResponseEntity<Map<String, String>> verifyForgotPasswordOtp(
                 @Valid @RequestBody VerifyForgotPasswordOtpDTO request) {
-        User user = passwordRecoveryService.verifyOtp(request.email(), request.otp());
-        String token = jwtUtil.generateToken(user.getEmail(), user.getUserRole(), user.getUserId());
-        return ResponseEntity.ok(new LoginResponseDTO(token, user.getUsername(),
-                user.getUserRole(), user.getUserId(), true));
+        // Verification never logs the user in. It only issues a short-lived,
+        // server-validated reset authorization bound to this account.
+        String resetToken = passwordRecoveryService.verifyOtp(request.email(), request.otp());
+        return ResponseEntity.ok(Map.of(
+                "message", "OTP verified successfully",
+                "resetToken", resetToken));
     }
 
     @PutMapping("/forgot-password/change-password")
     public ResponseEntity<Map<String, String>> changeForgottenPassword(
-                @Valid @RequestBody ResetPasswordDTO request, Authentication authentication) {
+                @Valid @RequestBody ResetPasswordDTO request) {
         if (!request.newPassword().equals(request.confirmPassword())) {
             throw new IllegalStateException("Passwords do not match");
         }
-        passwordRecoveryService.changePassword(authentication.getName(), request.newPassword());
+        passwordRecoveryService.resetPasswordWithGrant(
+                request.email(), request.resetToken(), request.newPassword());
         return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
     }
 
