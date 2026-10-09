@@ -70,6 +70,15 @@ public class Investment {
     @NotBlank
     private String status;
 
+    /**
+     * Stable identifier of the generated seed record this row was created from.
+     * NULL for investments created through the API. The unique constraint makes
+     * seed initialization idempotent: a restart can only insert rows whose
+     * seedKey is not present yet, and it never updates or deletes existing rows.
+     */
+    @Column(unique = true, length = 80)
+    private String seedKey;
+
     public Investment() {}
 
     public Investment(Long investmentId, String name, String description, String type,
@@ -127,4 +136,7 @@ public class Investment {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getSeedKey() { return seedKey; }
+    public void setSeedKey(String seedKey) { this.seedKey = seedKey; }
 }

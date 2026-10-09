@@ -35,8 +35,21 @@ export class HomeComponent implements OnInit {
       return;
     }
 
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // Send the query to the investment page of the section the current user
+    // belongs to. The /usernav routes only accept the "User" role, so an
+    // Admin or SuperAdmin landing there would be bounced back to /login by
+    // the auth guard.
+    const target = this.isAdmin
+      ? ['/adminnav/view-investment']
+      : ['/usernav/view-investments'];
+
     this.router.navigate(
-      ['/usernav/view-investments'],
+      target,
       {
         queryParams: {
           ai: query

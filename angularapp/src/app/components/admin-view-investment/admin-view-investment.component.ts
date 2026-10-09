@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Investment } from 'src/app/models/investment.model';
 import { InvestmentService } from 'src/app/services/investment.service';
 import { AiService } from 'src/app/services/ai.service';
@@ -25,13 +25,24 @@ export class AdminViewInvestmentComponent implements OnInit {
   aiError = '';
   aiResultActive = false;
 
+  // AI query arriving through the URL (?ai=...), applied once investments load
+  private pendingAiQuery = '';
+
   constructor(
     private investmentService: InvestmentService,
     private aiService: AiService,
+    private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      const aiQuery = params['ai'];
+      if (aiQuery) {
+        this.pendingAiQuery = aiQuery;
+        this.applyPendingAiSearch();
+      }
+    });
     this.loadInvestments();
   }
 
@@ -43,9 +54,19 @@ export class AdminViewInvestmentComponent implements OnInit {
         this.types = [...new Set(data.map(i => i.type))];
         this.aiResultActive = false;
         this.aiQuery = '';
+        this.applyPendingAiSearch();
       },
       error: () => this.router.navigate(['/error'])
     });
+  }
+
+  private applyPendingAiSearch(): void {
+    if (!this.pendingAiQuery || this.investments.length === 0) {
+      return;
+    }
+    this.aiQuery = this.pendingAiQuery;
+    this.pendingAiQuery = '';
+    this.onAiSearch();
   }
 
   applyFilter(): void {
