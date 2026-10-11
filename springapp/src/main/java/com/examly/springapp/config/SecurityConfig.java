@@ -70,6 +70,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/change-password")
                         .hasAnyRole("Admin", "SuperAdmin", "User")
 
+                        // Server-side logout: any authenticated role may revoke its own
+                        // token. The JWT filter validates the token first, so an
+                        // invalid or expired token never reaches this handler.
+                        .requestMatchers(HttpMethod.POST, "/api/logout")
+                        .hasAnyRole("User", "Admin", "SuperAdmin")
+
                         // Forgotten-password reset: authorized by the server-validated,
                         // time-limited reset grant issued only after successful OTP
                         // verification — never by a login session or client-supplied ID.

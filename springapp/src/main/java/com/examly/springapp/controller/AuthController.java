@@ -6,8 +6,10 @@ import com.examly.springapp.model.User;
 import com.examly.springapp.service.EmailService;
 import com.examly.springapp.service.OtpService;
 import com.examly.springapp.service.PasswordRecoveryService;
+import com.examly.springapp.service.TokenRevocationService;
 import com.examly.springapp.service.TwilioVerificationService;
 import com.examly.springapp.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,17 +45,20 @@ public class AuthController {
     private final EmailService emailService;
     private final PasswordRecoveryService passwordRecoveryService;
     private final TwilioVerificationService twilioVerificationService;
+    private final TokenRevocationService tokenRevocationService;
 
     public AuthController(UserService userService, JwtUtils jwtUtil,
                           OtpService otpService, EmailService emailService,
                           PasswordRecoveryService passwordRecoveryService,
-                          TwilioVerificationService twilioVerificationService) {
+                          TwilioVerificationService twilioVerificationService,
+                          TokenRevocationService tokenRevocationService) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
         this.otpService = otpService;
         this.emailService = emailService;
         this.passwordRecoveryService = passwordRecoveryService;
         this.twilioVerificationService = twilioVerificationService;
+        this.tokenRevocationService = tokenRevocationService;
     }
 
     @PostMapping("/register")
@@ -174,6 +179,22 @@ public class AuthController {
         String token = jwtUtil.generateToken(loggedIn.getEmail(), loggedIn.getUserRole(), loggedIn.getUserId());
         return ResponseEntity.ok(new LoginResponseDTO(token, loggedIn.getUsername(),
                 loggedIn.getUserRole(), loggedIn.getUserId(), loggedIn.isMustChangePassword()));
+    }
+
+    /**
+     * Server-side logout: revokes the presented JWT so it can no longer authenticate
+     * any request, even if a copy of it survives outside the browser. The revocation
+     * is recorded as a SHA-256 hash in {@code revoked_tokens}; JwtAuthenticationFilter
+     * rejects revoked tokens with 401. Only tokens that passed the filter reach here,
+     * so the header is always present and valid.
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            tokenRevocationService.revoke(authHeader.substring(7));
+        }
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
     @PutMapping("/change-password")

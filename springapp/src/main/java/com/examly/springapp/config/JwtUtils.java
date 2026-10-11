@@ -53,6 +53,11 @@ return Keys.hmacShaKeyFor(secret.getBytes());
         return (Long) userId;
     }
 
+    /** The token's own expiry ({@code exp} claim) — used to bound token-revocation rows. */
+    public Date extractExpiration(String token) {
+        return getClaims(token).getExpiration();
+    }
+
     public boolean isTokenValid(String token) {
         try {
             getClaims(token);

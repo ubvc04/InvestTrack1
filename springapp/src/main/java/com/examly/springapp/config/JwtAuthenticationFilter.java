@@ -2,6 +2,7 @@ package com.examly.springapp.config;
 
 import com.examly.springapp.model.User;
 import com.examly.springapp.repository.UserRepo;
+import com.examly.springapp.service.TokenRevocationService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,6 +53,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private UserRepo userRepo;
 
+    @Autowired
+    private TokenRevocationService tokenRevocationService;
+
     /*
      * Completely skip JWT filtering for public APIs.
      */
@@ -81,7 +85,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7);
 
             try {
-                if (jwtUtil.isTokenValid(token)) {
+                /*
+                 * A token is only trusted when its signature/expiry are valid AND it
+                 * was not revoked by a server-side logout (TokenRevocationService).
+                 * A revoked token is treated exactly like an invalid one: no
+                 * authentication is set, so the security layer rejects it with 401.
+                 * If the revocation lookup itself fails, the catch below clears the
+                 * context too — the check fails closed, never open.
+                 */
+                if (jwtUtil.isTokenValid(token)
+                        && !tokenRevocationService.isRevoked(token)) {
 
                     String email = jwtUtil.extractEmail(token);
                     String role = jwtUtil.extractRole(token);
