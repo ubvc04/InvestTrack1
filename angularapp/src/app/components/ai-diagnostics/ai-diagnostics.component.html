@@ -9,7 +9,7 @@
       <h2>AI Agent Diagnostics</h2>
 
       <p>
-        Every check below runs against the live backend: real Gemini requests, real MySQL
+        Every check below runs against the live backend: real Groq requests, real MySQL
         retrieval, real deterministic scoring. Nothing is simulated — if a part of the AI
         search pipeline is broken, it fails here honestly.
       </p>
@@ -34,7 +34,7 @@
     <i class="bi bi-exclamation-triangle"></i> {{ runError }}
   </p>
 
-  <!-- Backend + Gemini connectivity -->
+  <!-- Backend + Groq connectivity -->
 
   <section class="diag-grid">
 
@@ -62,7 +62,7 @@
 
       <div class="diag-card-head">
 
-        <span class="diag-card-title"><i class="bi bi-stars"></i> Gemini API connectivity</span>
+        <span class="diag-card-title"><i class="bi bi-stars"></i> Groq API connectivity</span>
 
         <span
           class="diag-badge"
@@ -78,7 +78,7 @@
 
       </div>
 
-      <p *ngIf="healthLoading && !health">Checking live Gemini connectivity…</p>
+      <p *ngIf="healthLoading && !health">Checking live Groq connectivity…</p>
 
       <p class="diag-error" *ngIf="healthError">
         <i class="bi bi-exclamation-triangle"></i> {{ healthError }}

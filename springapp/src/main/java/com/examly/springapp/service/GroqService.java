@@ -1,8 +1,8 @@
 package com.examly.springapp.service;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
@@ -10,20 +10,24 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
 
 /**
- * Google Gemini API client (REST, {@code v1beta}) used for natural-language criteria
- * interpretation, embeddings and connectivity health checks.
+ * Groq API client (OpenAI-compatible chat completions) used for natural-language
+ * criteria interpretation and connectivity health checks.
  *
  * <h2>Security</h2>
- * The API key is sent in the {@code x-goog-api-key} header — never as a URL query
- * parameter — so the key cannot leak through logged URLs, exception messages or
+ * The API key is sent in the {@code Authorization: Bearer} header — never as a URL
+ * query parameter — so the key cannot leak through logged URLs, exception messages or
  * access logs. The key is never returned from this service or logged.
+ *
+ * <h2>Embeddings</h2>
+ * The configured Groq account exposes no embedding model, so {@link #embed(String)}
+ * deliberately returns {@code null} and {@link #embedBatch} returns an empty list.
+ * Callers (such as the legacy lexical search) already treat that as "unavailable"
+ * and fall back to deterministic local ranking — no semantic ranking is ever faked.
  *
  * <h2>Error handling</h2>
  * Every generation call returns a {@link GenerationOutcome} carrying a sanitized
@@ -34,9 +38,9 @@ import java.util.Collections;
  * without a category and latency measurement.
  */
 @Service
-public class GeminiService {
+public class GroqService {
 
-    private static final Logger logger = LoggerFactory.getLogger(GeminiService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GroqService.class);
 
     /** Sanitized error categories shared with the health check and diagnostics panel. */
     public static final String CAT_OK = "OK";
@@ -48,21 +52,18 @@ public class GeminiService {
     public static final String CAT_NETWORK = "NETWORK_ERROR";
     public static final String CAT_INVALID = "INVALID_RESPONSE";
 
-    private static final String API_BASE = "https://generativelanguage.googleapis.com/v1beta/models/";
+    private static final String API_BASE = "https://api.groq.com/openai/v1/";
 
     private final RestTemplate restTemplate;
 
-    @Value("${gemini.api.key:}")
+    @Value("${groq.api.key:}")
     private String apiKey;
 
-    @Value("${gemini.embedding.model:gemini-embedding-001}")
-    private String embeddingModel;
-
-    @Value("${gemini.generation.model:gemini-2.5-flash}")
+    @Value("${groq.model:openai/gpt-oss-120b}")
     private String generationModel;
 
-    public GeminiService() {
-        // Bounded timeouts: a hung Gemini call must not hang the search request.
+    public GroqService() {
+        // Bounded timeouts: a hung Groq call must not hang the search request.
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(5_000);
         factory.setReadTimeout(45_000);
@@ -94,97 +95,26 @@ public class GeminiService {
         return generationModel == null ? "" : generationModel.trim();
     }
 
+    /**
+     * Semantic embedding lookup. The configured Groq account has no embedding model,
+     * so this always returns {@code null}: callers must use their deterministic
+     * local fallback rather than any fabricated vector.
+     */
     public float[] embed(String text) {
-        if (!isEnabled() || text == null || text.isBlank()) {
-            return null;
+        if (isEnabled()) {
+            logger.debug("Groq account exposes no embedding model; semantic ranking unavailable");
         }
-
-        try {
-            Map<String, Object> requestBody = new HashMap<>();
-            Map<String, Object> content = new HashMap<>();
-            Map<String, Object> part = new HashMap<>();
-            part.put("text", text);
-            content.put("parts", List.of(part));
-            requestBody.put("content", content);
-
-            Map<String, Object> response = postWithHeaderAuth(
-                    API_BASE + embeddingModel.trim() + ":embedContent", requestBody, Map.class);
-
-            if (response == null || response.get("embedding") == null) {
-                return null;
-            }
-
-            Object embeddingValue = ((Map<?, ?>) response.get("embedding")).get("values");
-            if (!(embeddingValue instanceof List<?> values)) {
-                return null;
-            }
-
-            float[] embedding = new float[values.size()];
-            for (int i = 0; i < values.size(); i++) {
-                Object raw = values.get(i);
-                if (raw instanceof Number number) {
-                    embedding[i] = number.floatValue();
-                } else {
-                    return null;
-                }
-            }
-            return embedding;
-        } catch (RestClientException e) {
-            logger.warn("Gemini embedding request failed ({}); AI search will use fallback ranking",
-                    categorize(e).category());
-            return null;
-        }
+        return null;
     }
 
+    /** Batch variant of {@link #embed(String)}; always empty for the same reason. */
     public List<float[]> embedBatch(List<String> texts) {
-        if (!isEnabled() || texts == null || texts.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        try {
-            List<Map<String, Object>> requests = new ArrayList<>();
-            for (String text : texts) {
-                requests.add(Map.of(
-                        "model", "models/" + embeddingModel.trim(),
-                        "content", Map.of("parts", List.of(Map.of("text", text)))
-                ));
-            }
-
-            Map<String, Object> response = postWithHeaderAuth(
-                    API_BASE + embeddingModel.trim() + ":batchEmbedContents",
-                    Map.of("requests", requests), Map.class);
-
-            Object embeddingsValue = response == null ? null : response.get("embeddings");
-            if (!(embeddingsValue instanceof List<?> embeddings)) {
-                return Collections.emptyList();
-            }
-
-            List<float[]> result = new ArrayList<>();
-            for (Object embeddingValue : embeddings) {
-                if (!(embeddingValue instanceof Map<?, ?> embeddingMap)
-                        || !(embeddingMap.get("values") instanceof List<?> values)) {
-                    return Collections.emptyList();
-                }
-                float[] vector = new float[values.size()];
-                for (int i = 0; i < values.size(); i++) {
-                    if (!(values.get(i) instanceof Number number)) {
-                        return Collections.emptyList();
-                    }
-                    vector[i] = number.floatValue();
-                }
-                result.add(vector);
-            }
-            return result;
-        } catch (RestClientException e) {
-            logger.warn("Gemini batch embedding request failed ({}); AI search will use fallback ranking",
-                    categorize(e).category());
-            return Collections.emptyList();
-        }
+        return List.of();
     }
 
     /**
      * Simple generation call kept for compatibility. Returns the generated text or an
-     * empty string when Gemini is disabled or the call failed — use
+     * empty string when Groq is disabled or the call failed — use
      * {@link #generateDetailed(String, boolean)} when the error category is needed.
      */
     public String generate(String prompt) {
@@ -194,8 +124,8 @@ public class GeminiService {
     /**
      * Generation call with a structured outcome.
      *
-     * @param fast when {@code true} thinking is disabled for a small, cheap, fast reply
-     *             (used for health probes and criteria JSON extraction)
+     * @param fast when {@code true} a small, cheap, fast reply is requested (used for
+     *             health probes and criteria JSON extraction)
      */
     public GenerationOutcome generateDetailed(String prompt, boolean fast) {
         long started = System.currentTimeMillis();
@@ -210,41 +140,30 @@ public class GeminiService {
         }
 
         Map<String, Object> requestBody = new HashMap<>();
-        List<Map<String, Object>> contents = new ArrayList<>();
-        Map<String, Object> part = new HashMap<>();
-        part.put("text", prompt);
-        contents.add(Map.of("parts", List.of(part)));
-        requestBody.put("contents", contents);
-
-        Map<String, Object> generationConfig = new HashMap<>();
-        generationConfig.put("temperature", 0.2);
-        generationConfig.put("maxOutputTokens", fast ? 1024 : 8192);
-        if (fast) {
-            generationConfig.put("thinkingConfig", Map.of("thinkingBudget", 0));
-        }
-        requestBody.put("generationConfig", generationConfig);
+        requestBody.put("model", model);
+        requestBody.put("messages", List.of(Map.of("role", "user", "content", prompt)));
+        requestBody.put("temperature", 0.2);
+        requestBody.put("max_tokens", fast ? 1024 : 8192);
 
         try {
-            Map<String, Object> response = postWithHeaderAuth(
-                    API_BASE + model + ":generateContent", requestBody, Map.class);
+            Map<?, ?> response = postWithHeaderAuth(
+                    API_BASE + "chat/completions", requestBody, Map.class);
             long latency = System.currentTimeMillis() - started;
 
-            if (response == null || !(response.get("candidates") instanceof List<?> candidates)
-                    || candidates.isEmpty()) {
-                logger.warn("Gemini returned no candidates (model={}, latency={}ms)", model, latency);
+            if (response == null || !(response.get("choices") instanceof List<?> choices)
+                    || choices.isEmpty()) {
+                logger.warn("Groq returned no choices (model={}, latency={}ms)", model, latency);
                 return new GenerationOutcome(false, "", CAT_INVALID, 200, latency, model);
             }
 
-            Map<?, ?> candidate = (Map<?, ?>) candidates.get(0);
-            if (!(candidate.get("content") instanceof Map<?, ?> contentMap)
-                    || !(contentMap.get("parts") instanceof List<?> parts)
-                    || parts.isEmpty()) {
-                logger.warn("Gemini candidate carried no text parts (model={}, latency={}ms)",
-                        model, latency);
+            Object first = choices.get(0);
+            if (!(first instanceof Map<?, ?> choice)
+                    || !(choice.get("message") instanceof Map<?, ?> message)) {
+                logger.warn("Groq choice carried no message (model={}, latency={}ms)", model, latency);
                 return new GenerationOutcome(false, "", CAT_INVALID, 200, latency, model);
             }
 
-            Object text = ((Map<?, ?>) parts.get(0)).get("text");
+            Object text = message.get("content");
             String generated = text == null ? "" : text.toString();
             if (generated.isBlank()) {
                 return new GenerationOutcome(false, "", CAT_INVALID, 200, latency, model);
@@ -253,7 +172,7 @@ public class GeminiService {
         } catch (RestClientException exception) {
             long latency = System.currentTimeMillis() - started;
             ErrorCategory categorized = categorize(exception);
-            logger.warn("Gemini generation failed: category={}, status={}, model={}, latency={}ms",
+            logger.warn("Groq generation failed: category={}, status={}, model={}, latency={}ms",
                     categorized.category(), categorized.httpStatus(), model, latency);
             return new GenerationOutcome(false, "", categorized.category(),
                     categorized.httpStatus(), latency, model);
@@ -270,15 +189,14 @@ public class GeminiService {
         String model = getGenerationModel();
         if (!isEnabled()) {
             return new HealthReport(false, model, false, "NOT_CONFIGURED", CAT_DISABLED,
-                    0, 0, "No Gemini API key is configured; AI search uses the deterministic "
+                    0, 0, "No Groq API key is configured; AI search uses the deterministic "
                     + "fallback engine.", checkedAt);
         }
 
         GenerationOutcome outcome = generateDetailed(
                 "Health check. Reply with exactly: PONG", true);
         if (outcome.success()) {
-            return new HealthReport(true, model, true, "UP", CAT_OK, outcome.latencyMs() > 0
-                    ? 200 : 200, outcome.latencyMs(),
+            return new HealthReport(true, model, true, "UP", CAT_OK, 200, outcome.latencyMs(),
                     "Model replied to a live test request.", checkedAt);
         }
 
@@ -303,7 +221,7 @@ public class GeminiService {
             }
             case CAT_NETWORK -> {
                 status = "NETWORK_ERROR";
-                detail = "The Gemini endpoint could not be reached from this server.";
+                detail = "The Groq endpoint could not be reached from this server.";
             }
             case "BAD_REQUEST" -> {
                 status = "BAD_REQUEST";
@@ -322,11 +240,11 @@ public class GeminiService {
     // Internals
     // ---------------------------------------------------------------------------------
 
-    /** POSTs to the Gemini API with the key in a header (never in the URL). */
+    /** POSTs to the Groq API with the key in a header (never in the URL). */
     private <T> T postWithHeaderAuth(String url, Object body, Class<T> type) {
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-        headers.set("x-goog-api-key", normalizedApiKey());
+        headers.set("Authorization", "Bearer " + normalizedApiKey());
         return restTemplate.postForObject(url, new org.springframework.http.HttpEntity<>(body, headers), type);
     }
 

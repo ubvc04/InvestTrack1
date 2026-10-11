@@ -96,7 +96,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/investments")
                         .hasAnyRole("Admin", "SuperAdmin")
 
-                        // AI diagnostics — Gemini health probe and the A-H test suite run
+                        // AI diagnostics — Groq health probe and the A-H test suite run
                         // real external API calls and exercise the full pipeline, so they are
                         // restricted to administrators. The API key is never exposed.
                         .requestMatchers(HttpMethod.GET, "/api/ai/health")

@@ -19,7 +19,7 @@ import java.util.Locale;
  * Executes the real AI-agent test suite against the live backend.
  *
  * <p>Every case runs through the same {@link AiMatchService#search(String)} pipeline the
- * UI uses — real Gemini interpretation (when configured), real MySQL retrieval, real
+ * UI uses — real Groq interpretation (when configured), real MySQL retrieval, real
  * deterministic scoring — and the verdict is computed from the actual response. No case
  * is simulated and no verdict is hardcoded to succeed.</p>
  */
@@ -29,13 +29,13 @@ public class AiDiagnosticsService {
     private static final Logger logger = LoggerFactory.getLogger(AiDiagnosticsService.class);
 
     private final AiMatchService aiMatchService;
-    private final GeminiService geminiService;
+    private final GroqService groqService;
     private final InvestmentRepo investmentRepo;
 
-    public AiDiagnosticsService(AiMatchService aiMatchService, GeminiService geminiService,
+    public AiDiagnosticsService(AiMatchService aiMatchService, GroqService groqService,
                                 InvestmentRepo investmentRepo) {
         this.aiMatchService = aiMatchService;
-        this.geminiService = geminiService;
+        this.groqService = groqService;
         this.investmentRepo = investmentRepo;
     }
 
@@ -70,7 +70,7 @@ public class AiDiagnosticsService {
                     "Recognise the missing risk tolerance, horizon, budget and goal and ask for "
                     + "clarification instead of naming an arbitrary winner."));
 
-    /** Runs backend + Gemini connectivity checks and the full A-H suite. */
+    /** Runs backend + Groq connectivity checks and the full A-H suite. */
     public AiDiagnosticsDTO runAll() {
         long started = System.currentTimeMillis();
 
@@ -88,8 +88,8 @@ public class AiDiagnosticsService {
             records = 0;
         }
 
-        GeminiService.HealthReport health = geminiService.healthCheck();
-        AiDiagnosticsDTO.GeminiCheck gemini = new AiDiagnosticsDTO.GeminiCheck(
+        GroqService.HealthReport health = groqService.healthCheck();
+        AiDiagnosticsDTO.GroqCheck groq = new AiDiagnosticsDTO.GroqCheck(
                 health.configured(), health.model(), health.up(), health.status(),
                 health.errorCategory(), health.httpStatus(), health.latencyMs(), health.detail());
 
@@ -98,9 +98,9 @@ public class AiDiagnosticsService {
             tests.add(runCase(testCase));
         }
 
-        logger.info("AI diagnostics suite finished in {}ms: gemini={}, cases={}, records={}",
+        logger.info("AI diagnostics suite finished in {}ms: groq={}, cases={}, records={}",
                 System.currentTimeMillis() - started, health.status(), tests.size(), records);
-        return new AiDiagnosticsDTO(Instant.now().toString(), backend, gemini, tests);
+        return new AiDiagnosticsDTO(Instant.now().toString(), backend, groq, tests);
     }
 
     private AiDiagnosticsDTO.TestCaseResult runCase(TestCase testCase) {

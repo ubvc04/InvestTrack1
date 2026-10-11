@@ -5,13 +5,13 @@ import java.util.List;
 /**
  * AI search response with deterministic match percentages and an analysis panel.
  *
- * @param semanticRankingUsed {@code true} only when Gemini actually interpreted the query;
+ * @param semanticRankingUsed {@code true} only when Groq actually interpreted the query;
  *                            {@code false} when the documented deterministic fallback engine ran
  * @param analysis            overall suggestion / analysis panel content
  * @param threshold           configured minimum match percentage (from configuration)
  * @param evaluatedCount      every eligible investment that was scored (not just the returned page)
  * @param matchedCount        investments that reached the threshold (size of {@code results})
- * @param engine              {@code "gemini-criteria"} or {@code "deterministic-fallback"}
+ * @param engine              {@code "groq-criteria"} or {@code "deterministic-fallback"}
  * @param excludedCount       records that verifiably contradicted at least one stated criterion
  *                            and were excluded before ranking (mandatory criteria)
  * @param heldBackCount       records held back because the stored data could not verify a

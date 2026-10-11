@@ -27,15 +27,15 @@ public class AiService {
     private static final Logger logger = LoggerFactory.getLogger(AiService.class);
 
     private final InvestmentRepo investmentRepository;
-    private final GeminiService geminiService;
+    private final GroqService groqService;
     private final double similarityThreshold;
 
     private final Map<Long, CachedEmbedding> embeddingCache = new ConcurrentHashMap<>();
 
-    public AiService(InvestmentRepo investmentRepository, GeminiService geminiService,
-                     @Value("${gemini.similarity.threshold:0.18}") double similarityThreshold) {
+    public AiService(InvestmentRepo investmentRepository, GroqService groqService,
+                     @Value("${groq.similarity.threshold:0.18}") double similarityThreshold) {
         this.investmentRepository = investmentRepository;
-        this.geminiService = geminiService;
+        this.groqService = groqService;
         this.similarityThreshold = similarityThreshold;
     }
 
@@ -47,9 +47,9 @@ public class AiService {
             return investments;
         }
 
-        if (geminiService.isEnabled()) {
+        if (groqService.isEnabled()) {
             try {
-                float[] queryVector = geminiService.embed(normalizedQuery);
+                float[] queryVector = groqService.embed(normalizedQuery);
                 if (queryVector != null) {
                     List<ScoredInvestment> scored = new ArrayList<>();
                     Map<Long, float[]> investmentVectors = getEmbeddingsForInvestments(investments);
@@ -81,7 +81,7 @@ public class AiService {
             } catch (UnrelatedInvestmentQueryException exception) {
                 throw exception;
             } catch (RuntimeException exception) {
-                logger.warn("Gemini semantic search failed; using lexical search fallback", exception);
+                logger.warn("Groq semantic search failed; using lexical search fallback", exception);
             }
         }
 
@@ -111,7 +111,7 @@ public class AiService {
             if (!uncachedProfiles.isEmpty()) {
                 for (int start = 0; start < uncachedProfiles.size(); start += 100) {
                     int end = Math.min(start + 100, uncachedProfiles.size());
-                    List<float[]> generated = geminiService.embedBatch(uncachedProfiles.subList(start, end));
+                    List<float[]> generated = groqService.embedBatch(uncachedProfiles.subList(start, end));
                     if (generated.size() == end - start) {
                         for (int i = 0; i < generated.size(); i++) {
                             int index = start + i;

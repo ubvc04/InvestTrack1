@@ -5,7 +5,7 @@ import { AiAgentHealth, AiDiagnosticsReport } from 'src/app/models/ai-diagnostic
 /**
  * AI Agent Diagnostics (administrators only).
  *
- * Executes real checks against the live backend: Gemini connectivity (one small live
+ * Executes real checks against the live backend: Groq connectivity (one small live
  * model request), investment database retrieval, natural-language parsing, mandatory
  * filtering, matching/ranking and result validation — each natural-language case (A-H)
  * runs through the exact same /api/ai/search/detailed pipeline the UI uses. Nothing on
@@ -54,7 +54,7 @@ export class AiDiagnosticsComponent implements OnInit {
     this.aiService.runDiagnostics().subscribe({
       next: (report) => {
         this.report = report;
-        this.health = report.gemini;
+        this.health = report.groq;
         this.running = false;
       },
       error: (error) => {
@@ -69,13 +69,13 @@ export class AiDiagnosticsComponent implements OnInit {
     return this.report ? this.report.tests.filter(test => test.ok).length : 0;
   }
 
-  /** Freshest Gemini health: the suite result when present, otherwise the probe. */
+  /** Freshest Groq health: the suite result when present, otherwise the probe. */
   activeHealth(): AiAgentHealth | null {
-    return this.report ? this.report.gemini : this.health;
+    return this.report ? this.report.groq : this.health;
   }
 
   engineLabel(engine: string | null): string {
-    return engine === 'gemini-criteria' ? 'Gemini' :
+    return engine === 'groq-criteria' ? 'Groq' :
       engine === 'deterministic-fallback' ? 'Deterministic fallback' : '—';
   }
 

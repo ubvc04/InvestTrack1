@@ -20,7 +20,7 @@ import java.util.Map;
  *
  * <p>The service loads every eligible investment from MySQL, asks
  * {@link InvestmentMatchEngine} to extract the criteria stated in the raw user query
- * (Gemini when available, documented deterministic fallback otherwise), scores every single
+ * (Groq when available, documented deterministic fallback otherwise), scores every single
  * record against those criteria, sorts descending and applies the configured match threshold.</p>
  *
  * <p>Configuration:</p>
@@ -122,7 +122,7 @@ public class AiMatchService {
         return new AiSearchResponseDTO(
                 query,
                 overview,
-                InvestmentMatchEngine.ENGINE_GEMINI.equals(plan.source()),
+                InvestmentMatchEngine.ENGINE_GROQ.equals(plan.source()),
                 results,
                 analysis,
                 matchThreshold,

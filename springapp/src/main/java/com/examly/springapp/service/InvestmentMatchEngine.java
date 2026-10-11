@@ -27,11 +27,11 @@ import java.util.regex.Pattern;
  *
  * <h2>Workflow</h2>
  * <ol>
- *   <li>Gemini interprets the unmodified natural-language query and extracts weighted
- *       investment criteria as JSON ({@code engine = "gemini-criteria"}). When Gemini is
+ *   <li>Groq interprets the unmodified natural-language query and extracts weighted
+ *       investment criteria as JSON ({@code engine = "groq-criteria"}). When Groq is
  *       disabled, fails or returns invalid JSON, a documented deterministic keyword/phrase
  *       extractor is used instead and the response is honestly labelled
- *       {@code engine = "deterministic-fallback"} — Gemini is never credited for work it
+ *       {@code engine = "deterministic-fallback"} — Groq is never credited for work it
  *       did not do.</li>
  *   <li>Every eligible investment loaded from MySQL is compared against each extracted
  *       criterion using stored fields only ({@code type}, {@code market}, {@code assetClass},
@@ -53,7 +53,7 @@ import java.util.regex.Pattern;
  *   confidence = verifiable weight / requested weight x 100
  * </pre>
  * <ul>
- *   <li>Weights are taken from the criteria extraction (Gemini or fallback defaults) and
+ *   <li>Weights are taken from the criteria extraction (Groq or fallback defaults) and
  *       normalized so the requested weights total 100.</li>
  *   <li>Only criteria the user actually mentioned are created, so nothing else is penalized.</li>
  *   <li>{@code UNVERIFIABLE} criteria (risk tolerance, investment horizon, liquidity,
@@ -74,7 +74,7 @@ public class InvestmentMatchEngine {
 
     private static final Logger logger = LoggerFactory.getLogger(InvestmentMatchEngine.class);
 
-    public static final String ENGINE_GEMINI = "gemini-criteria";
+    public static final String ENGINE_GROQ = "groq-criteria";
     public static final String ENGINE_FALLBACK = "deterministic-fallback";
 
     public static final String STATE_MATCH = "MATCH";
@@ -247,14 +247,14 @@ public class InvestmentMatchEngine {
                     + "([0-9][0-9,]*(?:\\.[0-9]+)?)\\s*(?:or less|or below|or under|max|maximum)",
             Pattern.CASE_INSENSITIVE);
 
-    private final GeminiService geminiService;
+    private final GroqService groqService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /** Compiled lexicon match patterns, cached per synonym. */
     private final Map<String, Pattern> lexiconPatternCache = new ConcurrentHashMap<>();
 
-    public InvestmentMatchEngine(GeminiService geminiService) {
-        this.geminiService = geminiService;
+    public InvestmentMatchEngine(GroqService groqService) {
+        this.groqService = groqService;
     }
 
     // -------------------------------------------------------------------------------------
@@ -286,7 +286,7 @@ public class InvestmentMatchEngine {
     // -------------------------------------------------------------------------------------
 
     /**
-     * Builds the match plan for a raw user query. Gemini is used when it is available;
+     * Builds the match plan for a raw user query. Groq is used when it is available;
      * otherwise the documented deterministic extractor runs. Both paths may throw
      * {@link UnrelatedInvestmentQueryException} (HTTP 400) for investment-unrelated requests.
      */
@@ -297,50 +297,50 @@ public class InvestmentMatchEngine {
                     "Please enter an investment-related search request.");
         }
 
-        String fallbackDetail = "gemini-disabled: no API key configured, deterministic engine used.";
-        if (geminiService.isEnabled()) {
-            GeminiService.GenerationOutcome outcome =
-                    geminiService.generateDetailed(buildCriteriaPrompt(normalized), true);
+        String fallbackDetail = "groq-disabled: no API key configured, deterministic engine used.";
+        if (groqService.isEnabled()) {
+            GroqService.GenerationOutcome outcome =
+                    groqService.generateDetailed(buildCriteriaPrompt(normalized), true);
             if (!outcome.success() && outcome.retryable()) {
                 // One bounded retry for transient conditions (quota churn, timeouts, blips).
-                logger.info("Gemini criteria call failed with transient category {}; retrying once",
+                logger.info("Groq criteria call failed with transient category {}; retrying once",
                         outcome.errorCategory());
                 try {
                     Thread.sleep(750);
                 } catch (InterruptedException interrupted) {
                     Thread.currentThread().interrupt();
                 }
-                outcome = geminiService.generateDetailed(buildCriteriaPrompt(normalized), true);
+                outcome = groqService.generateDetailed(buildCriteriaPrompt(normalized), true);
             }
             if (outcome.success()) {
                 try {
-                    MatchPlan plan = parseGeminiPlan(outcome.text());
+                    MatchPlan plan = parseGroqPlan(outcome.text());
                     if (plan != null) {
                         if (!plan.investmentRelated()) {
                             throw new UnrelatedInvestmentQueryException(UNRELATED_MESSAGE);
                         }
-                        MatchPlan geminiPlan = new MatchPlan(plan.interpretation(), true,
-                                ENGINE_GEMINI, plan.criteria(),
+                        MatchPlan groqPlan = new MatchPlan(plan.interpretation(), true,
+                                ENGINE_GROQ, plan.criteria(),
                                 "model " + outcome.model() + ", interpreted in " + outcome.latencyMs() + "ms");
-                        logger.info("Gemini extracted {} investment criteria (model={}, latency={}ms)",
-                                geminiPlan.criteria().size(), outcome.model(), outcome.latencyMs());
-                        return geminiPlan;
+                        logger.info("Groq extracted {} investment criteria (model={}, latency={}ms)",
+                                groqPlan.criteria().size(), outcome.model(), outcome.latencyMs());
+                        return groqPlan;
                     }
-                    logger.warn("Gemini criteria extraction returned unusable JSON; "
+                    logger.warn("Groq criteria extraction returned unusable JSON; "
                             + "using the deterministic fallback engine");
-                    fallbackDetail = "gemini returned unusable criteria JSON; deterministic engine used.";
+                    fallbackDetail = "groq returned unusable criteria JSON; deterministic engine used.";
                 } catch (UnrelatedInvestmentQueryException exception) {
                     throw exception;
                 } catch (RuntimeException exception) {
-                    logger.warn("Gemini criteria parsing failed; using the deterministic fallback engine",
+                    logger.warn("Groq criteria parsing failed; using the deterministic fallback engine",
                             exception);
-                    fallbackDetail = "gemini criteria response could not be parsed; deterministic engine used.";
+                    fallbackDetail = "groq criteria response could not be parsed; deterministic engine used.";
                 }
             } else {
-                fallbackDetail = "gemini unavailable [" + outcome.errorCategory()
+                fallbackDetail = "groq unavailable [" + outcome.errorCategory()
                         + (outcome.httpStatus() > 0 ? " HTTP " + outcome.httpStatus() : "")
                         + "]; deterministic engine used.";
-                logger.warn("Gemini criteria extraction failed: {}", fallbackDetail);
+                logger.warn("Groq criteria extraction failed: {}", fallbackDetail);
             }
         }
 
@@ -387,7 +387,7 @@ public class InvestmentMatchEngine {
                 """ + promptSafe(query);
     }
 
-    private MatchPlan parseGeminiPlan(String generated) {
+    private MatchPlan parseGroqPlan(String generated) {
         if (generated == null || generated.isBlank()) {
             return null;
         }
@@ -419,16 +419,16 @@ public class InvestmentMatchEngine {
                 }
             }
             if (!investmentRelated) {
-                return new MatchPlan(interpretation, false, ENGINE_GEMINI, List.of(), null);
+                return new MatchPlan(interpretation, false, ENGINE_GROQ, List.of(), null);
             }
             if (interpretation.isBlank() && criteria.isEmpty()) {
                 return null;
             }
             return new MatchPlan(interpretation.isBlank()
                     ? "Investment search based on your request." : limit(interpretation, 300),
-                    true, ENGINE_GEMINI, List.copyOf(criteria), null);
+                    true, ENGINE_GROQ, List.copyOf(criteria), null);
         } catch (Exception exception) {
-            logger.warn("Gemini criteria JSON could not be parsed: {}", exception.getMessage());
+            logger.warn("Groq criteria JSON could not be parsed: {}", exception.getMessage());
             return null;
         }
     }
@@ -452,9 +452,9 @@ public class InvestmentMatchEngine {
     }
 
     /**
-     * Deterministic, documented fallback criteria extractor. Used only when Gemini is
+     * Deterministic, documented fallback criteria extractor. Used only when Groq is
      * unavailable or returned unusable output; the response is labelled
-     * {@link #ENGINE_FALLBACK} so the UI never presents it as Gemini-generated.
+     * {@link #ENGINE_FALLBACK} so the UI never presents it as Groq-generated.
      */
     private MatchPlan fallbackPlan(String query) {
         String text = " " + query.toLowerCase(Locale.ROOT) + " ";
@@ -967,8 +967,8 @@ public class InvestmentMatchEngine {
     public String buildOverview(MatchPlan plan, int evaluated, int matched, int excluded,
                                 int heldBack, int threshold, int highestScore) {
         String engineNote = ENGINE_FALLBACK.equals(plan.source())
-                ? " Gemini was unavailable, so the documented deterministic fallback engine was used."
-                : " Criteria were interpreted by Gemini and scored deterministically in the backend.";
+                ? " Groq was unavailable, so the documented deterministic fallback engine was used."
+                : " Criteria were interpreted by Groq and scored deterministically in the backend.";
         StringBuilder notes = new StringBuilder();
         if (excluded > 0) {
             notes.append(' ').append(excluded).append(" record")

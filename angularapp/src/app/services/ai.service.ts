@@ -42,7 +42,7 @@ export class AiService {
   }
 
   /**
-   * Live Gemini connectivity probe (administrators only). Sends one small real request
+   * Live Groq connectivity probe (administrators only). Sends one small real request
    * to the configured model and returns its status, latency and a sanitized error
    * category. The API key is never exposed.
    */

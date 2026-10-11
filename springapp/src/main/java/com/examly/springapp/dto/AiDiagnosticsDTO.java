@@ -4,27 +4,27 @@ import java.util.List;
 
 /**
  * AI agent diagnostics report. Every number and verdict is computed from real backend
- * checks against the live database and the live Gemini API - nothing is simulated.
+ * checks against the live database and the live Groq API - nothing is simulated.
  *
  * @param backend connectivity and data-store check for this Spring Boot application
- * @param gemini  live Gemini API connectivity probe (one small real request)
+ * @param groq    live Groq API connectivity probe (one small real request)
  * @param tests   the natural-language test suite (A-H), each executed through the same
  *                {@code /api/ai/search/detailed} pipeline used by the UI
  */
 public record AiDiagnosticsDTO(
         String generatedAt,
         BackendCheck backend,
-        GeminiCheck gemini,
+        GroqCheck groq,
         List<TestCaseResult> tests) {
 
     /** Backend connectivity / retrieval check. */
     public record BackendCheck(boolean ok, String detail, long investmentRecords) {
     }
 
-    /** Gemini connectivity probe. Never exposes the API key. */
-    public record GeminiCheck(boolean configured, String model, boolean up, String status,
-                              String errorCategory, int httpStatus, long latencyMs,
-                              String detail) {
+    /** Groq connectivity probe. Never exposes the API key. */
+    public record GroqCheck(boolean configured, String model, boolean up, String status,
+                            String errorCategory, int httpStatus, long latencyMs,
+                            String detail) {
     }
 
     /** One executed natural-language test case. */

@@ -1,4 +1,4 @@
-/** Live Gemini connectivity probe result (administrators only). */
+/** Live Groq connectivity probe result (administrators only). */
 export interface AiAgentHealth {
   configured: boolean;
   model: string;
@@ -45,6 +45,6 @@ export interface AiDiagnosticsTestCase {
 export interface AiDiagnosticsReport {
   generatedAt: string;
   backend: { ok: boolean; detail: string; investmentRecords: number };
-  gemini: AiAgentHealth;
+  groq: AiAgentHealth;
   tests: AiDiagnosticsTestCase[];
 }

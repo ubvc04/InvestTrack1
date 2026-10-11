@@ -37,14 +37,14 @@ export interface AiAnalysis {
 export interface AiSearchResponse {
   query: string;
   overview: string;
-  /** true only when Gemini actually interpreted the query. */
+  /** true only when Groq actually interpreted the query. */
   semanticRankingUsed: boolean;
   results: AiSearchResult[];
   analysis: AiAnalysis;
   threshold: number;
   evaluatedCount: number;
   matchedCount: number;
-  /** "gemini-criteria" | "deterministic-fallback" */
+  /** "Groq-criteria" | "deterministic-fallback" */
   engine: string;
   /** Records that verifiably contradicted a stated criterion (mandatory exclusion). */
   excludedCount?: number;
