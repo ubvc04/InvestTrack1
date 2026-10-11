@@ -122,7 +122,7 @@ public class AiDiagnosticsService {
                         result.investment() == null ? null : result.investment().type(),
                         result.investment() == null ? null : result.investment().currency(),
                         result.investment() == null ? null : result.investment().currentPrice(),
-                        result.matchPercentage(), result.confidence(), result.explanation()));
+                        result.matchPercentage(), result.dataCoverage(), result.explanation()));
             }
 
             Verdict verdict = judge(testCase.id(), response);

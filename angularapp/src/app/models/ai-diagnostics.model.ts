@@ -19,7 +19,8 @@ export interface AiDiagnosticsTopResult {
   currency: string | null;
   currentPrice: number | null;
   matchPercentage: number;
-  confidence: number;
+  /** Share of the request the stored data could evaluate, 0..100. */
+  dataCoverage: number;
   why: string | null;
 }
 

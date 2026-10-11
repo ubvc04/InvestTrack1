@@ -240,6 +240,7 @@ export class UserViewInvestmentComponent implements OnInit {
   criterionStateLabel(state: string): string {
     switch (state) {
       case 'MATCH': return 'Match';
+      case 'PARTIAL': return 'Partial match';
       case 'MISMATCH': return 'Does not match';
       case 'UNVERIFIABLE': return 'Not verified';
       default: return state;

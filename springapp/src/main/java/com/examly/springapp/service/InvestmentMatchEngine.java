@@ -1,6 +1,7 @@
 package com.examly.springapp.service;
 
 import com.examly.springapp.dto.AiAnalysisDTO;
+import com.examly.springapp.dto.AiCriterionStatusDTO;
 import com.examly.springapp.dto.AiMatchCriterionDTO;
 import com.examly.springapp.exceptions.UnrelatedInvestmentQueryException;
 import com.examly.springapp.model.Investment;
@@ -45,25 +46,45 @@ import java.util.regex.Pattern;
  *
  * <h2>Scoring policy (documented, reproducible)</h2>
  * <pre>
- *   score = sum(weight_i * value_i) over verifiable criteria
- *           ------------------------------------------------ x 100        (0..100, integer)
- *           sum(weight_i) over verifiable criteria
+ *   score = sum(weight_i * credit_i) over ALL requested criteria
+ *           ----------------------------------------------------- x 100        (0..100, integer)
+ *           sum(weight_i) over ALL requested criteria
  *
- *   value_i = 1.0 for MATCH, 0.0 for MISMATCH
- *   confidence = verifiable weight / requested weight x 100
+ *   credit_i = 1.0 for MATCH, 0.0 for MISMATCH, 0.0 for UNVERIFIABLE,
+ *              and a transparent 0..1 factor for PARTIAL (see historical performance below)
+ *
+ *   dataCoverage = sum(weight_i where state != UNVERIFIABLE)
+ *                  ------------------------------------------ x 100
+ *                  sum(weight_i) over ALL requested criteria
  * </pre>
  * <ul>
  *   <li>Weights are taken from the criteria extraction (Groq or fallback defaults) and
  *       normalized so the requested weights total 100.</li>
  *   <li>Only criteria the user actually mentioned are created, so nothing else is penalized.</li>
- *   <li>{@code UNVERIFIABLE} criteria (risk tolerance, investment horizon, liquidity,
- *       volatility, and any criterion whose input cannot be read) are excluded from both the
- *       numerator and the denominator: a missing database field never counts as a mismatch and
- *       never invents a value. The resulting information loss is reported through
- *       {@code confidence} per result and through the analysis panel's unverified list.</li>
- *   <li>If no requested criterion can be verified the score is 0 and the confidence is 0;
- *       the analysis panel explains that the stored data cannot answer the question.</li>
- *   <li>The same query against unchanged data always produces the same percentages.</li>
+ *   <li><b>Unverifiable criteria stay in the denominator.</b> A missing database field never
+ *       counts as a match and never counts as a mismatch — but it does keep the record from
+ *       reaching 100%, because the score only counts criteria the backend actually confirmed.
+ *       This is what stops a "high-risk stocks" query from handing every stock a 100% match
+ *       while risk is unverifiable.</li>
+ *   <li><b>Historical price performance</b> is added by the backend (not the provider) whenever
+ *       a return objective is stated. It is graded from the recorded purchase-to-current price
+ *       change with documented partial credit — full credit at +100% or better, zero credit at
+ *       -20% or worse, linear in between — so every record's score reflects its own stored
+ *       data instead of tying with every other record. It is always labelled as history and
+ *       never presented as evidence of future returns; the forward-looking return objective
+ *       itself stays UNVERIFIABLE.</li>
+ *   <li>{@code dataCoverage} reports how much of the request could be evaluated at all. It
+ *       replaces the old "confidence" percentage, which was easy to misread as a statistical
+ *       confidence.</li>
+ *   <li>{@code matchTier} is {@code FULL_MATCH} only when every requested criterion was
+ *       verified and satisfied; anything else is {@code PARTIAL_MATCH}.</li>
+ *   <li>Criteria are either {@code MANDATORY} hard filters (instrument type, sector, budget,
+ *       geographic market, investment status) that can exclude a record, or {@code PREFERENCE}
+ *       criteria (risk, horizon, liquidity, volatility, income-vs-growth, return objective,
+ *       historical price performance) that only influence ranking.</li>
+ *   <li>The same query against unchanged data always produces the same percentages. Results are
+ *       sorted by confirmed-fit score descending, then data coverage descending, then name,
+ *       symbol and record id — a stable, fully deterministic order.</li>
  * </ul>
  *
  * <p>The percentage measures how closely a record fits the stated criteria. It is not a
@@ -80,6 +101,14 @@ public class InvestmentMatchEngine {
     public static final String STATE_MATCH = "MATCH";
     public static final String STATE_MISMATCH = "MISMATCH";
     public static final String STATE_UNVERIFIABLE = "UNVERIFIABLE";
+    /** Partial credit: the stored evidence supports the criterion only partly (0 < credit < 1). */
+    public static final String STATE_PARTIAL = "PARTIAL";
+
+    public static final String ROLE_MANDATORY = "MANDATORY";
+    public static final String ROLE_PREFERENCE = "PREFERENCE";
+
+    public static final String TIER_FULL = "FULL_MATCH";
+    public static final String TIER_PARTIAL = "PARTIAL_MATCH";
 
     public static final String UNRELATED_MESSAGE =
             "The AI search is designed for investment-related questions. Please ask about asset "
@@ -97,6 +126,12 @@ public class InvestmentMatchEngine {
     public static final String K_GEOGRAPHY = "geography";
     public static final String K_STATUS = "status";
     public static final String K_VOLATILITY = "volatility";
+    /**
+     * Backend-derived preference criterion (never extracted by the provider): the recorded
+     * purchase-to-current price change, graded with partial credit. It differentiates scores
+     * using real stored data while being explicitly labelled as history, not a forecast.
+     */
+    public static final String K_HISTORICAL_PERFORMANCE = "historicalPerformance";
 
     /** Human readable labels used in the UI when the extraction does not supply one. */
     private static final Map<String, String> LABELS = Map.ofEntries(
@@ -110,7 +145,8 @@ public class InvestmentMatchEngine {
             Map.entry(K_RETURN_OBJECTIVE, "Return objective"),
             Map.entry(K_GEOGRAPHY, "Geographic market"),
             Map.entry(K_STATUS, "Investment status"),
-            Map.entry(K_VOLATILITY, "Volatility"));
+            Map.entry(K_VOLATILITY, "Volatility"),
+            Map.entry(K_HISTORICAL_PERFORMANCE, "Historical price performance"));
 
     /** Default relative weights, applied when the extraction does not supply one. */
     private static final Map<String, Double> DEFAULT_WEIGHTS = Map.ofEntries(
@@ -124,7 +160,8 @@ public class InvestmentMatchEngine {
             Map.entry(K_RISK, 25d),
             Map.entry(K_HORIZON, 25d),
             Map.entry(K_LIQUIDITY, 20d),
-            Map.entry(K_VOLATILITY, 20d));
+            Map.entry(K_VOLATILITY, 20d),
+            Map.entry(K_HISTORICAL_PERFORMANCE, 25d));
 
     private static final Set<String> KNOWN_KEYS = Set.of(
             K_CATEGORY, K_SECTOR, K_RISK, K_HORIZON, K_BUDGET, K_LIQUIDITY,
@@ -132,6 +169,24 @@ public class InvestmentMatchEngine {
 
     private static final Set<String> STRUCTURALLY_UNVERIFIABLE = Set.of(
             K_RISK, K_HORIZON, K_LIQUIDITY, K_VOLATILITY);
+
+    /**
+     * Documented grading bounds for the historical price performance criterion: full credit at
+     * +100% recorded price change or better (the holding at least doubled), zero credit at
+     * -20% or worse, linear in between. These bounds are fixed engine policy, not market data.
+     */
+    private static final double HISTORICAL_FULL_CREDIT_AT = 100.0;
+    private static final double HISTORICAL_ZERO_CREDIT_BELOW = -20.0;
+
+    /**
+     * Hard-filter criteria: a verifiable MISMATCH excludes the record, and an unverifiable
+     * outcome holds it back. These are all verifiable filter intents (what kind of thing the
+     * user wants). Preferences — risk, horizon, liquidity, volatility, return objective — are
+     * attributes InvestTrack cannot verify or that look forward, so they only influence
+     * ranking and disclosure and never exclude a record.
+     */
+    private static final Set<String> MANDATORY_KEYS = Set.of(
+            K_CATEGORY, K_SECTOR, K_BUDGET, K_GEOGRAPHY, K_STATUS, K_INCOME_VS_GROWTH);
 
     /** Requested instrument types are mapped onto the canonical values stored in MySQL. */
     private static final Map<String, String> TYPE_ALIASES = new LinkedHashMap<>();
@@ -271,7 +326,8 @@ public class InvestmentMatchEngine {
     }
 
     /** The full outcome of scoring one investment. */
-    public record Evaluation(List<AiMatchCriterionDTO> details, int matchPercentage, int confidence,
+    public record Evaluation(List<AiMatchCriterionDTO> details, int matchPercentage, int dataCoverage,
+                             String matchTier, String historicalPerformance,
                              List<String> matchedLabels, List<String> mismatchedLabels,
                              List<String> unverifiableLabels, String primaryReason,
                              boolean missingVerifiableData) {
@@ -322,6 +378,11 @@ public class InvestmentMatchEngine {
                         MatchPlan groqPlan = new MatchPlan(plan.interpretation(), true,
                                 ENGINE_GROQ, plan.criteria(),
                                 "model " + outcome.model() + ", interpreted in " + outcome.latencyMs() + "ms");
+<<<<<<< HEAD
+=======
+                        groqPlan = withHistoricalPerformance(
+                                withDefaultStatusIfOpportunity(normalized, groqPlan));
+>>>>>>> 2a11b77 (ai)
                         logger.info("Groq extracted {} investment criteria (model={}, latency={}ms)",
                                 groqPlan.criteria().size(), outcome.model(), outcome.latencyMs());
                         return groqPlan;
@@ -348,10 +409,79 @@ public class InvestmentMatchEngine {
         if (!fallback.investmentRelated()) {
             throw new UnrelatedInvestmentQueryException(UNRELATED_MESSAGE);
         }
+        fallback = withHistoricalPerformance(withDefaultStatusIfOpportunity(normalized, fallback));
         logger.info("Fallback engine extracted {} investment criteria (detail: {})",
                 fallback.criteria().size(), fallbackDetail);
         return new MatchPlan(fallback.interpretation(), fallback.investmentRelated(),
                 ENGINE_FALLBACK, fallback.criteria(), fallbackDetail);
+    }
+
+    /**
+     * Opportunity-seeking queries ("show me stocks", "find investments", "what should I buy")
+     * mean the user wants currently-investable holdings, not their own already-sold positions.
+     * When no explicit status was requested and the query is an opportunity search (and not a
+     * request for past/sold holdings), a MANDATORY {@code Active} status filter is added and
+     * disclosed in the interpretation. This keeps Sold records out of recommendation results
+     * without ever hiding them from an explicit historical query.
+     */
+    private MatchPlan withDefaultStatusIfOpportunity(String query, MatchPlan plan) {
+        for (Criterion criterion : plan.criteria()) {
+            if (K_STATUS.equals(criterion.key())) {
+                return plan; // user stated a status explicitly; respect it
+            }
+        }
+        String text = " " + query.toLowerCase(Locale.ROOT) + " ";
+        boolean wantsHistory = containsAnyWord(text, "sold", "already sold", "disposed",
+                "exited", "past holding", "past holdings", "historical holding",
+                "previous holding", "used to own", "i sold", "my sold");
+        if (wantsHistory) {
+            return plan;
+        }
+        boolean opportunityIntent = containsAnyWord(text, "find", "show", "search", "recommend",
+                "suggest", "best", "invest", "investment", "buy", "looking for", "want",
+                "portfolio", "opportunit", "suitable");
+        if (!opportunityIntent) {
+            return plan;
+        }
+        List<Criterion> updated = new ArrayList<>(plan.criteria());
+        updated.add(new Criterion(K_STATUS, LABELS.get(K_STATUS), DEFAULT_WEIGHTS.get(K_STATUS),
+                List.of("Active")));
+        String disclosure = " Currently-investable view: Sold holdings are excluded by default; "
+                + "ask about past or sold holdings to include them.";
+        String interpretation = plan.interpretation() == null ? "" : plan.interpretation();
+        if (!interpretation.contains("Currently-investable view")) {
+            interpretation = (interpretation + disclosure).trim();
+        }
+        return new MatchPlan(interpretation, plan.investmentRelated(), plan.source(),
+                List.copyOf(updated), plan.sourceDetail());
+    }
+
+    /**
+     * When the user states a return objective, the backend derives an additional PREFERENCE
+     * criterion — historical price performance — so each record's own stored price data can
+     * influence its score instead of every record tying on the same verifiable criteria. The
+     * criterion is graded with the documented partial credit and is always labelled as history;
+     * the forward-looking return objective itself remains UNVERIFIABLE.
+     */
+    private MatchPlan withHistoricalPerformance(MatchPlan plan) {
+        boolean hasReturnObjective = false;
+        for (Criterion criterion : plan.criteria()) {
+            if (K_HISTORICAL_PERFORMANCE.equals(criterion.key())) {
+                return plan; // already derived
+            }
+            if (K_RETURN_OBJECTIVE.equals(criterion.key())) {
+                hasReturnObjective = true;
+            }
+        }
+        if (!hasReturnObjective) {
+            return plan;
+        }
+        List<Criterion> updated = new ArrayList<>(plan.criteria());
+        updated.add(new Criterion(K_HISTORICAL_PERFORMANCE,
+                LABELS.get(K_HISTORICAL_PERFORMANCE),
+                DEFAULT_WEIGHTS.get(K_HISTORICAL_PERFORMANCE), List.of()));
+        return new MatchPlan(plan.interpretation(), plan.investmentRelated(), plan.source(),
+                List.copyOf(updated), plan.sourceDetail());
     }
 
     private String buildCriteriaPrompt(String query) {
@@ -519,7 +649,9 @@ public class InvestmentMatchEngine {
         }
 
         String returnObjective = containsAnyWord(text, "high return", "high returns", "strong return",
-                "strong returns", "best performing", "top performing", "outperform", "high growth")
+                "strong returns", "best performing", "top performing", "outperform", "high growth",
+                "potential return", "potential returns", "return potential", "returns potential",
+                "growth potential", "strong potential", "high potential")
                 ? "high"
                 : containsAnyWord(text, "steady return", "stable return", "consistent return",
                 "conservative return") ? "stable" : null;
@@ -584,15 +716,19 @@ public class InvestmentMatchEngine {
         for (Investment investment : investments) {
             scored.add(new Scored(investment, evaluate(criteria, investment)));
         }
-        // Descending match percentage, then descending confidence, then a stable name/symbol
-        // tiebreak. Each .reversed() is scoped to its own key (reversing a composed chain
+        // Descending confirmed-fit percentage, then descending data coverage, then a stable
+        // name/symbol/id tiebreak so the order is fully deterministic even when percentages
+        // are equal. Each .reversed() is scoped to its own key (reversing a composed chain
         // would invert the whole ordering).
         scored.sort(Comparator
                 .comparingInt((Scored item) -> item.evaluation().matchPercentage()).reversed()
                 .thenComparing(Comparator
-                        .comparingInt((Scored item) -> item.evaluation().confidence()).reversed())
+                        .comparingInt((Scored item) -> item.evaluation().dataCoverage()).reversed())
                 .thenComparing(item -> safe(item.investment().getName()), String.CASE_INSENSITIVE_ORDER)
-                .thenComparing(item -> safe(item.investment().getSymbol()), String.CASE_INSENSITIVE_ORDER));
+                .thenComparing(item -> safe(item.investment().getSymbol()), String.CASE_INSENSITIVE_ORDER)
+                .thenComparing(Comparator.comparingLong(
+                        (Scored item) -> item.investment().getInvestmentId() == null
+                                ? Long.MAX_VALUE : item.investment().getInvestmentId())));
         return scored;
     }
 
@@ -624,46 +760,163 @@ public class InvestmentMatchEngine {
         List<String> unverifiable = new ArrayList<>();
 
         double requestedWeight = 0;
-        double verifiableWeight = 0;
+        double evaluableWeight = 0;
         double earnedWeight = 0;
         boolean missingVerifiableData = false;
 
         for (Criterion criterion : criteria) {
             CriterionOutcome outcome = evaluateCriterion(criterion, investment);
+            String role = roleFor(criterion.key());
             requestedWeight += criterion.rawWeight();
             if (!STATE_UNVERIFIABLE.equals(outcome.state())) {
-                verifiableWeight += criterion.rawWeight();
-                if (STATE_MATCH.equals(outcome.state())) {
-                    earnedWeight += criterion.rawWeight();
-                }
+                evaluableWeight += criterion.rawWeight();
             } else if (!STRUCTURALLY_UNVERIFIABLE.contains(criterion.key())) {
                 // The user stated a criterion that stored fields should verify, but this
                 // record carries no evidence either way. That is missing data: the record
                 // must not be presented as a confirmed match for the stated criterion.
                 missingVerifiableData = true;
             }
+            double credit = clampCredit(outcome.credit());
+            earnedWeight += criterion.rawWeight() * credit;
             details.add(new AiMatchCriterionDTO(criterion.label(), outcome.state(),
-                    criterion.rawWeight(), outcome.evidence()));
-            if (STATE_MATCH.equals(outcome.state())) {
-                matched.add(criterion.label());
-            } else if (STATE_MISMATCH.equals(outcome.state())) {
+                    criterion.rawWeight(), outcome.evidence(), role, credit));
+            if (STATE_MISMATCH.equals(outcome.state())) {
                 mismatched.add(criterion.label());
-            } else {
+            } else if (STATE_UNVERIFIABLE.equals(outcome.state())) {
                 unverifiable.add(criterion.label());
+            } else {
+                // MATCH and PARTIAL both contributed to the score and belong on the card.
+                matched.add(criterion.label());
             }
         }
 
-        int score = verifiableWeight <= 0 ? 0
-                : (int) Math.round((earnedWeight / verifiableWeight) * 100.0);
-        int confidence = requestedWeight <= 0 ? 0
-                : (int) Math.round((verifiableWeight / requestedWeight) * 100.0);
+        // Confirmed-fit percentage over the FULL requested weight. Unverifiable criteria stay
+        // in the denominator (they contribute 0 to the numerator), so a result can never reach
+        // 100% while any stated criterion is unverified. Data coverage reports how much of the
+        // request could be evaluated at all.
+        int score = requestedWeight <= 0 ? 0
+                : (int) Math.round((earnedWeight / requestedWeight) * 100.0);
+        int coverage = requestedWeight <= 0 ? 0
+                : (int) Math.round((evaluableWeight / requestedWeight) * 100.0);
+        int clampedScore = clampPercent(score);
+        int clampedCoverage = clampPercent(coverage);
 
-        return new Evaluation(details, clampPercent(score), clampPercent(confidence),
+        String tier = (clampedCoverage >= 100 && clampedScore >= 100) ? TIER_FULL : TIER_PARTIAL;
+        String historical = buildHistoricalPerformance(investment);
+
+        return new Evaluation(details, clampedScore, clampedCoverage, tier, historical,
                 List.copyOf(matched), List.copyOf(mismatched), List.copyOf(unverifiable),
                 primaryReason(details, investment), missingVerifiableData);
     }
 
-    private record CriterionOutcome(String state, String evidence) {
+    /** MANDATORY hard filters versus PREFERENCE ranking criteria. */
+    private String roleFor(String key) {
+        return MANDATORY_KEYS.contains(key) ? ROLE_MANDATORY : ROLE_PREFERENCE;
+    }
+
+    /**
+     * Criteria no stored field can decide for any record: risk, horizon, liquidity and
+     * volatility are not columns in the database, and a return objective is forward-looking
+     * (historical price change is context, never a forecast).
+     */
+    public boolean isAlwaysUnverifiable(String key) {
+        return STRUCTURALLY_UNVERIFIABLE.contains(key) || K_RETURN_OBJECTIVE.equals(key);
+    }
+
+    /** True when not a single evaluated record could be checked for this criterion. */
+    private boolean everyRecordUnverifiable(List<Scored> ranked, String label) {
+        for (Scored item : ranked) {
+            for (AiMatchCriterionDTO detail : item.evaluation().details()) {
+                if (label.equals(detail.criterion())
+                        && !STATE_UNVERIFIABLE.equals(detail.state())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * True when every requested criterion is unverifiable (risk/horizon/liquidity/volatility
+     * or a forward-looking return objective). In that case no record can be ranked honestly,
+     * so the search returns an empty state with the limitation and a rephrasing suggestion
+     * instead of a page of meaningless 0%-matches.
+     */
+    public boolean noVerifiableCriteria(MatchPlan plan) {
+        if (plan.criteria().isEmpty()) {
+            return true;
+        }
+        for (Criterion criterion : plan.criteria()) {
+            if (!isAlwaysUnverifiable(criterion.key())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Historical price context, clearly labelled as past performance and never a forecast.
+     * Returns {@code null} when the record has no comparable price points.
+     */
+    private String buildHistoricalPerformance(Investment investment) {
+        Double purchase = investment.getPurchasePrice();
+        Double current = investment.getCurrentPrice();
+        if (purchase == null || current == null || purchase <= 0) {
+            return null;
+        }
+        double change = ((current - purchase) / purchase) * 100.0;
+        return String.format(Locale.ROOT,
+                "Price change since purchase is %+.1f%% (historical record, not a forecast of future returns).",
+                change);
+    }
+
+    /**
+     * Grades the recorded purchase-to-current price change with the documented partial credit
+     * (full at +100% or better, zero at -20% or worse, linear between), so each record's score
+     * reflects its own stored data instead of tying with every other record. Records without
+     * comparable price points are UNVERIFIABLE for this criterion. The evidence always states
+     * that the figure is history and never a forecast of future returns.
+     */
+    private CriterionOutcome evaluateHistoricalPerformance(Criterion criterion,
+                                                           Investment investment) {
+        Double purchase = investment.getPurchasePrice();
+        Double current = investment.getCurrentPrice();
+        if (purchase == null || current == null || purchase <= 0) {
+            return new CriterionOutcome(STATE_UNVERIFIABLE,
+                    "The record lacks comparable purchase and current prices, so historical "
+                            + "price performance could not be calculated for this investment.");
+        }
+        double change = ((current - purchase) / purchase) * 100.0;
+        double credit = clampCredit((change - HISTORICAL_ZERO_CREDIT_BELOW)
+                / (HISTORICAL_FULL_CREDIT_AT - HISTORICAL_ZERO_CREDIT_BELOW));
+        String state = credit >= 1.0 ? STATE_MATCH
+                : credit <= 0.0 ? STATE_MISMATCH : STATE_PARTIAL;
+        String evidence = String.format(Locale.ROOT,
+                "Recorded price change since purchase is %+.1f%% (history, not a forecast of "
+                        + "future returns). Earned %.0f%% of this criterion's weight "
+                        + "(full credit at %+.0f%% or better, zero credit at %+.0f%% or worse, "
+                        + "linear in between).",
+                change, credit * 100.0, HISTORICAL_FULL_CREDIT_AT, HISTORICAL_ZERO_CREDIT_BELOW);
+        return new CriterionOutcome(state, evidence, credit);
+    }
+
+    /** Keeps criterion credit inside the documented 0..1 range. */
+    private static double clampCredit(double credit) {
+        if (Double.isNaN(credit) || credit < 0.0) {
+            return 0.0;
+        }
+        return Math.min(1.0, credit);
+    }
+
+    /**
+     * One criterion's evaluation. {@code credit} is the share of the criterion's weight that
+     * the stored evidence earns: 1.0 for MATCH, 0.0 for MISMATCH and UNVERIFIABLE, and a
+     * transparent 0..1 factor for PARTIAL (historical price performance).
+     */
+    private record CriterionOutcome(String state, String evidence, double credit) {
+        CriterionOutcome(String state, String evidence) {
+            this(state, evidence, STATE_MATCH.equals(state) ? 1.0 : 0.0);
+        }
     }
 
     private CriterionOutcome evaluateCriterion(Criterion criterion, Investment investment) {
@@ -681,6 +934,7 @@ public class InvestmentMatchEngine {
             case K_BUDGET -> evaluateBudget(criterion, investment);
             case K_INCOME_VS_GROWTH -> evaluateIncomeVsGrowth(criterion, investment);
             case K_RETURN_OBJECTIVE -> evaluateReturnObjective(criterion, investment);
+            case K_HISTORICAL_PERFORMANCE -> evaluateHistoricalPerformance(criterion, investment);
             case K_RISK -> new CriterionOutcome(STATE_UNVERIFIABLE,
                     "Risk tolerance is not stored on investment records, so it was not scored.");
             case K_HORIZON -> new CriterionOutcome(STATE_UNVERIFIABLE,
@@ -935,28 +1189,22 @@ public class InvestmentMatchEngine {
             return new CriterionOutcome(STATE_UNVERIFIABLE,
                     "No return objective was specified in the query.");
         }
-        String wanted = criterion.values().get(0).toLowerCase(Locale.ROOT);
-        boolean wantsHigh = wanted.contains("high") || wanted.contains("strong")
-                || wanted.contains("best") || wanted.contains("outperform");
-        if (!wantsHigh) {
-            return new CriterionOutcome(STATE_UNVERIFIABLE,
-                    "Only recorded price points are stored; steady or low-return behaviour cannot "
-                            + "be verified from two price points.");
-        }
+        // Forward-looking return potential is NOT stored and cannot be established from two
+        // recorded prices. Historical price change is real information but is not a forecast,
+        // so the criterion stays UNVERIFIABLE and the change is reported as labelled context.
         Double purchase = investment.getPurchasePrice();
         Double current = investment.getCurrentPrice();
         if (purchase == null || current == null || purchase <= 0) {
             return new CriterionOutcome(STATE_UNVERIFIABLE,
-                    "The record lacks comparable price points, so the return objective "
-                            + "could not be checked.");
+                    "Future return potential is not stored and cannot be forecast; this record "
+                            + "also lacks comparable price points, so no historical change can be shown.");
         }
         double change = ((current - purchase) / purchase) * 100.0;
-        String evidence = String.format(Locale.ROOT,
-                "Recorded price change since purchase is %+.1f%% (historical record, not a forecast).",
-                change);
-        return change >= 20.0
-                ? new CriterionOutcome(STATE_MATCH, evidence)
-                : new CriterionOutcome(STATE_MISMATCH, evidence);
+        return new CriterionOutcome(STATE_UNVERIFIABLE,
+                String.format(Locale.ROOT,
+                        "Future return potential is not stored and cannot be forecast from two "
+                                + "recorded prices. For context, the price change since purchase is %+.1f%% "
+                                + "(historical performance, not a prediction).", change));
     }
 
     // -------------------------------------------------------------------------------------
@@ -973,13 +1221,13 @@ public class InvestmentMatchEngine {
         if (excluded > 0) {
             notes.append(' ').append(excluded).append(" record")
                     .append(excluded == 1 ? "" : "s")
-                    .append(" failed at least one mandatory criterion and were excluded.");
+                    .append(" failed a mandatory criterion and were excluded.");
         }
         if (heldBack > 0) {
             notes.append(' ').append(heldBack).append(" record")
                     .append(heldBack == 1 ? "" : "s")
-                    .append(" were held back because the stored data could not verify a stated "
-                            + "criterion for them, so they are not presented as matches.");
+                    .append(" were held back because the stored data could not verify the criteria "
+                            + "needed to rank them, so they are not presented as matches.");
         }
         String excludedNote = notes.toString();
         if (evaluated == 0) {
@@ -989,14 +1237,26 @@ public class InvestmentMatchEngine {
             return "Your query did not state any criterion that can be matched against the stored "
                     + "investment fields, so nothing was ranked. " + engineNote;
         }
+        if (noVerifiableCriteria(plan)) {
+            StringBuilder labels = new StringBuilder();
+            for (Criterion criterion : normalizeWeights(plan.criteria())) {
+                if (labels.length() > 0) {
+                    labels.append(", ");
+                }
+                labels.append(criterion.label());
+            }
+            return "None of the stated criteria (" + labels + ") can be verified from InvestTrack's "
+                    + "stored investment data, so no record could be scored honestly and nothing "
+                    + "was presented as a match. " + engineNote;
+        }
         if (matched == 0) {
-            return "No investment reached the " + threshold + "% match threshold out of " + evaluated
-                    + " evaluated records (highest score " + highestScore + "%)." + excludedNote
-                    + engineNote;
+            return "No investment satisfied every mandatory criterion out of " + evaluated
+                    + " evaluated records (highest confirmed-fit score " + highestScore + "%)."
+                    + excludedNote + engineNote;
         }
         return "Matched " + matched + " of " + evaluated + " evaluated investments against "
                 + plan.criteria().size() + " requested criteria." + excludedNote + " Scores are "
-                + "deterministic match percentages calculated from stored investment fields — they "
+                + "confirmed-fit percentages calculated from stored investment fields — they "
                 + "are not predictions, risk ratings or advice." + engineNote;
     }
 
@@ -1011,30 +1271,21 @@ public class InvestmentMatchEngine {
         int matched = passing.size();
         List<Criterion> normalized = normalizeWeights(plan.criteria());
         List<String> requested = new ArrayList<>();
-        for (Criterion criterion : normalized) {
-            requested.add(criterion.label());
-        }
-
+        List<AiCriterionStatusDTO> criteriaStatus = new ArrayList<>();
         List<String> unverified = new ArrayList<>();
         for (Criterion criterion : normalized) {
-            if (STRUCTURALLY_UNVERIFIABLE.contains(criterion.key())) {
-                unverified.add(criterion.label());
-                continue;
+            requested.add(criterion.label());
+            boolean unverifiableNow = isAlwaysUnverifiable(criterion.key());
+            // Data-driven availability: a criterion stored fields should be able to answer is
+            // still reported unverifiable for this query when not a single evaluated record
+            // carried the needed data (e.g. an INR budget against an all-USD database).
+            if (!unverifiableNow && !ranked.isEmpty()) {
+                unverifiableNow = everyRecordUnverifiable(ranked, criterion.label());
             }
-            boolean allUnverifiable = true;
-            for (Scored item : ranked) {
-                for (AiMatchCriterionDTO detail : item.evaluation().details()) {
-                    if (detail.criterion().equals(criterion.label())
-                            && !STATE_UNVERIFIABLE.equals(detail.state())) {
-                        allUnverifiable = false;
-                        break;
-                    }
-                }
-                if (!allUnverifiable) {
-                    break;
-                }
-            }
-            if (allUnverifiable && !ranked.isEmpty()) {
+            String state = unverifiableNow ? STATE_UNVERIFIABLE : "VERIFIED";
+            criteriaStatus.add(new AiCriterionStatusDTO(criterion.label(), state,
+                    roleFor(criterion.key())));
+            if (unverifiableNow) {
                 unverified.add(criterion.label());
             }
         }
@@ -1046,9 +1297,9 @@ public class InvestmentMatchEngine {
         String whyTheyMatch;
         if (matched == 0) {
             int highest = ranked.isEmpty() ? 0 : ranked.get(0).evaluation().matchPercentage();
-            bestMatches = "No investment reached the " + threshold + "% threshold"
+            bestMatches = "No investment satisfied every mandatory criterion"
                     + (ranked.isEmpty() ? "."
-                    : "; the closest candidate scored " + highest + "%.");
+                    : "; the closest candidate confirmed " + highest + "% of the requested weight.");
             whyTheyMatch = ranked.isEmpty()
                     ? "Nothing could be scored because the database contains no investments."
                     : "Closest candidate: " + safe(ranked.get(0).investment().getName()) + " ("
@@ -1073,11 +1324,22 @@ public class InvestmentMatchEngine {
         StringBuilder considerations = new StringBuilder();
         considerations.append("Match percentages describe how closely a record fits your stated ")
                 .append("criteria using stored fields only; they are not a probability of profit, ")
-                .append("a risk rating or a recommendation.");
+                .append("a risk rating or a recommendation. Data coverage reports how much of your ")
+                .append("request could be evaluated at all.");
         if (!unverified.isEmpty()) {
             considerations.append(" Not verifiable from the database: ")
                     .append(String.join(", ", unverified))
-                    .append(" — these were excluded from the score and lowered each result's confidence.");
+                    .append(" — these stay in the score denominator, so no result can reach 100% "
+                            + "while they are unverified.");
+        }
+        for (Criterion criterion : normalized) {
+            if (K_HISTORICAL_PERFORMANCE.equals(criterion.key())) {
+                considerations.append(" Historical price performance is graded from your stored "
+                        + "purchase and current prices (full credit at +100% or better, zero at "
+                        + "-20% or worse, linear between). It describes recorded past results "
+                        + "only and does not establish future returns.");
+                break;
+            }
         }
         if (plan.criteria().isEmpty()) {
             considerations.append(" The query did not state any matchable criterion.");
@@ -1103,7 +1365,8 @@ public class InvestmentMatchEngine {
         }
 
         return new AiAnalysisDTO(objective, bestMatches, whyTheyMatch,
-                considerations.toString(), refine, List.copyOf(requested), List.copyOf(unverified));
+                considerations.toString(), refine, List.copyOf(criteriaStatus),
+                List.copyOf(requested), List.copyOf(unverified));
     }
 
     private String sentenceJoin(List<AiMatchCriterionDTO> details, String state) {
@@ -1129,18 +1392,25 @@ public class InvestmentMatchEngine {
         return builder.toString();
     }
 
-    /** Builds the concise, investment-specific explanation shown on each card. */
+    /**
+     * Builds the concise, investment-specific explanation shown on each card: the confirmed-fit
+     * percentage, every criterion that contributed credit (full or partial) with its stored
+     * evidence, the first contradicted criterion, and every criterion that could not be
+     * verified — so the card always explains its own number.
+     */
     public String buildExplanation(Evaluation evaluation) {
         StringBuilder builder = new StringBuilder();
         builder.append("Match ").append(evaluation.matchPercentage())
-                .append("% (confidence ").append(evaluation.confidence()).append("%).");
+                .append("% (data coverage ").append(evaluation.dataCoverage())
+                .append("%, ").append(TIER_FULL.equals(evaluation.matchTier())
+                        ? "fully verified" : "partial match").append(").");
         int used = 0;
         for (AiMatchCriterionDTO detail : evaluation.details()) {
-            if (!STATE_MATCH.equals(detail.state())) {
+            if (detail.credit() <= 0) {
                 continue;
             }
             builder.append(' ').append(detail.criterion()).append(": ").append(detail.evidence());
-            if (++used >= 2) {
+            if (++used >= 3) {
                 break;
             }
         }
@@ -1151,8 +1421,9 @@ public class InvestmentMatchEngine {
             }
         }
         if (!evaluation.unverifiableLabels().isEmpty()) {
-            builder.append(" Not verified: ")
-                    .append(String.join(", ", evaluation.unverifiableLabels())).append('.');
+            builder.append(" Not earned (not verifiable from stored data): ")
+                    .append(String.join(", ", evaluation.unverifiableLabels()))
+                    .append(" — each stays in the score denominator at zero credit.");
         }
         return builder.toString().trim();
     }

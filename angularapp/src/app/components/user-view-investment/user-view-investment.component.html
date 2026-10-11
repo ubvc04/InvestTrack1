@@ -239,38 +239,88 @@
 
   </div>
 
+  <!-- Criteria rendered once, each with its real evaluation state and role -->
   <div class="ai-criteria-chips">
 
     <span
       class="ai-chip"
-      *ngFor="let criterion of aiResponse.analysis.requestedCriteria">
+      [ngClass]="{ 'ai-chip-unverified': status.state === 'UNVERIFIABLE' }"
+      *ngFor="let status of aiResponse.analysis.criteriaStatus"
+      [title]="status.role === 'MANDATORY'
+        ? 'Hard filter — can exclude a record'
+        : 'Ranking preference — never excludes a record'">
 
-      <i class="bi bi-check2"></i>
-      {{ criterion }}
+      <i
+        class="bi"
+        [ngClass]="status.state === 'VERIFIED' ? 'bi-check2' : 'bi-question-circle'">
+      </i>
 
-    </span>
+      {{ status.label }}
 
-    <span
-      class="ai-chip ai-chip-unverified"
-      *ngFor="let criterion of aiResponse.analysis.unverifiedCriteria">
+      <span class="ai-chip-state">
+        {{ status.state === 'VERIFIED' ? 'verified' : 'not verifiable' }}
+      </span>
 
-      <i class="bi bi-question-circle"></i>
-      {{ criterion }} — not stored
+      <span class="ai-chip-role">
+        {{ status.role === 'MANDATORY' ? 'hard filter' : 'preference' }}
+      </span>
 
     </span>
 
     <span class="ai-chip ai-chip-meta">
+<<<<<<< HEAD
       {{ aiResponse.evaluatedCount }} records evaluated · threshold {{ aiResponse.threshold }}% ·
       engine: {{ aiResponse.engine === 'Groq-criteria' ? 'Groq interpretation' : 'deterministic fallback' }}
+=======
+      {{ aiResponse.evaluatedCount }} records evaluated · strong-match line {{ aiResponse.threshold }}% ·
+      engine: {{ aiResponse.engine === 'groq-criteria' ? 'Groq interpretation' : 'deterministic fallback' }}
+      <span *ngIf="aiResponse.matchedCount">
+        · {{ aiResponse.matchedCount }} matched</span>
+>>>>>>> 2a11b77 (ai)
       <span *ngIf="aiResponse.excludedCount">
-        · {{ aiResponse.excludedCount }} excluded (failed criteria)</span>
+        · {{ aiResponse.excludedCount }} excluded (failed a hard filter)</span>
       <span *ngIf="aiResponse.heldBackCount">
         · {{ aiResponse.heldBackCount }} held back (data could not verify)</span>
+      <span *ngIf="aiResponse.fullMatchCount">
+        · {{ aiResponse.fullMatchCount }} fully verified</span>
     </span>
 
   </div>
 
-  <!-- Empty state: nothing reached the threshold -->
+  <!-- Honest data limitations for this query -->
+  <div
+    class="ai-panel"
+    *ngIf="aiResponse.limitations && aiResponse.limitations.length > 0">
+
+    <div class="ai-panel-item ai-panel-wide">
+
+      <span class="ai-panel-label">
+        <i class="bi bi-exclamation-triangle"></i>
+        Data limitations
+      </span>
+
+      <ul class="ai-limitations-list">
+
+        <li *ngFor="let limitation of aiResponse.limitations">
+          {{ limitation }}
+        </li>
+
+      </ul>
+
+    </div>
+
+  </div>
+
+  <p
+    class="ai-score-definition"
+    *ngIf="aiResponse.matchScoreDefinition"
+    [title]="aiResponse.matchScoreDefinition">
+
+    How scores are calculated: {{ aiResponse.matchScoreDefinition }}
+
+  </p>
+
+  <!-- Empty state: nothing satisfied the mandatory criteria / nothing was verifiable -->
 
   <div
     *ngIf="aiResults.length === 0"
@@ -278,7 +328,9 @@
 
     <i class="bi bi-search"></i>
 
-    <h4>No investment reached the {{ aiResponse.threshold }}% match threshold</h4>
+    <h4>No investment satisfied the criteria of this query</h4>
+
+    <p>{{ aiResponse.overview }}</p>
 
     <p>{{ aiResponse.analysis.refineSuggestion }}</p>
 
@@ -307,9 +359,25 @@
           </span>
 
           <span
+            class="ai-match-tier"
+            [ngClass]="{ 'ai-match-tier-full': result.matchTier === 'FULL_MATCH' }"
+            [title]="result.matchTier === 'FULL_MATCH'
+              ? 'Every requested criterion was verified from stored data and satisfied'
+              : 'Some requested criteria could not be verified from stored data — this is not a fully verified match'">
+
+            <i
+              class="bi"
+              [ngClass]="result.matchTier === 'FULL_MATCH' ? 'bi-patch-check-fill' : 'bi-patch-question'">
+            </i>
+
+            {{ result.matchTier === 'FULL_MATCH' ? 'Fully verified' : 'Partial match' }}
+
+          </span>
+
+          <span
             class="ai-confidence"
-            title="Share of your request that could be verified from the stored investment data">
-            Confidence {{ result.confidence }}%
+            title="Share of your request the stored investment data could evaluate at all (not a statistical confidence)">
+            Data coverage {{ result.dataCoverage }}%
           </span>
 
         </div>
@@ -379,7 +447,7 @@
 
           <div>
             <i class="bi bi-buildings"></i>
-            {{ result.investment.symbol || 'N/A' }}
+            {{ result.investment.symbol || 'N/A' }}<span *ngIf="result.investment.exchange"> · {{ result.investment.exchange }}</span>
           </div>
 
           <div>
@@ -390,6 +458,16 @@
         </div>
 
         <p class="ai-explanation">{{ result.explanation }}</p>
+
+        <p
+          class="ai-historical-note"
+          *ngIf="result.historicalPerformance">
+
+          <i class="bi bi-clock-history"></i>
+
+          {{ result.historicalPerformance }}
+
+        </p>
 
         <button
           type="button"
@@ -414,6 +492,7 @@
             *ngFor="let criterion of result.criteria"
             [ngClass]="{
               'ai-criterion-match': criterion.state === 'MATCH',
+              'ai-criterion-partial': criterion.state === 'PARTIAL',
               'ai-criterion-mismatch': criterion.state === 'MISMATCH',
               'ai-criterion-unverified': criterion.state === 'UNVERIFIABLE'
             }">
@@ -433,7 +512,7 @@
             </span>
 
             <span class="ai-criterion-weight">
-              Weight {{ criterion.weight }}
+              Weight {{ criterion.weight }}<span *ngIf="criterion.credit > 0 && criterion.credit < 1"> · earned {{ criterion.credit * 100 | number:'1.0-1' }}%</span> · {{ criterion.role === 'MANDATORY' ? 'hard filter' : 'preference' }}
             </span>
 
           </li>

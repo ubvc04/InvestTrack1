@@ -36,7 +36,7 @@ public record AiDiagnosticsDTO(
 
     /** The leading genuine matches of one test case, drawn from stored records only. */
     public record TopResult(String name, String symbol, String type, String currency,
-                            Double currentPrice, int matchPercentage, int confidence,
+                            Double currentPrice, int matchPercentage, int dataCoverage,
                             String why) {
     }
 }
