@@ -92,7 +92,7 @@ public class GlobalExceptionHandler {
 
         if (cause.contains("duplicate") && cause.contains("user")) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("An account with that email already exists");
+                    .body("This email is already registered. Please sign in or use another email address.");
         }
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body("The request conflicts with existing data");

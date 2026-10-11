@@ -369,18 +369,29 @@
 
   background: transparent;
 
-  padding: 0;
+  padding: 6px 10px;
+
+  border-radius: 14px;
 
   display: flex;
   align-items: center;
 
   gap: 12px;
+
+  transition: background .25s ease;
+}
+
+.user-menu-btn:hover {
+
+  background: rgba(37, 99, 235, .06);
 }
 
 .user-avatar {
 
   width: 44px;
   height: 44px;
+
+  flex-shrink: 0;
 
   border-radius: 50%;
 
@@ -422,23 +433,47 @@
 
   align-items: flex-start;
 
-  line-height: 1.1;
+  line-height: 1.15;
+
+  gap: 2px;
+
+  min-width: 0;
+
+  max-width: 160px;
 }
 
 .user-name {
 
   color: var(--it-ink);
 
-  font-size: .82rem;
+  font-size: .88rem;
 
   font-weight: 700;
+
+  max-width: 160px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
 }
 
 .user-role-small {
 
   color: var(--it-text-muted);
 
-  font-size: .68rem;
+  font-size: .72rem;
+
+  letter-spacing: .02em;
+
+  max-width: 160px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
 }
 
 .user-menu-btn .bi-chevron-down {
@@ -446,6 +481,10 @@
   color: var(--it-text-muted);
 
   font-size: .8rem;
+
+  flex-shrink: 0;
+
+  margin-left: 2px;
 
   transition: .25s ease;
 }
@@ -971,4 +1010,19 @@ router-outlet {
   font-weight: 700;
 
   color: var(--it-ink);
+}
+/* ==========================================
+   ACCOUNT DROPDOWN — SMALL SCREENS
+========================================== */
+
+@media (max-width: 576px) {
+
+  .user-name,
+  .user-role-small {
+    max-width: 90px;
+  }
+
+  .user-meta {
+    max-width: 90px;
+  }
 }

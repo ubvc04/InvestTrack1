@@ -78,16 +78,16 @@
 
   border-radius: 30px;
 
-  background: rgba(255,255,255,.88);
+  background: var(--it-auth-card-bg);
 
   backdrop-filter: blur(24px);
 
-  border: 1px solid rgba(255,255,255,.85);
+  border: 1px solid var(--it-auth-card-border);
 
   box-shadow:
     0 30px 80px rgba(15,23,42,.12),
     0 8px 24px rgba(15,23,42,.06),
-    inset 0 1px 0 rgba(255,255,255,.6);
+    inset 0 1px 0 var(--it-auth-card-inset);
 }
 
 .login-card {
@@ -220,7 +220,7 @@
 
   border-radius: 50%;
 
-  border: 1px solid #dbeafe;
+  border: 1px solid var(--it-border-strong);
 
   color: var(--it-primary);
 
@@ -243,7 +243,7 @@
 
   border: 1px solid var(--it-border-strong);
 
-  background: rgba(255,255,255,.82);
+  background: var(--it-auth-input-bg);
 
   color: var(--it-ink);
 
@@ -322,7 +322,7 @@
 
   font-weight: 500;
 
-  color: #dc2626;
+  color: var(--it-danger-soft-fg);
 
   animation: validationFade .2s ease;
 }
@@ -410,11 +410,11 @@
 .alert-danger {
   border-radius: 14px;
 
-  border: 1px solid #fecdd3;
+  border: 1px solid var(--it-border);
 
   background: var(--it-danger-soft-bg);
 
-  color: #be123c;
+  color: var(--it-danger-soft-fg);
 }
 
 /* ==================================================

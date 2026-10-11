@@ -14,6 +14,8 @@ export class ForgotPasswordComponent implements OnDestroy {
   resetToken = '';
   newPassword = '';
   confirmPassword = '';
+  showPassword = false;
+  showConfirmPassword = false;
   loading = false;
   updating = false;
   message = '';

@@ -11,4 +11,5 @@ public interface UserService {
         String newPassword);
     java.util.List<User> getAdmins();
     boolean mustChangePassword(String email);
+    boolean existsByEmail(String email);
 }

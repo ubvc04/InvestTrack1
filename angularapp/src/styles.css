@@ -47,6 +47,13 @@
   --it-shadow-hover:
     0 24px 65px rgba(31,65,112,.16);
   --it-overlay-shadow: 0 12px 32px rgba(15,23,42,.18);
+
+  /* Auth pages (glass card + inputs) — identical to the legacy light values
+     so light mode is pixel-preserving, overridden for dark mode below. */
+  --it-auth-card-bg: rgba(255,255,255,.88);
+  --it-auth-card-border: rgba(255,255,255,.85);
+  --it-auth-card-inset: rgba(255,255,255,.6);
+  --it-auth-input-bg: rgba(255,255,255,.82);
 }
 
 /* ==================================================
@@ -96,6 +103,12 @@
   --it-shadow-hover:
     0 24px 65px rgba(0,0,0,.55);
   --it-overlay-shadow: 0 12px 32px rgba(0,0,0,.5);
+
+  /* Auth pages in dark mode */
+  --it-auth-card-bg: rgba(18,27,44,.94);
+  --it-auth-card-border: rgba(148,163,184,.25);
+  --it-auth-card-inset: rgba(255,255,255,.04);
+  --it-auth-input-bg: rgba(11,18,32,.65);
 }
 
 * {
@@ -304,6 +317,96 @@ body::after {
 
   box-shadow:
     0 0 0 .2rem rgba(36,107,254,.16);
+}
+
+/* ==================================================
+   NATIVE SELECTS / DROPDOWNS
+   Chromium renders the popup from the select's own
+   colors, so transparent selects fall back to a
+   white menu even in dark mode. Explicit, themed
+   select/option colors keep every filter dropdown
+   readable in both themes. Light values match the
+   browser defaults, so light mode is unchanged.
+================================================== */
+
+select {
+  background-color: var(--it-card-bg);
+  color: var(--it-text);
+  border-color: var(--it-border-strong);
+}
+
+select option {
+  background-color: var(--it-card-bg);
+  color: var(--it-text);
+}
+
+select option:hover,
+select option:checked,
+select option:checked option:hover {
+  background-color: var(--it-tint-bg);
+  color: var(--it-text);
+}
+
+select:disabled,
+select option:disabled {
+  background-color: var(--it-surface-2);
+  color: var(--it-text-muted);
+  cursor: not-allowed;
+}
+
+select:focus-visible {
+  border-color: var(--it-primary);
+  outline: none;
+  box-shadow: 0 0 0 .2rem rgba(36,107,254,.16);
+}
+
+/* ==================================================
+   PASSWORD VISIBILITY TOGGLE (auth pages)
+   Shared so the Forgot Password page (no component
+   stylesheet) gets the same themed eye icon as the
+   Login and Registration pages.
+================================================== */
+
+.password-group {
+  position: relative;
+}
+
+.password-group .form-control {
+  padding-right: 52px;
+}
+
+.password-toggle {
+  position: absolute;
+
+  right: 14px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  padding: 4px;
+
+  line-height: 1;
+
+  color: var(--it-text-muted);
+
+  cursor: pointer;
+
+  z-index: 20;
+
+  transition: color .25s ease;
+}
+
+.password-toggle:hover {
+  color: var(--it-primary);
+}
+
+.password-toggle:focus-visible {
+  outline: 2px solid var(--it-primary);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 /* ==================================================

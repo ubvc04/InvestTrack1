@@ -90,10 +90,13 @@
 
       <div class="mb-3">
 
-        <button type="button" class="btn btn-outline-primary w-100" (click)="sendOtp()">
+        <button type="button" class="btn btn-outline-primary w-100" (click)="sendOtp()"
+          [disabled]="otpLoading">
 
-          <i class="bi bi-envelope-check me-2"></i>
-          Send OTP
+          <span *ngIf="otpLoading" class="spinner-border spinner-border-sm me-2"></span>
+          <i *ngIf="!otpLoading" class="bi bi-envelope-check me-2"></i>
+
+          {{ otpLoading ? 'Sending OTP...' : 'Send OTP' }}
 
         </button>
 
@@ -112,7 +115,7 @@
           </span>
 
           <input type="text" class="form-control" [(ngModel)]="otp" [ngModelOptions]="{standalone: true}"
-            placeholder="Enter OTP received in email">
+            maxlength="6" inputmode="numeric" placeholder="Enter OTP received in email">
 
         </div>
 
@@ -120,10 +123,13 @@
 
       <div *ngIf="otpSent" class="mb-3">
 
-        <button type="button" class="btn btn-success w-100" (click)="verifyOtp()">
+        <button type="button" class="btn btn-success w-100" (click)="verifyOtp()"
+          [disabled]="otpVerifying">
 
-          <i class="bi bi-check-circle me-2"></i>
-          Verify OTP
+          <span *ngIf="otpVerifying" class="spinner-border spinner-border-sm me-2"></span>
+          <i *ngIf="!otpVerifying" class="bi bi-check-circle me-2"></i>
+
+          {{ otpVerifying ? 'Verifying...' : 'Verify OTP' }}
 
         </button>
 
@@ -150,14 +156,29 @@
           Password *
         </label>
 
-        <div class="input-group-modern">
+        <div class="input-group-modern password-group">
 
           <span class="input-icon">
             <i class="bi bi-shield-lock"></i>
           </span>
 
-          <input type="password" class="form-control" formControlName="password" placeholder="Enter password"
+          <input [type]="showPassword ? 'text' : 'password'" class="form-control" formControlName="password"
+            placeholder="Enter password"
             [class.is-invalid]="password?.invalid && password?.touched">
+
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="showPassword = !showPassword"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+            [attr.aria-pressed]="showPassword">
+
+            <i
+              class="bi"
+              [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'">
+            </i>
+
+          </button>
 
         </div>
 
@@ -183,14 +204,29 @@
           Confirm Password *
         </label>
 
-        <div class="input-group-modern">
+        <div class="input-group-modern password-group">
 
           <span class="input-icon">
             <i class="bi bi-patch-check"></i>
           </span>
 
-          <input type="password" class="form-control" formControlName="confirmPassword" placeholder="Confirm password"
+          <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" formControlName="confirmPassword"
+            placeholder="Confirm password"
             [class.is-invalid]="confirmPassword?.touched && signupForm.errors?.['passwordMismatch']">
+
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="showConfirmPassword = !showConfirmPassword"
+            [attr.aria-label]="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
+            [attr.aria-pressed]="showConfirmPassword">
+
+            <i
+              class="bi"
+              [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'">
+            </i>
+
+          </button>
 
         </div>
 

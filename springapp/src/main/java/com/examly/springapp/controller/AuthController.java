@@ -77,6 +77,12 @@ public class AuthController {
 
     @PostMapping("/send-otp")
     public ResponseEntity<Map<String, String>> sendOtp(@Valid @RequestBody SendOtpRequestDTO request) {
+        // Server-side email uniqueness gate: no OTP is generated or sent for an
+        // address that already has an account (also enforced at register time).
+        if (userService.existsByEmail(request.email())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "This email is already registered. Please sign in or use another email address.");
+        }
         String otp = otpService.generateOtp(request.email());
         try {
             emailService.sendOtpEmail(request.email(), otp);
@@ -84,6 +90,7 @@ public class AuthController {
             // Cause is logged for operators; the SMTP detail never reaches the client.
             logger.error("Registration OTP email could not be sent: {}", exception.getMessage());
             otpService.removeOtp(request.email());
+            otpService.removeSendCooldown(request.email());
             throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
                     "Unable to send OTP right now. Please try again later");
         }

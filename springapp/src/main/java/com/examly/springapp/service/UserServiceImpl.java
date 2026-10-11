@@ -91,6 +91,11 @@ public void changePassword(String email,
                 .orElse(true);
     }
 
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(normalizeEmail(email));
+    }
+
     private String normalizeEmail(String email) {
         return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
     }

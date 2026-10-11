@@ -21,6 +21,11 @@ export class SignupComponent implements OnDestroy {
   otpSent = false;
   otpVerified = false;
   otpMessage = '';
+  otpLoading = false;
+  otpVerifying = false;
+
+  showPassword = false;
+  showConfirmPassword = false;
 
   phoneOtp = '';
   phoneOtpSent = false;
@@ -43,6 +48,16 @@ export class SignupComponent implements OnDestroy {
       confirmPassword: ['', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]]
     }, { validators: this.passwordMatchValidator });
+
+    // Changing the email invalidates any previously sent or verified email OTP.
+    this.signupForm.get('email')?.valueChanges.subscribe(() => {
+      if (this.otpVerified || this.otpSent) {
+        this.otpVerified = false;
+        this.otpSent = false;
+        this.otp = '';
+        this.otpMessage = '';
+      }
+    });
 
     // Changing the phone number invalidates any previously verified phone OTP.
     this.signupForm.get('mobileNumber')?.valueChanges.subscribe(() => {
@@ -82,14 +97,25 @@ export class SignupComponent implements OnDestroy {
       return;
     }
 
-    this.errorMessage = '';
+    if (this.email?.invalid && this.email?.touched) {
+      this.errorMessage = 'Enter a valid email address before requesting OTP';
+      return;
+    }
 
+    this.errorMessage = '';
+    this.otpMessage = '';
+    this.otpLoading = true;
+
+    // The backend validates the email, rejects addresses that are already
+    // registered (409) and enforces the resend cooldown before sending.
     this.authService.sendOtp(email).subscribe({
       next: () => {
+        this.otpLoading = false;
         this.otpSent = true;
-        this.otpMessage = 'OTP sent successfully';
+        this.otpMessage = 'OTP sent successfully. Check your email for the code.';
       },
       error: err => {
+        this.otpLoading = false;
         this.errorMessage = this.extractError(err, 'Failed to send OTP');
       }
     });
@@ -104,12 +130,16 @@ export class SignupComponent implements OnDestroy {
       return;
     }
 
+    this.errorMessage = '';
+    this.otpVerifying = true;
+
     this.authService.verifyOtp(
       email,
       this.otp
     ).subscribe({
       next: () => {
 
+        this.otpVerifying = false;
         this.otpVerified = true;
 
         this.otpMessage =
@@ -119,6 +149,7 @@ export class SignupComponent implements OnDestroy {
       },
       error: err => {
 
+        this.otpVerifying = false;
         this.otpVerified = false;
 
         this.errorMessage =
