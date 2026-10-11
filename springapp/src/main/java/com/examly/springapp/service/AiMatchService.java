@@ -23,9 +23,6 @@ import java.util.Map;
  * <p>The service loads every eligible investment from MySQL, asks
  * {@link InvestmentMatchEngine} to extract the criteria stated in the raw user query
  * (Groq when available, documented deterministic fallback otherwise), scores every single
-<<<<<<< HEAD
- * record against those criteria, sorts descending and applies the configured match threshold.</p>
-=======
  * record against those criteria and sorts descending.</p>
  *
  * <p><b>Eligibility vs. ranking.</b> A record is returned when it satisfies every
@@ -38,7 +35,6 @@ import java.util.Map;
  *
  * <p>Every record lands in exactly one bucket, so the reported counts are additive:
  * {@code evaluated = matched + excluded + heldBack}.</p>
->>>>>>> 2a11b77 (ai)
  *
  * <p>Configuration:</p>
  * <ul>

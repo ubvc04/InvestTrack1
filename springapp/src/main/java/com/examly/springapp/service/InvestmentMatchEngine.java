@@ -378,11 +378,8 @@ public class InvestmentMatchEngine {
                         MatchPlan groqPlan = new MatchPlan(plan.interpretation(), true,
                                 ENGINE_GROQ, plan.criteria(),
                                 "model " + outcome.model() + ", interpreted in " + outcome.latencyMs() + "ms");
-<<<<<<< HEAD
-=======
                         groqPlan = withHistoricalPerformance(
                                 withDefaultStatusIfOpportunity(normalized, groqPlan));
->>>>>>> 2a11b77 (ai)
                         logger.info("Groq extracted {} investment criteria (model={}, latency={}ms)",
                                 groqPlan.criteria().size(), outcome.model(), outcome.latencyMs());
                         return groqPlan;

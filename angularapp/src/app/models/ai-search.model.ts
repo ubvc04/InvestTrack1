@@ -70,11 +70,8 @@ export interface AiSearchResponse {
   evaluatedCount: number;
   /** Records that satisfied every mandatory criterion (size of results). */
   matchedCount: number;
-<<<<<<< HEAD
-=======
   /** Results where every requested criterion was verified and satisfied (matchTier FULL_MATCH). */
   fullMatchCount?: number;
->>>>>>> 2a11b77 (ai)
   /** "Groq-criteria" | "deterministic-fallback" */
   engine: string;
   /** Records that verifiably contradicted a mandatory criterion (excluded before ranking). */

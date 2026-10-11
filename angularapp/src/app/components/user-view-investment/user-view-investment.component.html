@@ -268,15 +268,10 @@
     </span>
 
     <span class="ai-chip ai-chip-meta">
-<<<<<<< HEAD
-      {{ aiResponse.evaluatedCount }} records evaluated · threshold {{ aiResponse.threshold }}% ·
-      engine: {{ aiResponse.engine === 'Groq-criteria' ? 'Groq interpretation' : 'deterministic fallback' }}
-=======
       {{ aiResponse.evaluatedCount }} records evaluated · strong-match line {{ aiResponse.threshold }}% ·
       engine: {{ aiResponse.engine === 'groq-criteria' ? 'Groq interpretation' : 'deterministic fallback' }}
       <span *ngIf="aiResponse.matchedCount">
         · {{ aiResponse.matchedCount }} matched</span>
->>>>>>> 2a11b77 (ai)
       <span *ngIf="aiResponse.excludedCount">
         · {{ aiResponse.excludedCount }} excluded (failed a hard filter)</span>
       <span *ngIf="aiResponse.heldBackCount">

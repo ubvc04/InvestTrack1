@@ -8,14 +8,6 @@ import java.util.List;
  * @param semanticRankingUsed {@code true} only when Groq actually interpreted the query;
  *                            {@code false} when the documented deterministic fallback engine ran
  * @param analysis            overall suggestion / analysis panel content
-<<<<<<< HEAD
- * @param threshold           configured minimum match percentage (from configuration)
- * @param evaluatedCount      every eligible investment that was scored (not just the returned page)
- * @param matchedCount        investments that reached the threshold (size of {@code results})
- * @param engine              {@code "groq-criteria"} or {@code "deterministic-fallback"}
- * @param excludedCount       records that verifiably contradicted at least one stated criterion
- *                            and were excluded before ranking (mandatory criteria)
-=======
  * @param threshold           configured "strong match" score line (from configuration); records
  *                            that pass the mandatory filters are always shown and ranked, the
  *                            threshold only labels a result a strong match
@@ -27,7 +19,6 @@ import java.util.List;
  * @param engine              {@code "groq-criteria"} or {@code "deterministic-fallback"}
  * @param excludedCount       records that verifiably contradicted at least one MANDATORY criterion
  *                            and were excluded before ranking
->>>>>>> 2a11b77 (ai)
  * @param heldBackCount       records held back because the stored data could not verify a
  *                            MANDATORY criterion for them (they are never presented as matches)
  * @param limitations         honest, human-readable data limitations for this query (e.g.
