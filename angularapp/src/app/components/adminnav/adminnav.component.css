@@ -626,20 +626,86 @@
 }
 
 /* ==========================================
-   DESKTOP TRIM (just above the expand
-   breakpoint â€” the six-item Super Admin row)
+   RESPONSIVE ONE-ROW SIZING
+   The Admin/Super Admin bar always stays
+   expanded on desktop (original design) -
+   spacing and sizing adapt to the width.
+   Below the xl breakpoint the Bootstrap
+   collapse takes over for tablets/mobile.
 ========================================== */
+
+/* Tight desktop (1200-1400): the six-item Super Admin row */
+
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+
+  .invest-brand {
+    gap: 6px;
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+  }
+
+  .brand-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-icon i {
+    font-size: 1.1rem;
+  }
+
+  .navbar-collapse {
+    gap: 8px;
+  }
+
+  .navbar-nav {
+    margin-left: 6px;
+    gap: 2px;
+  }
+
+  .nav-link {
+    gap: 5px;
+    padding: 7px 6px !important;
+    font-size: 0.82rem;
+  }
+
+  .nav-link i {
+    font-size: 0.95rem;
+  }
+
+  .user-menu-btn {
+    gap: 8px;
+    padding: 6px 8px;
+  }
+
+  .user-avatar {
+    width: 38px;
+    height: 38px;
+  }
+
+  .user-meta,
+  .user-name,
+  .user-role-small {
+    max-width: 84px;
+  }
+}
 
 @media (min-width: 1400px) and (max-width: 1599.98px) {
 
   .brand-title {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
+  }
+
+  .brand-icon {
+    width: 42px;
+    height: 42px;
   }
 
   .nav-link {
     gap: 6px;
-    padding: 8px 9px !important;
-    font-size: .86rem;
+    padding: 7px 10px !important;
+    font-size: 0.88rem;
   }
 
   .nav-link i {
@@ -649,16 +715,17 @@
   .user-meta,
   .user-name,
   .user-role-small {
-    max-width: 120px;
+    max-width: 110px;
   }
 }
 
 /* ==========================================
-   COLLAPSED PANEL (below the expand
-   breakpoint) â€” vertical menu with dividers
+   COLLAPSED PANEL (tablet / phone only -
+   desktop and laptop always keep the
+   horizontal one-row layout)
 ========================================== */
 
-@media (max-width: 1399.98px) {
+@media (max-width: 1199.98px) {
 
   .navbar-collapse {
     margin-top: 14px;
@@ -794,13 +861,6 @@
   position: relative;
 }
 
-.user-dropdown .dropdown-item i {
-
-  width: 18px;
-
-  font-size: 1rem;
-}
-
 .dropdown-menu {
 
   z-index: 99999 !important;
@@ -823,35 +883,6 @@ router-outlet {
 /* ==========================================
    NOTIFICATION DROPDOWN
 ========================================== */
-
-@keyframes notificationPulse {
-
-  0% {
-
-    transform: scale(1);
-  }
-
-  50% {
-
-    transform: scale(1.15);
-  }
-
-  100% {
-
-    transform: scale(1);
-  }
-}
-
-.notification-title {
-
-  padding: 10px 14px;
-
-  color: var(--it-ink);
-
-  font-size: 1rem;
-
-  font-weight: 700;
-}
 
 .notification-dropdown .dropdown-item {
 

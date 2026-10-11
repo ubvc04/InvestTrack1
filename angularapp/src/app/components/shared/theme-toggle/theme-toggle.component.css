@@ -32,6 +32,17 @@
   letter-spacing: 0.02em;
 }
 
+/* On narrower desktops the navbar is dense — show the icon only */
+@media (max-width: 1399.98px) {
+  .theme-toggle-text {
+    display: none;
+  }
+
+  .theme-toggle-btn {
+    padding: 0.45rem 0.6rem;
+  }
+}
+
 @media (max-width: 576px) {
   .theme-toggle-text {
     display: none;

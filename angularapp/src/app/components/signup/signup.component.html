@@ -2,27 +2,33 @@
 
   <div class="auth-card signup-card">
 
-    <div class="text-center mb-4">
+    <!-- Compact header: logo beside the title -->
 
-      <div class="auth-logo mb-3">
+    <div class="auth-header">
+
+      <div class="auth-logo">
         <i class="bi bi-graph-up-arrow"></i>
       </div>
 
-      <h1 class="auth-title">
-        InvestTrack
-      </h1>
+      <div class="auth-heading">
 
-      <p class="auth-subtitle">
-        Create your account
-      </p>
+        <h1 class="auth-title">
+          InvestTrack
+        </h1>
+
+        <p class="auth-subtitle">
+          Create your account
+        </p>
+
+      </div>
 
     </div>
 
-    <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
+    <form [formGroup]="signupForm" (ngSubmit)="onSignup()" class="signup-grid">
 
       <!-- Username -->
 
-      <div class="mb-3">
+      <div class="signup-field">
 
         <label class="form-label fw-semibold">
           Username *
@@ -55,7 +61,7 @@
 
       <!-- Email -->
 
-      <div class="mb-3">
+      <div class="signup-field">
 
         <label class="form-label fw-semibold">
           Email Address *
@@ -84,8 +90,8 @@
 
         </div>
 
-        <!-- Email availability error (e.g. already registered) — always
-             directly below the Email field, above the Send OTP button. -->
+        <!-- Email availability error (e.g. already registered) — directly
+             below the Email field, above the Send OTP button. -->
 
         <div class="invalid-feedback d-block" *ngIf="emailError">
 
@@ -93,13 +99,7 @@
 
         </div>
 
-      </div>
-
-      <!-- OTP Verification -->
-
-      <div class="mb-3">
-
-        <button type="button" class="btn btn-outline-primary w-100" (click)="sendOtp()"
+        <button type="button" class="btn btn-outline-primary btn-otp w-100" (click)="sendOtp()"
           [disabled]="otpLoading">
 
           <span *ngIf="otpLoading" class="spinner-border spinner-border-sm me-2"></span>
@@ -109,57 +109,41 @@
 
         </button>
 
-      </div>
+        <!-- Email OTP entry — only while verification is pending -->
 
-      <div *ngIf="otpSent" class="mb-3">
-
-        <label class="form-label fw-semibold">
-          Enter OTP *
-        </label>
-
-        <div class="input-group-modern">
-
-          <span class="input-icon">
-            <i class="bi bi-shield-check"></i>
-          </span>
+        <div class="otp-inline" *ngIf="otpSent && !otpVerified">
 
           <input type="text" class="form-control" [(ngModel)]="otp" [ngModelOptions]="{standalone: true}"
-            maxlength="6" inputmode="numeric" placeholder="Enter OTP received in email">
+            maxlength="6" inputmode="numeric" placeholder="Enter OTP">
+
+          <button type="button" class="btn btn-success" (click)="verifyOtp()" [disabled]="otpVerifying">
+
+            <span *ngIf="otpVerifying" class="spinner-border spinner-border-sm"></span>
+            <ng-container *ngIf="!otpVerifying">Verify</ng-container>
+
+          </button>
+
+        </div>
+
+        <div class="field-status info" *ngIf="otpMessage && !otpVerified">
+
+          <i class="bi bi-info-circle"></i>
+          {{ otpMessage }}
+
+        </div>
+
+        <div class="field-status ok" *ngIf="otpVerified">
+
+          <i class="bi bi-patch-check-fill"></i>
+          Email verified
 
         </div>
 
       </div>
 
-      <div *ngIf="otpSent" class="mb-3">
-
-        <button type="button" class="btn btn-success w-100" (click)="verifyOtp()"
-          [disabled]="otpVerifying">
-
-          <span *ngIf="otpVerifying" class="spinner-border spinner-border-sm me-2"></span>
-          <i *ngIf="!otpVerifying" class="bi bi-check-circle me-2"></i>
-
-          {{ otpVerifying ? 'Verifying...' : 'Verify OTP' }}
-
-        </button>
-
-      </div>
-
-      <div *ngIf="otpMessage" class="alert alert-info">
-
-        {{ otpMessage }}
-
-      </div>
-
-      <div *ngIf="otpVerified" class="alert alert-success">
-
-        <i class="bi bi-patch-check-fill me-2"></i>
-        Email verified successfully
-
-      </div>
-
       <!-- Password -->
 
-      <div class="mb-3">
+      <div class="signup-field">
 
         <label class="form-label fw-semibold">
           Password *
@@ -203,8 +187,7 @@
 
         </div>
 
-        <!-- Live password requirements — directly below the Password field,
-             above Confirm Password, updating while the user types. -->
+        <!-- Live password requirements — directly below the Password field -->
 
         <ul class="password-rules" *ngIf="password?.value">
 
@@ -218,28 +201,28 @@
           <li [class.rule-met]="passwordChecks.upper">
 
             <i class="bi" [ngClass]="passwordChecks.upper ? 'bi-check-circle-fill' : 'bi-circle'"></i>
-            At least one uppercase letter (A–Z)
+            One uppercase (A–Z)
 
           </li>
 
           <li [class.rule-met]="passwordChecks.lower">
 
             <i class="bi" [ngClass]="passwordChecks.lower ? 'bi-check-circle-fill' : 'bi-circle'"></i>
-            At least one lowercase letter (a–z)
+            One lowercase (a–z)
 
           </li>
 
           <li [class.rule-met]="passwordChecks.number">
 
             <i class="bi" [ngClass]="passwordChecks.number ? 'bi-check-circle-fill' : 'bi-circle'"></i>
-            At least one number (0–9)
+            One number (0–9)
 
           </li>
 
           <li [class.rule-met]="passwordChecks.special">
 
             <i class="bi" [ngClass]="passwordChecks.special ? 'bi-check-circle-fill' : 'bi-circle'"></i>
-            At least one special character (e.g. @, #, !)
+            One special character (@, #, !)
 
           </li>
 
@@ -249,7 +232,7 @@
 
       <!-- Confirm Password -->
 
-      <div class="mb-3">
+      <div class="signup-field">
 
         <label class="form-label fw-semibold">
           Confirm Password *
@@ -287,7 +270,7 @@
 
         </div>
 
-        <!-- Live match confirmation — only once a confirmation value exists. -->
+        <!-- Live match confirmation — only once a confirmation value exists -->
 
         <div class="password-match-ok"
           *ngIf="confirmPassword?.touched && confirmPassword?.value && password?.value && !signupForm.hasError('passwordMismatch')">
@@ -301,7 +284,7 @@
 
       <!-- Mobile Number -->
 
-      <div class="mb-3">
+      <div class="signup-field">
 
         <label class="form-label fw-semibold">
           Mobile Number *
@@ -330,13 +313,7 @@
 
         </div>
 
-      </div>
-
-      <!-- Phone OTP Verification -->
-
-      <div class="mb-3">
-
-        <button type="button" class="btn btn-outline-primary w-100" (click)="sendPhoneOtp()"
+        <button type="button" class="btn btn-outline-primary btn-otp w-100" (click)="sendPhoneOtp()"
           [disabled]="phoneOtpLoading || resendCooldown > 0">
 
           <span *ngIf="phoneOtpLoading" class="spinner-border spinner-border-sm me-2"></span>
@@ -351,87 +328,76 @@
 
         </button>
 
-      </div>
+        <!-- Phone OTP entry — only while verification is pending -->
 
-      <div *ngIf="phoneOtpSent && !phoneOtpVerified" class="mb-3">
-
-        <label class="form-label fw-semibold">
-          Enter Phone OTP *
-        </label>
-
-        <div class="input-group-modern">
-
-          <span class="input-icon">
-            <i class="bi bi-shield-check"></i>
-          </span>
+        <div class="otp-inline" *ngIf="phoneOtpSent && !phoneOtpVerified">
 
           <input type="text" class="form-control" [(ngModel)]="phoneOtp" [ngModelOptions]="{standalone: true}"
             maxlength="6" inputmode="numeric" placeholder="Enter OTP received by SMS">
 
+          <button type="button" class="btn btn-success" (click)="verifyPhoneOtp()" [disabled]="phoneOtpLoading">
+
+            <span *ngIf="phoneOtpLoading" class="spinner-border spinner-border-sm"></span>
+            <ng-container *ngIf="!phoneOtpLoading">Verify</ng-container>
+
+          </button>
+
         </div>
 
-        <button type="button" class="btn btn-success w-100 mt-2" (click)="verifyPhoneOtp()"
-          [disabled]="phoneOtpLoading">
+        <div class="field-status info" *ngIf="phoneOtpMessage && !phoneOtpVerified">
 
-          <span *ngIf="phoneOtpLoading" class="spinner-border spinner-border-sm me-2"></span>
-          <i *ngIf="!phoneOtpLoading" class="bi bi-check-circle me-2"></i>
-          Verify Phone OTP
+          <i class="bi bi-info-circle"></i>
+          {{ phoneOtpMessage }}
+
+        </div>
+
+        <div class="field-status ok" *ngIf="phoneOtpVerified">
+
+          <i class="bi bi-patch-check-fill"></i>
+          Phone number verified
+
+        </div>
+
+      </div>
+
+      <!-- Submit — spans the full grid width -->
+
+      <div class="signup-field field-actions">
+
+        <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center">
+
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+          {{ errorMessage }}
+
+        </div>
+
+        <button type="submit" class="btn btn-primary signup-btn w-100"
+          [disabled]="signupForm.invalid || loading || !otpVerified || !phoneOtpVerified">
+
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2">
+          </span>
+
+          <i *ngIf="!loading" class="bi bi-person-plus-fill me-2">
+          </i>
+
+          Create Account
 
         </button>
 
-      </div>
+        <div class="text-center mt-2">
 
-      <div *ngIf="phoneOtpMessage" class="alert alert-info">
+          <span class="text-muted">
+            Already have an account?
+          </span>
 
-        {{ phoneOtpMessage }}
+          <a role="button" (click)="goToLogin()" class="login-link ms-1">
 
-      </div>
+            Sign In
 
-      <div *ngIf="phoneOtpVerified" class="alert alert-success">
+          </a>
 
-        <i class="bi bi-patch-check-fill me-2"></i>
-        Phone number verified successfully
-
-      </div>
-
-      <!-- Backend Error -->
-
-      <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center">
-
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-
-        {{ errorMessage }}
-
-      </div>
-
-      <!-- Submit -->
-
-      <button type="submit" class="btn btn-primary signup-btn w-100 mb-3"
-        [disabled]="signupForm.invalid || loading || !otpVerified || !phoneOtpVerified">
-        
-        <span *ngIf="loading" class="spinner-border spinner-border-sm me-2">
-        </span>
-
-        <i *ngIf="!loading" class="bi bi-person-plus-fill me-2">
-        </i>
-
-        Create Account
-
-      </button>
-
-      <!-- Login -->
-
-      <div class="text-center">
-
-        <span class="text-muted">
-          Already have an account?
-        </span>
-
-        <a role="button" (click)="goToLogin()" class="login-link ms-1">
-
-          Sign In
-
-        </a>
+        </div>
 
       </div>
 
