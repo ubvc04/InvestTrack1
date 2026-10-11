@@ -79,6 +79,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/admins")
                         .hasRole("SuperAdmin")
 
+                        // Admin Console aggregated statistics (Admin / SuperAdmin only).
+                        // Counters and chart datasets are computed server-side from
+                        // persisted records; regular users can never read platform-wide
+                        // inquiry, feedback or catalogue summaries.
+                        .requestMatchers("/api/admin/**")
+                        .hasAnyRole("Admin", "SuperAdmin")
+
                         // Admin APIs
                         .requestMatchers(HttpMethod.POST, "/api/investments")
                         .hasAnyRole("Admin", "SuperAdmin")

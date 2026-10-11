@@ -32,6 +32,9 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ThemeToggleComponent } from './components/shared/theme-toggle/theme-toggle.component';
 import { NotificationBellComponent } from './components/shared/notification-bell/notification-bell.component';
+import { DoughnutChartComponent } from './components/charts/doughnut-chart/doughnut-chart.component';
+import { BarChartComponent } from './components/charts/bar-chart/bar-chart.component';
+import { TrendChartComponent } from './components/charts/trend-chart/trend-chart.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +63,9 @@ import { NotificationBellComponent } from './components/shared/notification-bell
     SuperAdminManagementComponent,
     ThemeToggleComponent,
     NotificationBellComponent,
+    DoughnutChartComponent,
+    BarChartComponent,
+    TrendChartComponent,
   ],
 
 

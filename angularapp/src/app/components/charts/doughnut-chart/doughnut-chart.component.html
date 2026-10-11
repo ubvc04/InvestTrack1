@@ -1,0 +1,69 @@
+<div class="chart-frame" *ngIf="total > 0; else empty">
+
+  <div class="doughnut-wrap">
+
+    <svg
+      viewBox="0 0 100 100"
+      role="img"
+      [attr.aria-label]="'Doughnut chart with ' + slices.length + ' segments, total ' + total">
+
+      <circle class="doughnut-track" cx="50" cy="50" r="15.9155" />
+
+      <circle
+        *ngFor="let seg of segments()"
+        class="doughnut-segment"
+        cx="50"
+        cy="50"
+        r="15.9155"
+        transform="rotate(-90 50 50)"
+        [attr.stroke]="seg.slice.color"
+        [attr.stroke-dasharray]="seg.length + ' ' + (100 - seg.length)"
+        [attr.stroke-dash-offset]="-seg.offset">
+
+        <title>
+          {{ seg.slice.label }}: {{ seg.slice.value }} ({{ percentage(seg.slice.value) }}%)
+        </title>
+
+      </circle>
+
+    </svg>
+
+    <div class="doughnut-center" *ngIf="centerLabel">
+
+      <strong>{{ total }}</strong>
+
+      <span>{{ centerLabel }}</span>
+
+    </div>
+
+  </div>
+
+  <ul class="chart-legend">
+
+    <li *ngFor="let slice of slices">
+
+      <span class="legend-swatch" [style.background]="slice.color"></span>
+
+      <span class="legend-label">{{ slice.label }}</span>
+
+      <b>{{ slice.value }}</b>
+
+      <small>{{ percentage(slice.value) }}%</small>
+
+    </li>
+
+  </ul>
+
+</div>
+
+<ng-template #empty>
+
+  <div class="chart-empty">
+
+    <i class="bi bi-pie-chart"></i>
+
+    <span>{{ emptyMessage }}</span>
+
+  </div>
+
+</ng-template>

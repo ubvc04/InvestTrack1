@@ -1,7 +1,7 @@
 <main class="console-shell">
 
   <!-- ==========================================
-       HERO SECTION
+       1. ADMIN COMMAND CENTER HEADER
   ========================================== -->
 
   <section class="portfolio-header">
@@ -34,20 +34,16 @@
   </section>
 
   <!-- ==========================================
-       DASHBOARD TOOLBAR
+       2. OPERATIONS & INVESTMENT OVERVIEW
   ========================================== -->
 
   <header class="dashboard-heading">
 
-    <div>
+    <div class="section-kicker">
 
-      <div class="section-kicker">
+      <span class="kicker-line"></span>
 
-        <span class="kicker-line"></span>
-
-        Operations & Investment Overview
-
-      </div>
+      Operations &amp; Investment Overview
 
     </div>
 
@@ -93,9 +89,7 @@
 
   </header>
 
-  <!-- ==========================================
-       ERROR BANNER
-  ========================================== -->
+  <!-- ERROR BANNER (last good data is always preserved) -->
 
   <div
     class="error-banner"
@@ -115,624 +109,702 @@
 
   </div>
 
-  <!-- ==========================================
-       KPI CARDS
-  ========================================== -->
+  <!-- INITIAL LOADING STATE -->
 
-  <section class="kpi-grid">
+  <section
+    class="loading-panel"
+    *ngIf="loading">
 
-    <article class="kpi-card kpi-blue">
+    <span class="spinner-border"></span>
 
-      <div class="kpi-top">
-
-        <span class="kpi-label">Investments</span>
-
-        <span class="kpi-icon">
-
-          <i class="bi bi-bar-chart-line"></i>
-
-        </span>
-
-      </div>
-
-      <strong>
-
-        {{ investments.length }}
-
-      </strong>
-
-      <div class="kpi-foot">
-
-        <span>Catalog Entries</span>
-
-        <span class="trend positive">
-
-          <i class="bi bi-check2-circle"></i>
-
-          Active Catalog
-
-        </span>
-
-      </div>
-
-    </article>
-
-    <article class="kpi-card kpi-purple">
-
-      <div class="kpi-top">
-
-        <span class="kpi-label">Feedback</span>
-
-        <span class="kpi-icon">
-
-          <i class="bi bi-chat-square-text"></i>
-
-        </span>
-
-      </div>
-
-      <strong>
-
-        {{ feedbacks.length }}
-
-      </strong>
-
-      <div class="kpi-foot">
-
-        <span>Customer Submissions</span>
-
-        <span class="trend neutral">
-
-          <i class="bi bi-inbox"></i>
-
-          All Activity
-
-        </span>
-
-      </div>
-
-    </article>
-
-    <article class="kpi-card kpi-amber">
-
-      <div class="kpi-top">
-
-        <span class="kpi-label">Open Inquiries</span>
-
-        <span class="kpi-icon">
-
-          <i class="bi bi-hourglass-split"></i>
-
-        </span>
-
-      </div>
-
-      <strong>
-
-        {{ openInquiries }}
-
-      </strong>
-
-      <div class="kpi-foot">
-
-        <span>Awaiting Response</span>
-
-        <span class="trend warning">
-
-          <i class="bi bi-flag"></i>
-
-          Monitor Queue
-
-        </span>
-
-      </div>
-
-    </article>
-
-    <article class="kpi-card kpi-green">
-
-      <div class="kpi-top">
-
-        <span class="kpi-label">Resolved</span>
-
-        <span class="kpi-icon">
-
-          <i class="bi bi-check2-circle"></i>
-
-        </span>
-
-      </div>
-
-      <strong>
-
-        {{ count('RESOLVED') }}
-
-      </strong>
-
-      <div class="kpi-foot">
-
-        <span>Completed Inquiries</span>
-
-        <span class="trend positive">
-
-          <i class="bi bi-arrow-up-right"></i>
-
-          Closed Loop
-
-        </span>
-
-      </div>
-
-    </article>
+    <p>Loading dashboard data…</p>
 
   </section>
 
-  <!-- ==========================================
-       HEALTH + PRIORITY
-  ========================================== -->
+  <ng-container *ngIf="stats as s">
 
-  <section class="split-grid">
+    <!-- ==========================================
+         3. KEY PERFORMANCE INDICATOR CARDS
+    ========================================== -->
 
-    <article class="dashboard-card">
+    <section class="kpi-grid">
 
-      <div class="card-heading">
+      <article class="kpi-card kpi-blue">
 
-        <div>
+        <div class="kpi-top">
 
-          <span class="card-eyebrow">
+          <span class="kpi-label">Catalog Entries</span>
 
-            Workflow Status
+          <span class="kpi-icon">
 
-          </span>
-
-          <h2>Inquiry Health</h2>
-
-        </div>
-
-      </div>
-
-      <div class="health-total">
-
-        <strong>{{ inquiries.length }}</strong>
-
-        <span>Total Inquiries</span>
-
-      </div>
-
-      <div class="health-list">
-
-        <div class="health-item">
-      
-          <div class="health-meta">
-      
-            <span>
-              Pending
-            </span>
-      
-            <b>
-              {{ count('PENDING') }}
-              <small>{{ percentage('PENDING') }}%</small>
-            </b>
-      
-          </div>
-      
-          <div class="health-track">
-      
-            <span
-              class="health-fill pending-fill"
-              [style.width.%]="percentage('PENDING')">
-            </span>
-      
-          </div>
-      
-        </div>
-      
-        <div class="health-item">
-      
-          <div class="health-meta">
-      
-            <span>
-              Resolved
-            </span>
-      
-            <b>
-              {{ count('RESOLVED') }}
-              <small>{{ percentage('RESOLVED') }}%</small>
-            </b>
-      
-          </div>
-      
-          <div class="health-track">
-      
-            <span
-              class="health-fill resolved-fill"
-              [style.width.%]="percentage('RESOLVED')">
-            </span>
-      
-          </div>
-      
-        </div>
-      
-        <div class="health-item">
-      
-          <div class="health-meta">
-      
-            <span>
-              RESOLVED
-            </span>
-      
-            <b>
-              {{ count('RESOLVED') }}
-              <small>{{ percentage('RESOLVED') }}%</small>
-            </b>
-      
-          </div>
-      
-          <div class="health-track">
-      
-            <span
-              class="health-fill closed-fill"
-              [style.width.%]="percentage('RESOLVED')">
-            </span>
-      
-          </div>
-      
-        </div>
-      
-      </div>
-
-    </article>
-
-    <article class="dashboard-card">
-
-      <div class="card-heading">
-
-        <div>
-
-          <span class="card-eyebrow">
-
-            Workload Triage
+            <i class="bi bi-collection-fill"></i>
 
           </span>
 
-          <h2>Priority Queue</h2>
+        </div>
+
+        <strong>{{ s.investments.total }}</strong>
+
+        <div class="kpi-foot">
+
+          <span>Investment catalogue records</span>
 
         </div>
 
-      </div>
-
-      <div class="priority-list">
-
-        <div class="priority-row">
-      
-          <span class="priority-mark">H</span>
-      
-          <div>
-      
-            <strong>High Priority</strong>
-      
-            <small>Requires immediate attention</small>
-      
-          </div>
-      
-          <b>{{ countPriority('High') }}</b>
-      
-        </div>
-      
-        <div class="priority-row">
-      
-          <span class="priority-mark">M</span>
-      
-          <div>
-      
-            <strong>Medium Priority</strong>
-      
-            <small>Needs follow up</small>
-      
-          </div>
-      
-          <b>{{ countPriority('Medium') }}</b>
-      
-        </div>
-      
-        <div class="priority-row">
-      
-          <span class="priority-mark">L</span>
-      
-          <div>
-      
-            <strong>Low Priority</strong>
-      
-            <small>Routine requests</small>
-      
-          </div>
-      
-          <b>{{ countPriority('Low') }}</b>
-      
-        </div>
-      
-      </div>
-
-    </article>
-
-  </section>
-
-  <!-- ==========================================
-       SUMMARY
-  ========================================== -->
-
-  <section class="dashboard-card summary-card">
-
-    <div class="card-heading">
-
-      <div>
-
-        <span class="card-eyebrow">
-
-          At A Glance
-
-        </span>
-
-        <h2>Operations Summary</h2>
-
-      </div>
-
-    </div>
-
-    <div class="summary-grid">
-
-      <div>
-
-        <span>Active Investments</span>
-
-        <strong>{{ activeInvestments }}</strong>
-
-      </div>
-
-      <div>
-
-        <span>Pending Inquiries</span>
-
-        <strong>{{ count('PENDING') }}</strong>
-
-      </div>
-
-      <div>
-
-        <span>High Priority</span>
-
-        <strong class="critical-number">
-
-          {{ countPriority('High') }}
-
-        </strong>
-
-      </div>
-
-      <div>
-
-        <span>Resolved</span>
-
-        <strong class="success-number">
-
-          {{ count('RESOLVED') }}
-
-        </strong>
-
-      </div>
-
-      <div>
-
-        <span>Total Feedback</span>
-
-        <strong>{{ feedbacks.length }}</strong>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- ==========================================
-       CONTENT SECTION
-  ========================================== -->
-
-  <section class="content-grid">
-
-    <article class="dashboard-card table-card">
-
-      <div class="card-heading">
-
-        <div>
-
-          <span class="card-eyebrow">
-
-            Customer Activity
-
-          </span>
-
-          <h2>Recent Inquiries</h2>
-
-        </div>
-
-      </div>
-
-      <div
-  class="table-wrap"
-  *ngIf="inquiries.length; else noInquiries">
-
-  <table>
-
-    <thead>
-
-      <tr>
-
-        <th>Investment</th>
-        <th>User</th>
-        <th>Priority</th>
-        <th>Status</th>
-        <th>Date</th>
-
-      </tr>
-
-    </thead>
-
-    <tbody>
-
-      <tr *ngFor="let inquiry of inquiries | slice:0:5">
-
-        <td>{{ inquiry.investment.name }}</td>
-
-        <td>{{ inquiry.user.username }}</td>
-
-        <td>{{ inquiry.priority }}</td>
-
-        <td>{{ inquiry.status }}</td>
-
-        <td>{{ inquiry.inquiryDate | date:'shortDate' }}</td>
-
-      </tr>
-
-    </tbody>
-
-  </table>
-
-</div>
-
-<ng-template #noInquiries>
-
-  <div class="empty-state">
-
-    <div class="empty-icon">
-
-      <i class="bi bi-chat-square"></i>
-
-    </div>
-
-    <strong>No Inquiries Available</strong>
-
-  </div>
-
-</ng-template>
-
-    </article>
-
-    <article class="dashboard-card catalog-card">
-
-      <div class="card-heading">
-
-        <div>
-
-          <span class="card-eyebrow">
-
-            Investment Catalog
-
-          </span>
-
-          <h2>Investment Snapshot</h2>
-
-        </div>
-
-      </div>
-
-      <div
-  class="catalog-list"
-  *ngIf="investments.length; else noInvestments">
-
-  <div
-    class="catalog-item"
-    *ngFor="let investment of investments | slice:0:5">
-
-    <div class="catalog-name">
-
-      <strong>{{ investment.name }}</strong>
-
-      <small>{{ investment.type }}</small>
-
-    </div>
-
-  </div>
-
-</div>
-
-<ng-template #noInvestments>
-
-  <div class="empty-state">
-
-    <div class="empty-icon">
-
-      <i class="bi bi-bar-chart-line"></i>
-
-    </div>
-
-    <strong>No Investments Available</strong>
-
-  </div>
-
-</ng-template>
-
-    </article>
-
-  </section>
-
-  <section class="dashboard-card feedback-card">
-
-    <div class="card-heading">
-  
-      <div>
-  
-        <span class="card-eyebrow">
-          Customer Voice
-        </span>
-  
-        <h2>Latest Feedback</h2>
-  
-      </div>
-  
-    </div>
-  
-    <div
-      class="feedback-grid"
-      *ngIf="feedbacks.length; else noFeedback">
-  
-      <article
-        class="feedback-item"
-        *ngFor="let feedback of feedbacks | slice:0:3">
-  
-        <div class="feedback-top">
-  
-          <span>
-            {{ feedback.category }}
-          </span>
-  
-          <span>
-            {{ feedback.date | date:'shortDate' }}
-          </span>
-  
-        </div>
-  
-        <p>
-          {{ feedback.feedbackText }}
-        </p>
-  
       </article>
-  
-    </div>
-  
-    <ng-template #noFeedback>
-  
-      <div class="empty-state">
-  
-        <div class="empty-icon">
-  
-          <i class="bi bi-chat-heart"></i>
-  
+
+      <article class="kpi-card kpi-cyan">
+
+        <div class="kpi-top">
+
+          <span class="kpi-label">Active Investments</span>
+
+          <span class="kpi-icon">
+
+            <i class="bi bi-graph-up-arrow"></i>
+
+          </span>
+
         </div>
-  
-        <strong>No Feedback Available</strong>
-  
+
+        <strong>{{ s.investments.active }}</strong>
+
+        <div class="kpi-foot">
+
+          <span>Entries with Active status</span>
+
+        </div>
+
+      </article>
+
+      <article class="kpi-card kpi-purple">
+
+        <div class="kpi-top">
+
+          <span class="kpi-label">Feedback Submissions</span>
+
+          <span class="kpi-icon">
+
+            <i class="bi bi-chat-square-text"></i>
+
+          </span>
+
+        </div>
+
+        <strong>{{ s.feedbacks.total }}</strong>
+
+        <div class="kpi-foot">
+
+          <span>Customer submissions</span>
+
+        </div>
+
+      </article>
+
+      <article class="kpi-card kpi-amber">
+
+        <div class="kpi-top">
+
+          <span class="kpi-label">Open Inquiries</span>
+
+          <span class="kpi-icon">
+
+            <i class="bi bi-hourglass-split"></i>
+
+          </span>
+
+        </div>
+
+        <strong>{{ openInquiries }}</strong>
+
+        <div class="kpi-foot">
+
+          <span>Awaiting resolution</span>
+
+        </div>
+
+      </article>
+
+      <article class="kpi-card kpi-green">
+
+        <div class="kpi-top">
+
+          <span class="kpi-label">Resolved Inquiries</span>
+
+          <span class="kpi-icon">
+
+            <i class="bi bi-check2-circle"></i>
+
+          </span>
+
+        </div>
+
+        <strong>{{ resolvedInquiries }}</strong>
+
+        <div class="kpi-foot">
+
+          <span>Completed inquiries</span>
+
+        </div>
+
+      </article>
+
+      <article class="kpi-card kpi-slate">
+
+        <div class="kpi-top">
+
+          <span class="kpi-label">Total Inquiries</span>
+
+          <span class="kpi-icon">
+
+            <i class="bi bi-inbox"></i>
+
+          </span>
+
+        </div>
+
+        <strong>{{ s.inquiries.total }}</strong>
+
+        <div class="kpi-foot">
+
+          <span>All recorded inquiries</span>
+
+        </div>
+
+      </article>
+
+      <article class="kpi-card kpi-red">
+
+        <div class="kpi-top">
+
+          <span class="kpi-label">High Priority</span>
+
+          <span class="kpi-icon">
+
+            <i class="bi bi-exclamation-octagon"></i>
+
+          </span>
+
+        </div>
+
+        <strong>{{ highPriority }}</strong>
+
+        <div class="kpi-foot">
+
+          <span>Requires attention</span>
+
+        </div>
+
+      </article>
+
+    </section>
+
+    <!-- ==========================================
+         4. INVESTMENT ANALYTICS
+    ========================================== -->
+
+    <section class="analytics-section">
+
+      <div class="section-title">
+
+        <h2>Investment Analytics</h2>
+
+        <span>Catalogue composition, comparison and recorded activity</span>
+
       </div>
-  
-    </ng-template>
-  
-  </section>
+
+      <div class="analytics-grid">
+
+        <article class="dashboard-card">
+
+          <div class="card-heading">
+
+            <div>
+
+              <span class="card-eyebrow">Portfolio Mix</span>
+
+              <h2>Catalog Distribution</h2>
+
+            </div>
+
+          </div>
+
+          <app-doughnut-chart
+            [slices]="typeSlices"
+            centerLabel="Entries"
+            emptyMessage="No investments recorded yet.">
+          </app-doughnut-chart>
+
+        </article>
+
+        <article class="dashboard-card">
+
+          <div class="card-heading">
+
+            <div>
+
+              <span class="card-eyebrow">Asset Types</span>
+
+              <h2>Investments by Type</h2>
+
+            </div>
+
+          </div>
+
+          <app-bar-chart
+            [data]="typeBars"
+            orientation="vertical"
+            emptyMessage="No investments recorded yet.">
+          </app-bar-chart>
+
+        </article>
+
+        <article class="dashboard-card wide-card">
+
+          <div class="card-heading">
+
+            <div>
+
+              <span class="card-eyebrow">Historical Records</span>
+
+              <h2>Investment Activity Over Time</h2>
+
+            </div>
+
+          </div>
+
+          <app-trend-chart
+            [points]="activityPoints"
+            granularity="month"
+            emptyMessage="No dated activity recorded yet.">
+          </app-trend-chart>
+
+          <p class="chart-note">
+
+            Based on purchase dates recorded in the catalogue.
+
+          </p>
+
+        </article>
+
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         5. INQUIRY WORKFLOW & PRIORITY ANALYTICS
+    ========================================== -->
+
+    <section class="analytics-section">
+
+      <div class="section-title">
+
+        <h2>Inquiry Workflow &amp; Priority Analytics</h2>
+
+        <span>Status distribution, workload triage and creation trend</span>
+
+      </div>
+
+      <div class="analytics-grid">
+
+        <article class="dashboard-card">
+
+          <div class="card-heading">
+
+            <div>
+
+              <span class="card-eyebrow">Workflow Status</span>
+
+              <h2>Inquiry Status</h2>
+
+            </div>
+
+          </div>
+
+          <app-doughnut-chart
+            [slices]="statusSlices"
+            centerLabel="Inquiries"
+            emptyMessage="No inquiries recorded yet.">
+          </app-doughnut-chart>
+
+        </article>
+
+        <article class="dashboard-card">
+
+          <div class="card-heading">
+
+            <div>
+
+              <span class="card-eyebrow">Workload Triage</span>
+
+              <h2>Inquiry Priority</h2>
+
+            </div>
+
+          </div>
+
+          <app-bar-chart
+            [data]="priorityBars"
+            orientation="horizontal"
+            emptyMessage="No inquiries recorded yet.">
+          </app-bar-chart>
+
+        </article>
+
+        <article class="dashboard-card wide-card">
+
+          <div class="card-heading">
+
+            <div>
+
+              <span class="card-eyebrow">Workload Trend</span>
+
+              <h2>Inquiry Volume Over Time</h2>
+
+            </div>
+
+          </div>
+
+          <app-trend-chart
+            [points]="inquiryTrendPoints"
+            granularity="day"
+            emptyMessage="No historical inquiry data yet.">
+          </app-trend-chart>
+
+          <p class="chart-note">
+
+            Inquiries created per day, from stored inquiry dates.
+
+          </p>
+
+        </article>
+
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         6. OPERATIONS SUMMARY
+    ========================================== -->
+
+    <section class="dashboard-card summary-card">
+
+      <div class="card-heading">
+
+        <div>
+
+          <span class="card-eyebrow">At A Glance</span>
+
+          <h2>Operations Summary</h2>
+
+        </div>
+
+      </div>
+
+      <div class="summary-grid">
+
+        <div class="summary-tile">
+
+          <span>Active Investments</span>
+
+          <strong class="number-info">{{ s.investments.active }}</strong>
+
+        </div>
+
+        <div class="summary-tile">
+
+          <span>Pending Inquiries</span>
+
+          <strong class="number-warning">{{ pendingInquiries }}</strong>
+
+        </div>
+
+        <div class="summary-tile">
+
+          <span>High Priority</span>
+
+          <strong class="number-critical">{{ highPriority }}</strong>
+
+        </div>
+
+        <div class="summary-tile">
+
+          <span>Resolved</span>
+
+          <strong class="number-success">{{ resolvedInquiries }}</strong>
+
+        </div>
+
+        <div class="summary-tile">
+
+          <span>Total Feedback</span>
+
+          <strong class="number-neutral">{{ s.feedbacks.total }}</strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         7 + 8. RECENT INQUIRIES & CATALOG SNAPSHOT
+    ========================================== -->
+
+    <section class="content-grid">
+
+      <article class="dashboard-card table-card">
+
+        <div class="card-heading">
+
+          <div>
+
+            <span class="card-eyebrow">Customer Activity</span>
+
+            <h2>Recent Inquiries</h2>
+
+          </div>
+
+          <span
+            class="card-meta"
+            *ngIf="s.recentInquiries.length">
+
+            Latest {{ s.recentInquiries.length }} of {{ s.inquiries.total }}
+
+          </span>
+
+        </div>
+
+        <div
+          class="table-wrap"
+          *ngIf="s.recentInquiries.length; else noInquiries">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>Investment</th>
+                <th>User</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Date</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr *ngFor="let row of s.recentInquiries">
+
+                <td class="fw-semibold">{{ row.investment }}</td>
+
+                <td>{{ row.user }}</td>
+
+                <td>
+
+                  <span
+                    class="pill"
+                    [ngClass]="priorityPillClass(row.priority)">
+
+                    {{ row.priority }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span
+                    class="pill"
+                    [ngClass]="statusPillClass(row.status)">
+
+                    {{ titleCase(row.status) }}
+
+                  </span>
+
+                </td>
+
+                <td>
+
+                  <span *ngIf="row.date; else noDate">{{ row.date | date:'mediumDate' }}</span>
+
+                  <ng-template #noDate>—</ng-template>
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+        <ng-template #noInquiries>
+
+          <div class="empty-state">
+
+            <div class="empty-icon">
+
+              <i class="bi bi-chat-square"></i>
+
+            </div>
+
+            <strong>No Inquiries Yet</strong>
+
+          </div>
+
+        </ng-template>
+
+      </article>
+
+      <article class="dashboard-card catalog-card">
+
+        <div class="card-heading">
+
+          <div>
+
+            <span class="card-eyebrow">Investment Catalog</span>
+
+            <h2>Investment Snapshot</h2>
+
+          </div>
+
+        </div>
+
+        <div
+          class="catalog-list"
+          *ngIf="s.recentInvestments.length; else noInvestments">
+
+          <div
+            class="catalog-item"
+            *ngFor="let row of s.recentInvestments">
+
+            <div class="catalog-name">
+
+              <strong>{{ row.name }}</strong>
+
+              <small>
+                {{ catalogType(row) }}<span *ngIf="row.market"> · {{ row.market }}</span>
+              </small>
+
+            </div>
+
+            <div class="catalog-side">
+
+              <span
+                class="pill"
+                [ngClass]="row.status?.toLowerCase() === 'active' ? 'pill-success' : 'pill-muted'">
+
+                {{ row.status }}
+
+              </span>
+
+              <b>{{ formatPrice(row) }}</b>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <ng-template #noInvestments>
+
+          <div class="empty-state">
+
+            <div class="empty-icon">
+
+              <i class="bi bi-bar-chart-line"></i>
+
+            </div>
+
+            <strong>No Investments Yet</strong>
+
+          </div>
+
+        </ng-template>
+
+        <p class="chart-note">
+
+          Values as recorded in the catalogue — not live market data.
+
+        </p>
+
+      </article>
+
+    </section>
+
+    <!-- ==========================================
+         9. LATEST CUSTOMER FEEDBACK
+    ========================================== -->
+
+    <section class="dashboard-card feedback-card">
+
+      <div class="card-heading">
+
+        <div>
+
+          <span class="card-eyebrow">Customer Voice</span>
+
+          <h2>Latest Feedback</h2>
+
+        </div>
+
+        <span
+          class="card-meta"
+          *ngIf="s.feedbacks.total">
+
+          {{ s.feedbacks.total }} total
+
+        </span>
+
+      </div>
+
+      <div
+        class="feedback-grid"
+        *ngIf="s.recentFeedback.length; else noFeedback">
+
+        <article
+          class="feedback-item"
+          *ngFor="let row of s.recentFeedback">
+
+          <div class="feedback-top">
+
+            <span class="pill pill-info">{{ row.category }}</span>
+
+            <span>{{ row.date | date:'shortDate' }}</span>
+
+          </div>
+
+          <p>{{ row.text }}</p>
+
+          <small *ngIf="row.user">{{ row.user }}</small>
+
+        </article>
+
+      </div>
+
+      <ng-template #noFeedback>
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+
+            <i class="bi bi-chat-heart"></i>
+
+          </div>
+
+          <strong>No Feedback Yet</strong>
+
+        </div>
+
+      </ng-template>
+
+    </section>
+
+  </ng-container>
+
+</main>

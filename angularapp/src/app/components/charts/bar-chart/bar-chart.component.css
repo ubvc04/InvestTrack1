@@ -1,0 +1,127 @@
+/* ---------------- Vertical bars ---------------- */
+
+.bars-vertical {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  min-height: 190px;
+  padding-top: 6px;
+}
+
+.bar-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.bar-value {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--it-ink);
+}
+
+.bar-track-v {
+  width: 100%;
+  max-width: 46px;
+  height: 130px;
+  display: flex;
+  align-items: flex-end;
+  background: var(--it-surface-2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.bar-fill-v {
+  display: block;
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+  transition: height 0.45s ease;
+  min-height: 2px;
+}
+
+.bar-label {
+  font-size: 0.68rem;
+  color: var(--it-text-muted);
+  text-align: center;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+/* ---------------- Horizontal bars ---------------- */
+
+.bars-horizontal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 6px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-label-h {
+  width: 92px;
+  flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--it-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-track-h {
+  flex: 1;
+  height: 16px;
+  background: var(--it-surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar-fill-h {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.45s ease;
+  min-width: 3px;
+}
+
+.bar-value-h {
+  width: 24px;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--it-ink);
+}
+
+/* ---------------- Shared ---------------- */
+
+.chart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 160px;
+  color: var(--it-text-muted);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.chart-empty i {
+  font-size: 1.6rem;
+  opacity: 0.6;
+}
+
+@media (max-width: 576px) {
+  .bar-label-h {
+    width: 72px;
+    font-size: 0.72rem;
+  }
+}

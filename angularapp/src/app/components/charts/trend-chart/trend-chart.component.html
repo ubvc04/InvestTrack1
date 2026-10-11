@@ -1,0 +1,67 @@
+<div class="chart-frame" *ngIf="points.length; else empty">
+
+  <svg
+    viewBox="0 0 300 108"
+    role="img"
+    [attr.aria-label]="ariaLabel">
+
+    <!-- Gridlines + value ticks -->
+    <g class="trend-grid">
+
+      <line [attr.x1]="left" [attr.x2]="right" [attr.y1]="top" [attr.y2]="top" />
+      <line [attr.x1]="left" [attr.x2]="right" [attr.y1]="(top + bottom) / 2" [attr.y2]="(top + bottom) / 2" />
+      <line [attr.x1]="left" [attr.x2]="right" [attr.y1]="bottom" [attr.y2]="bottom" />
+
+      <text class="trend-tick" [attr.x]="left" [attr.y]="top - 3">{{ yMax }}</text>
+      <text class="trend-tick" [attr.x]="left" [attr.y]="bottom + 9">0</text>
+
+    </g>
+
+    <!-- Area + line -->
+    <path class="trend-area" [attr.d]="areaPath" [attr.fill]="accent" />
+    <polyline class="trend-line" [attr.points]="linePath" [attr.stroke]="accent" />
+
+    <!-- Points with tooltips -->
+    <circle
+      *ngFor="let coord of coords"
+      class="trend-dot"
+      [attr.cx]="coord.x"
+      [attr.cy]="coord.y"
+      r="2.6"
+      [attr.fill]="accent">
+
+      <title>
+        {{ tooltip(coord) }}
+      </title>
+
+    </circle>
+
+    <!-- X axis labels (sampled) -->
+    <ng-container *ngFor="let coord of coords; let i = index">
+
+      <text
+        *ngIf="showLabel(i)"
+        class="trend-xlabel"
+        [attr.x]="coord.x"
+        y="102"
+        [text-anchor]="i === 0 ? 'start' : (i === coords.length - 1 ? 'end' : 'middle')">
+        {{ axisLabel(coord.point.period) }}
+      </text>
+
+    </ng-container>
+
+  </svg>
+
+</div>
+
+<ng-template #empty>
+
+  <div class="chart-empty">
+
+    <i class="bi bi-graph-up"></i>
+
+    <span>{{ emptyMessage }}</span>
+
+  </div>
+
+</ng-template>

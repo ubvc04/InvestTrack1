@@ -1,0 +1,53 @@
+.chart-frame svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.trend-grid line {
+  stroke: var(--it-border-strong);
+  stroke-width: 0.6;
+}
+
+.trend-tick {
+  fill: var(--it-text-muted);
+  font-size: 6px;
+}
+
+.trend-area {
+  opacity: 0.12;
+}
+
+.trend-line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.trend-dot:hover {
+  opacity: 0.75;
+}
+
+.trend-xlabel {
+  fill: var(--it-text-muted);
+  font-size: 6.5px;
+}
+
+.chart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 150px;
+  color: var(--it-text-muted);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.chart-empty i {
+  font-size: 1.6rem;
+  opacity: 0.6;
+}

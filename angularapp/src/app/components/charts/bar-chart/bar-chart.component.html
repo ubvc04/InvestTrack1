@@ -1,0 +1,75 @@
+<ng-container *ngIf="data.length; else empty">
+
+  <!-- Vertical columns -->
+  <div
+    class="bars-vertical"
+    *ngIf="orientation === 'vertical'"
+    role="img"
+    [attr.aria-label]="'Bar chart with ' + data.length + ' categories'">
+
+    <div
+      class="bar-col"
+      *ngFor="let datum of data; let i = index"
+      [attr.title]="tooltip(datum)">
+
+      <span class="bar-value">{{ datum.value }}</span>
+
+      <div class="bar-track-v">
+
+        <span
+          class="bar-fill-v"
+          [style.height.%]="(datum.value / max) * 100"
+          [style.background]="colorOf(datum, i)">
+        </span>
+
+      </div>
+
+      <span class="bar-label">{{ datum.label }}</span>
+
+    </div>
+
+  </div>
+
+  <!-- Horizontal rows -->
+  <div
+    class="bars-horizontal"
+    *ngIf="orientation === 'horizontal'"
+    role="img"
+    [attr.aria-label]="'Horizontal bar chart with ' + data.length + ' categories'">
+
+    <div
+      class="bar-row"
+      *ngFor="let datum of data; let i = index"
+      [attr.title]="tooltip(datum)">
+
+      <span class="bar-label-h">{{ datum.label }}</span>
+
+      <div class="bar-track-h">
+
+        <span
+          class="bar-fill-h"
+          [style.width.%]="(datum.value / max) * 100"
+          [style.background]="colorOf(datum, i)">
+        </span>
+
+      </div>
+
+      <b class="bar-value-h">{{ datum.value }}</b>
+
+    </div>
+
+  </div>
+
+</ng-container>
+
+<ng-template #empty>
+
+  <div class="chart-empty">
+
+    <i class="bi bi-bar-chart"></i>
+
+    <span>{{ emptyMessage }}</span>
+
+  </div>
+
+</ng-template>
