@@ -19,12 +19,23 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:8081")
 public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
+    /**
+     * Password policy for self-service registration — mirrors the live rules shown
+     * on the registration page (min 8 chars, upper, lower, digit, special char).
+     */
+    private static final Pattern STRONG_PASSWORD =
+            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$");
+    private static final String STRONG_PASSWORD_MESSAGE =
+            "Password must be at least 8 characters and include an uppercase letter, "
+            + "a lowercase letter, a number and a special character";
 
     private final UserService userService;
     private final JwtUtils jwtUtil;
@@ -47,6 +58,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRequestDTO request) {
+        if (request.password() == null || !STRONG_PASSWORD.matcher(request.password()).matches()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, STRONG_PASSWORD_MESSAGE);
+        }
         requireVerified(request.email());
         requirePhoneVerified(request.mobileNumber());
         User created = userService.createUser(ApiDtoMapper.toUser(request));

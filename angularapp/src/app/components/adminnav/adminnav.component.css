@@ -1,4 +1,4 @@
-:host {
+﻿:host {
   display: block;
 }
 
@@ -41,15 +41,17 @@
   display: flex;
   align-items: center;
 
-  gap: 14px;
+  gap: 10px;
 
   text-decoration: none !important;
 }
 
 .brand-icon {
 
-  width: 52px;
-  height: 52px;
+  width: 46px;
+  height: 46px;
+
+  flex-shrink: 0;
 
   border-radius: 16px;
 
@@ -81,16 +83,18 @@
 
   color: white;
 
-  font-size: 1.4rem;
+  font-size: 1.25rem;
 }
 
 .brand-title {
 
-  font-size: 2rem;
+  font-size: 1.55rem;
 
   font-weight: 800;
 
   letter-spacing: -.05em;
+
+  white-space: nowrap;
 
   color: var(--it-ink);
 }
@@ -101,29 +105,32 @@
 
 .navbar-collapse {
 
-  display: flex;
-
+  /* Display is managed by Bootstrap's navbar-expand-* / collapse rules;
+     this only handles alignment once the bar is laid out as a row. */
   align-items: center;
 
-  justify-content: space-between;
+  gap: 10px;
 
-  width: 100%;
   min-width: 0;
 }
 
 .navbar-nav {
 
-  margin-left: 18px;
-  min-width: 0;
+  margin-left: 10px;
 
   display: flex;
   align-items: center;
 
-  gap: clamp(6px, .8vw, 14px);
+  gap: 2px;
+
+  flex-wrap: nowrap;
+
+  min-width: 0;
 }
 
 .navbar-nav .nav-item {
   min-width: 0;
+  flex-shrink: 0;
 }
 
 .nav-link {
@@ -137,24 +144,26 @@
   display: flex;
   align-items: center;
 
-  gap: 6px;
+  gap: 7px;
 
-  padding: 10px 0 !important;
+  padding: 8px 11px !important;
+
+  border-radius: 12px;
 
   color: var(--it-text-muted) !important;
 
-  font-size: .86rem;
+  font-size: .92rem;
 
   font-weight: 600;
-
-  background: transparent !important;
 
   transition: .3s ease;
 }
 
 .nav-link i {
 
-  font-size: 1.08rem;
+  font-size: 1.05rem;
+
+  flex-shrink: 0;
 
   color: var(--it-text-muted);
 
@@ -164,6 +173,8 @@
 .nav-link:hover {
 
   color: var(--it-primary) !important;
+
+  background: var(--it-hover-bg);
 }
 
 .nav-link:hover i {
@@ -230,115 +241,14 @@
 }
 
 /* ==========================================
-   NOTIFICATION
-========================================== */
-
-.admin-notification {
-
-  position: relative;
-
-  width: 52px;
-  height: 52px;
-
-  border: none;
-
-  border-radius: 18px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background:
-    linear-gradient(
-      135deg,
-      #2563eb,
-      #06b6d4
-    );
-
-  color: white;
-
-  box-shadow:
-    0 12px 25px rgba(37,99,235,.25);
-
-  transition: .3s ease;
-}
-
-.admin-notification:hover {
-
-  transform:
-    translateY(-3px)
-    scale(1.05);
-
-  box-shadow:
-    0 18px 32px rgba(37,99,235,.35);
-}
-
-.admin-notification i {
-
-  font-size: 1.25rem;
-
-  color: white;
-}
-
-.admin-badge {
-
-  position: absolute;
-
-  top: -6px;
-  right: -6px;
-
-  min-width: 22px;
-  height: 22px;
-
-  padding: 0 6px;
-
-  border-radius: 999px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: #ef4444;
-
-  color: white;
-
-  font-size: .72rem;
-
-  font-weight: 700;
-
-  border: 2px solid white;
-
-  box-shadow:
-    0 0 0 6px rgba(239,68,68,.15);
-
-  animation: notificationPulse 2s infinite;
-}
-
-@keyframes notificationPulse {
-
-  0% {
-
-    transform: scale(1);
-  }
-
-  50% {
-
-    transform: scale(1.15);
-  }
-
-  100% {
-
-    transform: scale(1);
-  }
-}
-
-/* ==========================================
    NAV ACTIONS (theme switch + notification bell)
 ========================================== */
 
 .nav-actions {
 
   margin-left: auto;
+
+  flex-shrink: 0;
 
   display: inline-flex;
 
@@ -358,6 +268,8 @@
 .user-dropdown-container {
 
   margin-left: 0.75rem;
+
+  flex-shrink: 0;
 
   position: relative;
 
@@ -714,75 +626,114 @@
 }
 
 /* ==========================================
-   TABLET
+   DESKTOP TRIM (just above the expand
+   breakpoint â€” the six-item Super Admin row)
 ========================================== */
 
-@media (max-width: 1199px) {
+@media (min-width: 1400px) and (max-width: 1599.98px) {
+
+  .brand-title {
+    font-size: 1.4rem;
+  }
+
+  .nav-link {
+    gap: 6px;
+    padding: 8px 9px !important;
+    font-size: .86rem;
+  }
+
+  .nav-link i {
+    font-size: 1rem;
+  }
+
+  .user-meta,
+  .user-name,
+  .user-role-small {
+    max-width: 120px;
+  }
+}
+
+/* ==========================================
+   COLLAPSED PANEL (below the expand
+   breakpoint) â€” vertical menu with dividers
+========================================== */
+
+@media (max-width: 1399.98px) {
 
   .navbar-collapse {
-    display: none !important;
+    margin-top: 14px;
 
-    margin-top: 16px;
-
-    padding: 18px;
+    padding: 14px;
 
     border-radius: 20px;
 
     background: var(--it-card-bg);
 
+    border: 1px solid var(--it-border);
+
     box-shadow:
       0 15px 35px rgba(15,23,42,.08);
-  }
 
-  @media (min-width: 1200px) and (max-width: 1500px) {
-    .brand-title {
-      font-size: 1.65rem;
-    }
-
-    .navbar-nav {
-      margin-left: 10px;
-      gap: 5px;
-    }
-
-    .nav-link {
-      gap: 4px;
-      font-size: .76rem;
-    }
-
-    .nav-link i {
-      font-size: .98rem;
-    }
-  }
-
-  .navbar-collapse.show {
-    display: flex !important;
+    align-items: stretch;
   }
 
   .navbar-nav {
 
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 4px;
+
     margin-left: 0;
+  }
 
-    gap: 20px;
+  .nav-link {
+    justify-content: flex-start;
 
-    margin-bottom: 20px;
+    padding: 12px 14px !important;
+
+    font-size: 1rem;
+
+    white-space: normal;
+  }
+
+  .nav-link::after {
+    display: none;
   }
 
   .nav-actions {
 
     margin-left: 0;
 
-    width: 100%;
+    margin-top: 12px;
+
+    padding-top: 12px;
+
+    border-top: 1px solid var(--it-border);
 
     justify-content: flex-start;
 
-    padding: 4px 0;
+    gap: 1rem;
   }
 
   .user-dropdown-container {
 
     width: 100%;
 
-    justify-content: space-between;
+    margin-left: 0;
+
+    margin-top: 12px;
+
+    padding-top: 12px;
+
+    border-top: 1px solid var(--it-border);
+  }
+
+  .user-menu-btn {
+    width: 100%;
+
+    justify-content: flex-start;
   }
 }
 
@@ -1012,7 +963,7 @@ router-outlet {
   color: var(--it-ink);
 }
 /* ==========================================
-   ACCOUNT DROPDOWN � SMALL SCREENS
+   ACCOUNT DROPDOWN ï¿½ SMALL SCREENS
 ========================================== */
 
 @media (max-width: 576px) {

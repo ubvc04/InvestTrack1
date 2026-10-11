@@ -544,3 +544,88 @@
     left: 12px;
   }
 }
+/* =====================================
+   LIVE PASSWORD REQUIREMENTS
+===================================== */
+
+.password-rules {
+
+  list-style: none;
+
+  margin: 10px 0 0;
+
+  padding: 12px 14px;
+
+  border-radius: 14px;
+
+  background: var(--it-surface-2);
+
+  border: 1px solid var(--it-border);
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  font-size: .82rem;
+
+  color: var(--it-text-muted);
+
+  transition: border-color .25s ease;
+}
+
+.password-rules li {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.password-rules li i {
+
+  flex-shrink: 0;
+
+  font-size: .95rem;
+
+  color: var(--it-text-muted);
+
+  transition: color .25s ease;
+}
+
+.password-rules li.rule-met {
+
+  color: var(--it-success-soft-fg);
+
+  font-weight: 600;
+}
+
+.password-rules li.rule-met i {
+
+  color: var(--it-success-soft-fg);
+}
+
+/* =====================================
+   CONFIRM PASSWORD MATCH FEEDBACK
+===================================== */
+
+.password-match-ok {
+
+  margin-top: 8px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  font-size: .82rem;
+
+  font-weight: 600;
+
+  color: var(--it-success-soft-fg);
+
+  animation: validationFade .2s ease;
+}

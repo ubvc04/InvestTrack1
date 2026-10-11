@@ -84,6 +84,15 @@
 
         </div>
 
+        <!-- Email availability error (e.g. already registered) — always
+             directly below the Email field, above the Send OTP button. -->
+
+        <div class="invalid-feedback d-block" *ngIf="emailError">
+
+          {{ emailError }}
+
+        </div>
+
       </div>
 
       <!-- OTP Verification -->
@@ -189,10 +198,52 @@
           </span>
 
           <span *ngIf="password?.errors?.['minlength']">
-            At least 6 characters.
+            At least 8 characters.
           </span>
 
         </div>
+
+        <!-- Live password requirements — directly below the Password field,
+             above Confirm Password, updating while the user types. -->
+
+        <ul class="password-rules" *ngIf="password?.value">
+
+          <li [class.rule-met]="passwordChecks.length">
+
+            <i class="bi" [ngClass]="passwordChecks.length ? 'bi-check-circle-fill' : 'bi-circle'"></i>
+            At least 8 characters
+
+          </li>
+
+          <li [class.rule-met]="passwordChecks.upper">
+
+            <i class="bi" [ngClass]="passwordChecks.upper ? 'bi-check-circle-fill' : 'bi-circle'"></i>
+            At least one uppercase letter (A–Z)
+
+          </li>
+
+          <li [class.rule-met]="passwordChecks.lower">
+
+            <i class="bi" [ngClass]="passwordChecks.lower ? 'bi-check-circle-fill' : 'bi-circle'"></i>
+            At least one lowercase letter (a–z)
+
+          </li>
+
+          <li [class.rule-met]="passwordChecks.number">
+
+            <i class="bi" [ngClass]="passwordChecks.number ? 'bi-check-circle-fill' : 'bi-circle'"></i>
+            At least one number (0–9)
+
+          </li>
+
+          <li [class.rule-met]="passwordChecks.special">
+
+            <i class="bi" [ngClass]="passwordChecks.special ? 'bi-check-circle-fill' : 'bi-circle'"></i>
+            At least one special character (e.g. @, #, !)
+
+          </li>
+
+        </ul>
 
       </div>
 
@@ -212,7 +263,7 @@
 
           <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" formControlName="confirmPassword"
             placeholder="Confirm password"
-            [class.is-invalid]="confirmPassword?.touched && signupForm.errors?.['passwordMismatch']">
+            [class.is-invalid]="confirmPassword?.touched && confirmPassword?.value && signupForm.errors?.['passwordMismatch']">
 
           <button
             type="button"
@@ -230,9 +281,19 @@
 
         </div>
 
-        <div class="invalid-feedback" *ngIf="confirmPassword?.touched && signupForm.errors?.['passwordMismatch']">
+        <div class="invalid-feedback" *ngIf="confirmPassword?.touched && confirmPassword?.value && signupForm.errors?.['passwordMismatch']">
 
           Passwords do not match.
+
+        </div>
+
+        <!-- Live match confirmation — only once a confirmation value exists. -->
+
+        <div class="password-match-ok"
+          *ngIf="confirmPassword?.touched && confirmPassword?.value && password?.value && !signupForm.hasError('passwordMismatch')">
+
+          <i class="bi bi-check-circle-fill"></i>
+          Passwords match
 
         </div>
 

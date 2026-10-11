@@ -17,6 +17,10 @@ export class SignupComponent implements OnDestroy {
   showModal = false;
   loading = false;
 
+  /** Email-specific error (format / already registered) — shown directly
+   *  under the Email field, never near the Create Account button. */
+  emailError = '';
+
   otp = '';
   otpSent = false;
   otpVerified = false;
@@ -44,13 +48,15 @@ export class SignupComponent implements OnDestroy {
     this.signupForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8), SignupComponent.strengthValidator]],
       confirmPassword: ['', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]]
     }, { validators: this.passwordMatchValidator });
 
-    // Changing the email invalidates any previously sent or verified email OTP.
+    // Changing the email invalidates any previously sent or verified email OTP
+    // and clears the previous email error so the message never goes stale.
     this.signupForm.get('email')?.valueChanges.subscribe(() => {
+      this.emailError = '';
       if (this.otpVerified || this.otpSent) {
         this.otpVerified = false;
         this.otpSent = false;
@@ -82,27 +88,52 @@ export class SignupComponent implements OnDestroy {
     return pass === confirm ? null : { passwordMismatch: true };
   }
 
+  /** Mirrors the backend registration password policy. */
+  private static strengthValidator(control: AbstractControl) {
+    const value: string = control.value || '';
+    const met =
+      value.length >= 8 &&
+      /[A-Z]/.test(value) &&
+      /[a-z]/.test(value) &&
+      /[0-9]/.test(value) &&
+      /[^A-Za-z0-9]/.test(value);
+    return met ? null : { passwordStrength: true };
+  }
+
   get username() { return this.signupForm.get('username'); }
   get email() { return this.signupForm.get('email'); }
   get password() { return this.signupForm.get('password'); }
   get confirmPassword() { return this.signupForm.get('confirmPassword'); }
   get mobileNumber() { return this.signupForm.get('mobileNumber'); }
 
+  /** Live per-rule password checks — recomputed on every change-detection
+   *  cycle so the requirement list updates while the user types. */
+  get passwordChecks() {
+    const value: string = this.password?.value || '';
+    return {
+      length: value.length >= 8,
+      upper: /[A-Z]/.test(value),
+      lower: /[a-z]/.test(value),
+      number: /[0-9]/.test(value),
+      special: /[^A-Za-z0-9]/.test(value)
+    };
+  }
+
   sendOtp(): void {
 
     const email = this.signupForm.value.email;
 
     if (!email) {
-      this.errorMessage = 'Please enter email first';
+      this.emailError = 'Please enter email first';
       return;
     }
 
-    if (this.email?.invalid && this.email?.touched) {
-      this.errorMessage = 'Enter a valid email address before requesting OTP';
+    if (this.email?.invalid) {
+      this.emailError = 'Enter a valid email address before requesting OTP';
       return;
     }
 
-    this.errorMessage = '';
+    this.emailError = '';
     this.otpMessage = '';
     this.otpLoading = true;
 
@@ -111,12 +142,13 @@ export class SignupComponent implements OnDestroy {
     this.authService.sendOtp(email).subscribe({
       next: () => {
         this.otpLoading = false;
+        this.emailError = '';
         this.otpSent = true;
         this.otpMessage = 'OTP sent successfully. Check your email for the code.';
       },
       error: err => {
         this.otpLoading = false;
-        this.errorMessage = this.extractError(err, 'Failed to send OTP');
+        this.emailError = this.extractError(err, 'Failed to send OTP');
       }
     });
   }
@@ -250,7 +282,14 @@ export class SignupComponent implements OnDestroy {
       error: (err) => {
         this.loading = false;
         this.phoneOtpVerified = false;
-        this.errorMessage = this.extractError(err, 'Registration failed. Please try again.');
+        const message = this.extractError(err, 'Registration failed. Please try again.');
+        // The duplicate-email race (409 from the unique constraint) belongs
+        // under the Email field, not in the generic error slot.
+        if (message.toLowerCase().includes('already registered')) {
+          this.emailError = message;
+        } else {
+          this.errorMessage = message;
+        }
       }
     });
   }
