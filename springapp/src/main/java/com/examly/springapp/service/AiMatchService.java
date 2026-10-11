@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * AI investment search with deterministic, explainable match percentages.
@@ -59,14 +61,39 @@ public class AiMatchService {
      *         query is not investment-related
      */
     public AiSearchResponseDTO search(String query) {
+        long started = System.currentTimeMillis();
         InvestmentMatchEngine.MatchPlan plan = matchEngine.buildPlan(query);
         List<Investment> investments = investmentRepository.findAll();
 
         List<InvestmentMatchEngine.Scored> ranked = matchEngine.rank(plan, investments);
 
-        // Primary AI-matched results: only investments that reached the configured threshold.
+        // Mandatory criteria + threshold. A record that verifiably contradicts any stated
+        // criterion fails a mandatory filter and is excluded before ranking. A record whose
+        // stored data cannot verify a stated verifiable criterion (e.g. no market evidence
+        // for a geographic request) is held back rather than presented as a match. A missing
+        // database field is never treated as a match or a mismatch. Structurally unverifiable
+        // criteria (risk, horizon, liquidity, volatility) never block results - they only
+        // lower confidence and are disclosed in the analysis panel.
         List<InvestmentMatchEngine.Scored> passing = new ArrayList<>();
+        Map<String, Integer> exclusionReasons = new LinkedHashMap<>();
+        int excluded = 0;
+        int heldBack = 0;
         for (InvestmentMatchEngine.Scored item : ranked) {
+            boolean failedMandatory = false;
+            for (com.examly.springapp.dto.AiMatchCriterionDTO detail : item.evaluation().details()) {
+                if (InvestmentMatchEngine.STATE_MISMATCH.equals(detail.state())) {
+                    failedMandatory = true;
+                    exclusionReasons.merge(detail.criterion(), 1, Integer::sum);
+                }
+            }
+            if (failedMandatory) {
+                excluded++;
+                continue;
+            }
+            if (item.evaluation().missingVerifiableData()) {
+                heldBack++;
+                continue;
+            }
             if (item.evaluation().matchPercentage() >= matchThreshold) {
                 passing.add(item);
             }
@@ -78,12 +105,19 @@ public class AiMatchService {
 
         int highestScore = ranked.isEmpty() ? 0 : ranked.get(0).evaluation().matchPercentage();
         String overview = matchEngine.buildOverview(plan, investments.size(), results.size(),
-                matchThreshold, highestScore);
+                excluded, heldBack, matchThreshold, highestScore);
         var analysis = matchEngine.buildAnalysis(plan, ranked, passing, matchThreshold,
                 investments.size());
 
-        logger.info("AI match search [{}]: evaluated={}, matched={}, threshold={}, engine={}",
-                query, investments.size(), results.size(), matchThreshold, plan.source());
+        long latency = System.currentTimeMillis() - started;
+        // Log correlation data only: never the raw query, never credentials.
+        logger.info("AI match search [len={}, hash={}]: engine={}, detail=\"{}\", evaluated={}, "
+                        + "matched={}, excluded={}, heldBack={}, threshold={}, latency={}ms, "
+                        + "exclusionReasons={}",
+                query == null ? 0 : query.length(),
+                query == null ? "-" : Integer.toHexString(query.hashCode()),
+                plan.source(), plan.sourceDetail(), investments.size(), results.size(), excluded,
+                heldBack, matchThreshold, latency, exclusionReasons);
 
         return new AiSearchResponseDTO(
                 query,
@@ -94,7 +128,10 @@ public class AiMatchService {
                 matchThreshold,
                 investments.size(),
                 results.size(),
-                plan.source());
+                plan.source(),
+                excluded,
+                heldBack,
+                plan.sourceDetail());
     }
 
     private AiSearchResultDTO toResult(InvestmentMatchEngine.Scored item, boolean passedThreshold) {

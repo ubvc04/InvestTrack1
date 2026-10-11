@@ -46,4 +46,10 @@ export interface AiSearchResponse {
   matchedCount: number;
   /** "gemini-criteria" | "deterministic-fallback" */
   engine: string;
+  /** Records that verifiably contradicted a stated criterion (mandatory exclusion). */
+  excludedCount?: number;
+  /** Records held back because stored data could not verify a stated criterion. */
+  heldBackCount?: number;
+  /** Sanitized engine detail: model + latency, or the reason the fallback ran. */
+  engineDetail?: string;
 }

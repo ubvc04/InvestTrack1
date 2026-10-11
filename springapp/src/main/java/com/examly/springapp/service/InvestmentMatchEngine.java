@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -233,18 +234,24 @@ public class InvestmentMatchEngine {
     private static final List<String> GROWTH_WORDING = List.of(
             "growth", "appreciation", "capital gain", "expand", "expansion", "accumulate", "wealth creation");
 
+    /** Currency token shared by the budget patterns: symbol or word form. */
+    private static final String CURRENCY_TOKEN =
+            "(?:[$€£₹]|usd|eur|gbp|inr|rs\\.?|dollars?|rupees?)";
     private static final Pattern BUDGET_PATTERN = Pattern.compile(
             "(?:under|below|less than|upto|up to|maximum|max|budget(?: of)?|within|afford(?:able)?|cheaper than)\\s*"
-                    + "(?:[$€£₹]|usd|eur|gbp|inr|rs\\.?|dollars?|rupees?)?\\s*"
+                    + "(" + CURRENCY_TOKEN + ")?\\s*"
                     + "([0-9][0-9,]*(?:\\.[0-9]+)?)",
             Pattern.CASE_INSENSITIVE);
     private static final Pattern BUDGET_SUFFIX_PATTERN = Pattern.compile(
-            "([$€£₹]|usd|eur|gbp|inr|rs\\.?|dollars?|rupees?)?\\s*"
+            "(" + CURRENCY_TOKEN + ")?\\s*"
                     + "([0-9][0-9,]*(?:\\.[0-9]+)?)\\s*(?:or less|or below|or under|max|maximum)",
             Pattern.CASE_INSENSITIVE);
 
     private final GeminiService geminiService;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    /** Compiled lexicon match patterns, cached per synonym. */
+    private final Map<String, Pattern> lexiconPatternCache = new ConcurrentHashMap<>();
 
     public InvestmentMatchEngine(GeminiService geminiService) {
         this.geminiService = geminiService;
@@ -260,13 +267,14 @@ public class InvestmentMatchEngine {
 
     /** The interpretation of one query. */
     public record MatchPlan(String interpretation, boolean investmentRelated, String source,
-                            List<Criterion> criteria) {
+                            List<Criterion> criteria, String sourceDetail) {
     }
 
     /** The full outcome of scoring one investment. */
     public record Evaluation(List<AiMatchCriterionDTO> details, int matchPercentage, int confidence,
                              List<String> matchedLabels, List<String> mismatchedLabels,
-                             List<String> unverifiableLabels, String primaryReason) {
+                             List<String> unverifiableLabels, String primaryReason,
+                             boolean missingVerifiableData) {
     }
 
     /** One investment plus its evaluation, used for sorting and rendering. */
@@ -289,25 +297,50 @@ public class InvestmentMatchEngine {
                     "Please enter an investment-related search request.");
         }
 
+        String fallbackDetail = "gemini-disabled: no API key configured, deterministic engine used.";
         if (geminiService.isEnabled()) {
-            try {
-                String generated = geminiService.generate(buildCriteriaPrompt(normalized));
-                MatchPlan plan = parseGeminiPlan(generated);
-                if (plan != null) {
-                    if (!plan.investmentRelated()) {
-                        throw new UnrelatedInvestmentQueryException(UNRELATED_MESSAGE);
-                    }
-                    logger.info("Gemini extracted {} investment criteria for query [{}]",
-                            plan.criteria().size(), normalized);
-                    return plan;
+            GeminiService.GenerationOutcome outcome =
+                    geminiService.generateDetailed(buildCriteriaPrompt(normalized), true);
+            if (!outcome.success() && outcome.retryable()) {
+                // One bounded retry for transient conditions (quota churn, timeouts, blips).
+                logger.info("Gemini criteria call failed with transient category {}; retrying once",
+                        outcome.errorCategory());
+                try {
+                    Thread.sleep(750);
+                } catch (InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
                 }
-                logger.warn("Gemini criteria extraction returned unusable JSON; "
-                        + "using the deterministic fallback engine");
-            } catch (UnrelatedInvestmentQueryException exception) {
-                throw exception;
-            } catch (RuntimeException exception) {
-                logger.warn("Gemini criteria extraction failed; using the deterministic fallback engine",
-                        exception);
+                outcome = geminiService.generateDetailed(buildCriteriaPrompt(normalized), true);
+            }
+            if (outcome.success()) {
+                try {
+                    MatchPlan plan = parseGeminiPlan(outcome.text());
+                    if (plan != null) {
+                        if (!plan.investmentRelated()) {
+                            throw new UnrelatedInvestmentQueryException(UNRELATED_MESSAGE);
+                        }
+                        MatchPlan geminiPlan = new MatchPlan(plan.interpretation(), true,
+                                ENGINE_GEMINI, plan.criteria(),
+                                "model " + outcome.model() + ", interpreted in " + outcome.latencyMs() + "ms");
+                        logger.info("Gemini extracted {} investment criteria (model={}, latency={}ms)",
+                                geminiPlan.criteria().size(), outcome.model(), outcome.latencyMs());
+                        return geminiPlan;
+                    }
+                    logger.warn("Gemini criteria extraction returned unusable JSON; "
+                            + "using the deterministic fallback engine");
+                    fallbackDetail = "gemini returned unusable criteria JSON; deterministic engine used.";
+                } catch (UnrelatedInvestmentQueryException exception) {
+                    throw exception;
+                } catch (RuntimeException exception) {
+                    logger.warn("Gemini criteria parsing failed; using the deterministic fallback engine",
+                            exception);
+                    fallbackDetail = "gemini criteria response could not be parsed; deterministic engine used.";
+                }
+            } else {
+                fallbackDetail = "gemini unavailable [" + outcome.errorCategory()
+                        + (outcome.httpStatus() > 0 ? " HTTP " + outcome.httpStatus() : "")
+                        + "]; deterministic engine used.";
+                logger.warn("Gemini criteria extraction failed: {}", fallbackDetail);
             }
         }
 
@@ -315,9 +348,10 @@ public class InvestmentMatchEngine {
         if (!fallback.investmentRelated()) {
             throw new UnrelatedInvestmentQueryException(UNRELATED_MESSAGE);
         }
-        logger.info("Fallback engine extracted {} investment criteria for query [{}]",
-                fallback.criteria().size(), normalized);
-        return fallback;
+        logger.info("Fallback engine extracted {} investment criteria (detail: {})",
+                fallback.criteria().size(), fallbackDetail);
+        return new MatchPlan(fallback.interpretation(), fallback.investmentRelated(),
+                ENGINE_FALLBACK, fallback.criteria(), fallbackDetail);
     }
 
     private String buildCriteriaPrompt(String query) {
@@ -331,8 +365,8 @@ public class InvestmentMatchEngine {
                   category        -> "Instrument type"        (verifiable: type field)
                   sector          -> "Sector"                 (verifiable: market, asset class, description)
                   status          -> "Investment status"      (verifiable: status field, Active/Sold)
-                  budget          -> "Budget"                 (verifiable: current price; put a plain number in values)
-                  geography       -> "Geographic market"      (verifiable: market, exchange, description)
+                  budget          -> "Budget"                 (verifiable: current price; put the plain number in values[0] and, when the user names a currency, its ISO code - e.g. INR, USD - as values[1])
+                  geography       -> "Geographic market"      (verifiable: market, exchange, description; use market names like "India", "United States", "Europe")
                   incomeVsGrowth  -> "Income vs growth"       (verifiable: description wording)
                   returnObjective -> "Return objective"       (verifiable from recorded price change)
                   risk            -> "Risk tolerance"         (NOT verifiable: risk is not stored)
@@ -385,14 +419,14 @@ public class InvestmentMatchEngine {
                 }
             }
             if (!investmentRelated) {
-                return new MatchPlan(interpretation, false, ENGINE_GEMINI, List.of());
+                return new MatchPlan(interpretation, false, ENGINE_GEMINI, List.of(), null);
             }
             if (interpretation.isBlank() && criteria.isEmpty()) {
                 return null;
             }
             return new MatchPlan(interpretation.isBlank()
                     ? "Investment search based on your request." : limit(interpretation, 300),
-                    true, ENGINE_GEMINI, List.copyOf(criteria));
+                    true, ENGINE_GEMINI, List.copyOf(criteria), null);
         } catch (Exception exception) {
             logger.warn("Gemini criteria JSON could not be parsed: {}", exception.getMessage());
             return null;
@@ -464,10 +498,15 @@ public class InvestmentMatchEngine {
                     List.of(horizon)));
         }
 
-        String budget = extractBudget(text);
-        if (budget != null) {
+        BudgetExtraction budget = extractBudget(text);
+        if (budget != null && budget.amount() != null) {
+            List<String> budgetValues = new ArrayList<>();
+            budgetValues.add(String.valueOf(budget.amount()));
+            if (budget.currency() != null) {
+                budgetValues.add(budget.currency());
+            }
             criteria.add(new Criterion(K_BUDGET, LABELS.get(K_BUDGET), DEFAULT_WEIGHTS.get(K_BUDGET),
-                    List.of(budget)));
+                    budgetValues));
         }
 
         if (containsAnyWord(text, "dividend", "passive income", "income stream", "yield", "regular income")) {
@@ -514,7 +553,8 @@ public class InvestmentMatchEngine {
 
         boolean investmentRelated = hasInvestmentQueryHint(query) || !criteria.isEmpty();
         String interpretation = buildFallbackInterpretation(criteria);
-        return new MatchPlan(interpretation, investmentRelated, ENGINE_FALLBACK, List.copyOf(criteria));
+        return new MatchPlan(interpretation, investmentRelated, ENGINE_FALLBACK,
+                List.copyOf(criteria), null);
     }
 
     private String buildFallbackInterpretation(List<Criterion> criteria) {
@@ -586,6 +626,7 @@ public class InvestmentMatchEngine {
         double requestedWeight = 0;
         double verifiableWeight = 0;
         double earnedWeight = 0;
+        boolean missingVerifiableData = false;
 
         for (Criterion criterion : criteria) {
             CriterionOutcome outcome = evaluateCriterion(criterion, investment);
@@ -595,6 +636,11 @@ public class InvestmentMatchEngine {
                 if (STATE_MATCH.equals(outcome.state())) {
                     earnedWeight += criterion.rawWeight();
                 }
+            } else if (!STRUCTURALLY_UNVERIFIABLE.contains(criterion.key())) {
+                // The user stated a criterion that stored fields should verify, but this
+                // record carries no evidence either way. That is missing data: the record
+                // must not be presented as a confirmed match for the stated criterion.
+                missingVerifiableData = true;
             }
             details.add(new AiMatchCriterionDTO(criterion.label(), outcome.state(),
                     criterion.rawWeight(), outcome.evidence()));
@@ -614,7 +660,7 @@ public class InvestmentMatchEngine {
 
         return new Evaluation(details, clampPercent(score), clampPercent(confidence),
                 List.copyOf(matched), List.copyOf(mismatched), List.copyOf(unverifiable),
-                primaryReason(details, investment));
+                primaryReason(details, investment), missingVerifiableData);
     }
 
     private record CriterionOutcome(String state, String evidence) {
@@ -714,7 +760,7 @@ public class InvestmentMatchEngine {
         }
 
         for (String synonym : requestedSynonyms) {
-            if (text.contains(synonym.toLowerCase(Locale.ROOT))) {
+            if (lexiconTextMatch(text, synonym)) {
                 return new CriterionOutcome(STATE_MATCH,
                         "The record carries " + evidenceName + " for '"
                                 + String.join(", ", criterion.values()) + "' (matched on '"
@@ -729,7 +775,7 @@ public class InvestmentMatchEngine {
                 continue;
             }
             for (String synonym : entry.getValue()) {
-                if (text.contains(synonym.toLowerCase(Locale.ROOT))) {
+                if (lexiconTextMatch(text, synonym)) {
                     recordCarriesAnyEvidence = true;
                     if (firstOtherEvidence == null) {
                         firstOtherEvidence = entry.getKey();
@@ -772,17 +818,69 @@ public class InvestmentMatchEngine {
             return new CriterionOutcome(STATE_UNVERIFIABLE,
                     "No numeric budget could be read from the query.");
         }
+        String requestedCurrency = requestedBudgetCurrency(criterion.values());
+        String recordCurrency = normalizeCurrency(investment.getCurrency());
+        if (recordCurrency == null) {
+            return new CriterionOutcome(STATE_UNVERIFIABLE,
+                    "The record does not state its currency, so it cannot be safely compared "
+                            + "to the requested limit.");
+        }
+        if (requestedCurrency != null && !requestedCurrency.equalsIgnoreCase(recordCurrency)) {
+            return new CriterionOutcome(STATE_UNVERIFIABLE,
+                    "The requested limit is stated in " + requestedCurrency
+                            + " but this record is priced in " + recordCurrency
+                            + "; currencies are not converted, so the budget could not be verified.");
+        }
         Double price = investment.getCurrentPrice();
         if (price == null) {
             return new CriterionOutcome(STATE_UNVERIFIABLE,
                     "The record has no current price, so the budget cannot be checked.");
         }
-        String evidence = "Current price " + formatMoney(price, investment.getCurrency())
-                + " per unit versus the requested limit of "
-                + formatMoney(limit, investment.getCurrency()) + ".";
+        String evidence = "Current price " + formatMoney(price, recordCurrency)
+                + " per unit versus the requested limit of " + formatMoney(limit, recordCurrency) + ".";
+        if (requestedCurrency == null) {
+            evidence += " The query did not state a currency; the record's " + recordCurrency
+                    + " price was compared as a plain amount.";
+        }
         return price <= limit
                 ? new CriterionOutcome(STATE_MATCH, evidence)
                 : new CriterionOutcome(STATE_MISMATCH, evidence);
+    }
+
+    /** Reads the ISO currency code the user stated, wherever the extraction placed it. */
+    private String requestedBudgetCurrency(List<String> values) {
+        for (String value : values) {
+            String currency = normalizeCurrency(value);
+            if (currency != null) {
+                return currency;
+            }
+        }
+        return null;
+    }
+
+    /** Maps a currency symbol, word or ISO code onto an ISO code; null when unknown. */
+    private String normalizeCurrency(String token) {
+        if (token == null) {
+            return null;
+        }
+        String value = token.trim().toLowerCase(Locale.ROOT);
+        if (value.isBlank()) {
+            return null;
+        }
+        if (value.startsWith("₹") || value.equals("inr") || value.startsWith("rs")
+                || value.startsWith("rupee")) {
+            return "INR";
+        }
+        if (value.startsWith("$") || value.equals("usd") || value.startsWith("dollar")) {
+            return "USD";
+        }
+        if (value.startsWith("€") || value.equals("eur") || value.startsWith("euro")) {
+            return "EUR";
+        }
+        if (value.startsWith("£") || value.equals("gbp") || value.startsWith("pound")) {
+            return "GBP";
+        }
+        return null;
     }
 
     private CriterionOutcome evaluateIncomeVsGrowth(Criterion criterion, Investment investment) {
@@ -866,11 +964,24 @@ public class InvestmentMatchEngine {
     // -------------------------------------------------------------------------------------
 
     /** Builds the overview text actually shown above the results. */
-    public String buildOverview(MatchPlan plan, int evaluated, int matched, int threshold,
-                                int highestScore) {
+    public String buildOverview(MatchPlan plan, int evaluated, int matched, int excluded,
+                                int heldBack, int threshold, int highestScore) {
         String engineNote = ENGINE_FALLBACK.equals(plan.source())
                 ? " Gemini was unavailable, so the documented deterministic fallback engine was used."
                 : " Criteria were interpreted by Gemini and scored deterministically in the backend.";
+        StringBuilder notes = new StringBuilder();
+        if (excluded > 0) {
+            notes.append(' ').append(excluded).append(" record")
+                    .append(excluded == 1 ? "" : "s")
+                    .append(" failed at least one mandatory criterion and were excluded.");
+        }
+        if (heldBack > 0) {
+            notes.append(' ').append(heldBack).append(" record")
+                    .append(heldBack == 1 ? "" : "s")
+                    .append(" were held back because the stored data could not verify a stated "
+                            + "criterion for them, so they are not presented as matches.");
+        }
+        String excludedNote = notes.toString();
         if (evaluated == 0) {
             return "The investment database contains no records to evaluate." + engineNote;
         }
@@ -880,12 +991,13 @@ public class InvestmentMatchEngine {
         }
         if (matched == 0) {
             return "No investment reached the " + threshold + "% match threshold out of " + evaluated
-                    + " evaluated records (highest score " + highestScore + "%). " + engineNote;
+                    + " evaluated records (highest score " + highestScore + "%)." + excludedNote
+                    + engineNote;
         }
         return "Matched " + matched + " of " + evaluated + " evaluated investments against "
-                + plan.criteria().size() + " requested criteria. Scores are deterministic match "
-                + "percentages calculated from stored investment fields — they are not predictions, "
-                + "risk ratings or advice." + engineNote;
+                + plan.criteria().size() + " requested criteria." + excludedNote + " Scores are "
+                + "deterministic match percentages calculated from stored investment fields — they "
+                + "are not predictions, risk ratings or advice." + engineNote;
     }
 
     /**
@@ -975,8 +1087,9 @@ public class InvestmentMatchEngine {
 
         String refine;
         if (plan.criteria().isEmpty()) {
-            refine = "Add at least one concrete criterion, for example "
-                    + "\"technology stocks under $500 with Active status\".";
+            refine = "Your question did not state a risk tolerance, time horizon, budget, market "
+                    + "or goal, so nothing could be ranked objectively. Add at least one concrete "
+                    + "criterion, for example \"technology stocks under $500 with Active status\".";
         } else if (unverified.size() == normalized.size() && !normalized.isEmpty()) {
             refine = "None of the stated criteria can be verified from the stored investment fields. "
                     + "Rephrase using verifiable criteria such as instrument type, sector, budget, "
@@ -1093,15 +1206,54 @@ public class InvestmentMatchEngine {
         if (canonical != null) {
             return canonical;
         }
-        String text = " " + queryText + " ";
+        String text = " " + queryText.toLowerCase(Locale.ROOT) + " ";
         for (Map.Entry<String, List<String>> entry : lexicon.entrySet()) {
             for (String synonym : entry.getValue()) {
-                if (text.contains(synonym.toLowerCase(Locale.ROOT))) {
+                if (lexiconTextMatch(text, synonym)) {
                     return entry.getKey();
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * Word-boundary-aware lexicon matching. Short synonyms such as "nse", "bse" or "us"
+     * must match whole words only, so unrelated text like "expense ratio" or "absent"
+     * never counts as geographic or sector evidence. Longer tokens match from a word
+     * start so documented stems ("technolog", "utilit") keep working. Synonyms that
+     * contain punctuation ("u.s.") require exact space-padded containment. Matches are
+     * cached per synonym.
+     */
+    private boolean lexiconTextMatch(String paddedLowerText, String synonym) {
+        if (paddedLowerText == null || synonym == null) {
+            return false;
+        }
+        String token = synonym.toLowerCase(Locale.ROOT).trim();
+        if (token.isEmpty()) {
+            return false;
+        }
+        if (!token.matches("[a-z]+(?:\\s+[a-z]+)*")) {
+            return paddedLowerText.contains(" " + token + " ")
+                    || paddedLowerText.contains(token);
+        }
+        Pattern pattern = lexiconPatternCache.computeIfAbsent(token, key -> {
+            String[] words = key.split("\\s+");
+            StringBuilder regex = new StringBuilder("\\b");
+            for (int i = 0; i < words.length; i++) {
+                if (i > 0) {
+                    regex.append("\\s+");
+                }
+                regex.append(Pattern.quote(words[i]));
+                if (key.length() <= 5 && i == words.length - 1) {
+                    // Short synonyms also match their plural ("stocks" -> "stock" style).
+                    regex.append("(?:s)?");
+                }
+            }
+            regex.append("\\b");
+            return Pattern.compile(regex.toString());
+        });
+        return pattern.matcher(paddedLowerText).find();
     }
 
     private String canonicalLexiconKey(String value, Map<String, List<String>> lexicon) {
@@ -1124,16 +1276,32 @@ public class InvestmentMatchEngine {
         return null;
     }
 
-    private String extractBudget(String text) {
+    /** A budget read from the query: the numeric limit and the stated currency, if any. */
+    public record BudgetExtraction(Double amount, String currency) {
+    }
+
+    private BudgetExtraction extractBudget(String text) {
         Matcher matcher = BUDGET_PATTERN.matcher(text);
         if (matcher.find()) {
-            return matcher.group(1);
+            return toBudget(matcher.group(1), matcher.group(2));
         }
         matcher = BUDGET_SUFFIX_PATTERN.matcher(text);
         if (matcher.find()) {
-            return matcher.group(2);
+            return toBudget(matcher.group(1), matcher.group(2));
         }
         return null;
+    }
+
+    private BudgetExtraction toBudget(String currencyToken, String numberToken) {
+        Double amount = null;
+        if (numberToken != null) {
+            try {
+                amount = Double.parseDouble(numberToken.replace(",", ""));
+            } catch (NumberFormatException ignored) {
+                amount = null;
+            }
+        }
+        return new BudgetExtraction(amount, normalizeCurrency(currencyToken));
     }
 
     private Double firstNumber(List<String> values) {

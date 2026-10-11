@@ -12,6 +12,13 @@ import java.util.List;
  * @param evaluatedCount      every eligible investment that was scored (not just the returned page)
  * @param matchedCount        investments that reached the threshold (size of {@code results})
  * @param engine              {@code "gemini-criteria"} or {@code "deterministic-fallback"}
+ * @param excludedCount       records that verifiably contradicted at least one stated criterion
+ *                            and were excluded before ranking (mandatory criteria)
+ * @param heldBackCount       records held back because the stored data could not verify a
+ *                            stated verifiable criterion (they are never presented as matches)
+ * @param engineDetail        sanitized detail about the interpretation engine, e.g. the model
+ *                            used and its latency, or the reason the fallback engine ran;
+ *                            never contains credentials
  */
 public record AiSearchResponseDTO(
         String query,
@@ -22,5 +29,8 @@ public record AiSearchResponseDTO(
         int threshold,
         int evaluatedCount,
         int matchedCount,
-        String engine) {
+        String engine,
+        int excludedCount,
+        int heldBackCount,
+        String engineDetail) {
 }

@@ -25,6 +25,7 @@ import { authGuard } from './guards/auth.guard';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { SuperAdminManagementComponent } from './components/super-admin-management/super-admin-management.component';
+import { AiDiagnosticsComponent } from './components/ai-diagnostics/ai-diagnostics.component';
 
 const routes: Routes = [
   
@@ -51,6 +52,7 @@ const routes: Routes = [
       { path: 'view-inquiry', component: AdminViewInquiryComponent },
       { path: 'view-feedback', component: AdminViewFeedbackComponent },
       { path: 'console', component: AdminConsoleComponent },
+      { path: 'ai-diagnostics', component: AiDiagnosticsComponent, canActivate: [authGuard], data: { role: ['Admin', 'SuperAdmin'] } },
       { path: 'management', component: SuperAdminManagementComponent, canActivate: [authGuard], data: { role: 'SuperAdmin' } },
       { path: 'change-password', component: ChangePasswordComponent }
     ]

@@ -35,6 +35,7 @@ import { NotificationBellComponent } from './components/shared/notification-bell
 import { DoughnutChartComponent } from './components/charts/doughnut-chart/doughnut-chart.component';
 import { BarChartComponent } from './components/charts/bar-chart/bar-chart.component';
 import { TrendChartComponent } from './components/charts/trend-chart/trend-chart.component';
+import { AiDiagnosticsComponent } from './components/ai-diagnostics/ai-diagnostics.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { TrendChartComponent } from './components/charts/trend-chart/trend-chart
     DoughnutChartComponent,
     BarChartComponent,
     TrendChartComponent,
+    AiDiagnosticsComponent,
   ],
 
 

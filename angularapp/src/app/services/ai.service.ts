@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Investment } from '../models/investment.model';
 import { AiSearchResponse } from '../models/ai-search.model';
+import { AiAgentHealth, AiDiagnosticsReport } from '../models/ai-diagnostics.model';
 import { AuthService } from './auth.service';
 import { environment } from '../environment';
 
@@ -37,6 +38,25 @@ export class AiService {
   searchDetailed(query: string): Observable<AiSearchResponse> {
     return this.http.post<AiSearchResponse>(`${this.apiUrl}/api/ai/search/detailed`,
       { query },
+      { headers: this.getHeaders() });
+  }
+
+  /**
+   * Live Gemini connectivity probe (administrators only). Sends one small real request
+   * to the configured model and returns its status, latency and a sanitized error
+   * category. The API key is never exposed.
+   */
+  health(): Observable<AiAgentHealth> {
+    return this.http.get<AiAgentHealth>(`${this.apiUrl}/api/ai/health`,
+      { headers: this.getHeaders() });
+  }
+
+  /**
+   * Runs the full AI agent test suite (A-H) against the live backend through the same
+   * pipeline the UI uses. Administrators only. Every result is computed from real checks.
+   */
+  runDiagnostics(): Observable<AiDiagnosticsReport> {
+    return this.http.post<AiDiagnosticsReport>(`${this.apiUrl}/api/ai/diagnostics`, {},
       { headers: this.getHeaders() });
   }
 }

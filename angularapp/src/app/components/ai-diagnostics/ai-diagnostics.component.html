@@ -1,0 +1,239 @@
+<div class="diag-shell">
+
+  <header class="diag-hero">
+
+    <div class="diag-hero-text">
+
+      <span class="diag-eyebrow"><i class="bi bi-cpu"></i> Admin only</span>
+
+      <h2>AI Agent Diagnostics</h2>
+
+      <p>
+        Every check below runs against the live backend: real Gemini requests, real MySQL
+        retrieval, real deterministic scoring. Nothing is simulated — if a part of the AI
+        search pipeline is broken, it fails here honestly.
+      </p>
+
+    </div>
+
+    <button
+      class="diag-run-btn"
+      type="button"
+      (click)="runAiTests()"
+      [disabled]="running">
+
+      <i class="bi" [ngClass]="running ? 'bi-hourglass-split' : 'bi-play-fill'"></i>
+
+      {{ running ? 'Running AI tests…' : 'Run AI Tests' }}
+
+    </button>
+
+  </header>
+
+  <p class="diag-error" *ngIf="runError">
+    <i class="bi bi-exclamation-triangle"></i> {{ runError }}
+  </p>
+
+  <!-- Backend + Gemini connectivity -->
+
+  <section class="diag-grid">
+
+    <article class="diag-card">
+
+      <div class="diag-card-head">
+
+        <span class="diag-card-title"><i class="bi bi-hdd-network"></i> Backend connectivity</span>
+
+        <span class="diag-badge diag-badge-pass" *ngIf="report">
+          <i class="bi bi-check-circle"></i> {{ report.backend.ok ? 'PASS' : 'FAIL' }}
+        </span>
+
+      </div>
+
+      <p *ngIf="report">{{ report.backend.detail }}</p>
+
+      <p class="diag-meta" *ngIf="report">
+        {{ report.backend.investmentRecords }} investment records loaded for matching
+      </p>
+
+    </article>
+
+    <article class="diag-card">
+
+      <div class="diag-card-head">
+
+        <span class="diag-card-title"><i class="bi bi-stars"></i> Gemini API connectivity</span>
+
+        <span
+          class="diag-badge"
+          [class.diag-badge-pass]="activeHealth()?.up"
+          [class.diag-badge-fail]="health && !health.up && !healthLoading"
+          *ngIf="health || report">
+
+          <i class="bi" [ngClass]="activeHealth()?.up ? 'bi-check-circle' : 'bi-x-circle'"></i>
+
+          {{ activeHealth()?.up ? 'UP' : (activeHealth()?.status || 'UNKNOWN') }}
+
+        </span>
+
+      </div>
+
+      <p *ngIf="healthLoading && !health">Checking live Gemini connectivity…</p>
+
+      <p class="diag-error" *ngIf="healthError">
+        <i class="bi bi-exclamation-triangle"></i> {{ healthError }}
+      </p>
+
+      <ng-container *ngIf="health && !healthLoading">
+
+        <p>{{ health.detail }}</p>
+
+        <p class="diag-meta">
+          model {{ health.model }} · round-trip {{ health.latencyMs }}ms ·
+          category {{ health.errorCategory }}
+          <ng-container *ngIf="health.httpStatus"> · HTTP {{ health.httpStatus }}</ng-container>
+        </p>
+
+        <p class="diag-meta" *ngIf="!health.configured">
+          No API key is configured, so AI search runs on the deterministic fallback engine.
+        </p>
+
+      </ng-container>
+
+    </article>
+
+  </section>
+
+  <!-- Test suite summary -->
+
+  <section class="diag-summary" *ngIf="report">
+
+    <div class="diag-summary-text">
+
+      <h3>
+        Natural-language test suite —
+        {{ passedCount() }} / {{ report.tests.length }} passing
+      </h3>
+
+      <p class="diag-meta">
+        Generated {{ report.generatedAt | date:'medium' }} · each case ran through the same
+        /api/ai/search/detailed pipeline the search UI uses
+      </p>
+
+    </div>
+
+  </section>
+
+  <!-- Individual test cases -->
+
+  <section class="diag-tests" *ngIf="report">
+
+    <article
+      class="diag-test"
+      *ngFor="let test of report.tests"
+      [class.diag-test-pass]="test.ok"
+      [class.diag-test-fail]="!test.ok">
+
+      <div class="diag-test-head">
+
+        <span class="diag-test-id">{{ test.id }}</span>
+
+        <span class="diag-test-title">{{ test.title }}</span>
+
+        <span class="diag-badge" [class.diag-badge-pass]="test.ok" [class.diag-badge-fail]="!test.ok">
+
+          <i class="bi" [ngClass]="test.ok ? 'bi-check-circle' : 'bi-x-circle'"></i>
+
+          {{ test.ok ? 'PASS' : 'FAIL' }}
+
+        </span>
+
+      </div>
+
+      <dl class="diag-test-facts">
+
+        <div>
+          <dt>Query</dt>
+          <dd>{{ test.query }}</dd>
+        </div>
+
+        <div>
+          <dt>Expected behavior</dt>
+          <dd>{{ test.expectation }}</dd>
+        </div>
+
+        <div>
+          <dt>Parsed criteria</dt>
+          <dd>
+            <span class="diag-chip" *ngFor="let criterion of test.criteria">{{ criterion }}</span>
+            <span class="diag-chip diag-chip-muted" *ngIf="test.criteria.length === 0">
+              none stated — clarification expected
+            </span>
+          </dd>
+        </div>
+
+        <div>
+          <dt>Database</dt>
+          <dd>
+            {{ test.evaluated }} evaluated · {{ test.matched }} matched ·
+            {{ test.excluded }} excluded (failed criteria)
+          </dd>
+        </div>
+
+        <div>
+          <dt>Engine</dt>
+          <dd>
+            {{ engineLabel(test.engine) }}
+            <span class="diag-meta" *ngIf="test.engineDetail"> — {{ test.engineDetail }}</span>
+            <span class="diag-meta"> · {{ test.latencyMs }}ms</span>
+          </dd>
+        </div>
+
+      </dl>
+
+      <div class="diag-results" *ngIf="test.topResults.length > 0">
+
+        <div
+          class="diag-result"
+          *ngFor="let result of test.topResults">
+
+          <span class="diag-result-name">
+            {{ result.name }} <span class="diag-meta">({{ result.symbol }} · {{ result.type }})</span>
+          </span>
+
+          <span class="diag-result-score">
+            {{ result.matchPercentage }}% match · {{ result.confidence }}% confidence
+          </span>
+
+        </div>
+
+      </div>
+
+      <p class="diag-verdict" [class.diag-verdict-fail]="!test.ok">
+
+        <i class="bi" [ngClass]="test.ok ? 'bi-patch-check' : 'bi-exclamation-octagon'"></i>
+
+        {{ test.verdict }}
+
+      </p>
+
+    </article>
+
+  </section>
+
+  <!-- Idle state before the first run -->
+
+  <section class="diag-idle" *ngIf="!report && !running && !runError">
+
+    <i class="bi bi-clipboard2-pulse"></i>
+
+    <h4>No diagnostics have been run yet</h4>
+
+    <p>
+      Press <strong>Run AI Tests</strong> to execute the connectivity checks and the
+      natural-language test suite against the live backend.
+    </p>
+
+  </section>
+
+</div>

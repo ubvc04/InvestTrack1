@@ -176,7 +176,7 @@
 
       <span class="ai-panel-label">
         <i class="bi bi-trophy"></i>
-        Best matches
+        Strongest matches
       </span>
 
       <p>{{ aiResponse.analysis.bestMatches }}</p>
@@ -241,6 +241,10 @@
     <span class="ai-chip ai-chip-meta">
       {{ aiResponse.evaluatedCount }} records evaluated · threshold {{ aiResponse.threshold }}% ·
       engine: {{ aiResponse.engine === 'gemini-criteria' ? 'Gemini interpretation' : 'deterministic fallback' }}
+      <span *ngIf="aiResponse.excludedCount">
+        · {{ aiResponse.excludedCount }} excluded (failed criteria)</span>
+      <span *ngIf="aiResponse.heldBackCount">
+        · {{ aiResponse.heldBackCount }} held back (data could not verify)</span>
     </span>
 
   </div>

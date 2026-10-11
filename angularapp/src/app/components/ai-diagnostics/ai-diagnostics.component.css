@@ -1,0 +1,340 @@
+/* AI Agent Diagnostics — themed with the shared --it-* tokens so it renders
+   correctly in both light and dark mode. */
+
+.diag-shell {
+  padding: 1.5rem 0 3rem;
+}
+
+/* Hero ------------------------------------------------------------------ */
+
+.diag-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.4rem 1.6rem;
+  border-radius: 16px;
+  background: linear-gradient(120deg, #0f2a4d 0%, #123a63 60%, #155a8a 100%);
+  color: #f2f7ff;
+  box-shadow: 0 10px 26px rgba(15, 42, 77, .25);
+  margin-bottom: 1.25rem;
+}
+
+.diag-hero-text h2 {
+  margin: .2rem 0 .35rem;
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+.diag-hero-text p {
+  margin: 0;
+  max-width: 62ch;
+  font-size: .92rem;
+  color: rgba(242, 247, 255, .82);
+}
+
+.diag-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: #9fd0ff;
+}
+
+.diag-run-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  border: 0;
+  border-radius: 12px;
+  padding: .75rem 1.3rem;
+  font-size: .95rem;
+  font-weight: 700;
+  color: #0f2a4d;
+  background: #f2f7ff;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+.diag-run-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, .18);
+}
+
+.diag-run-btn:disabled {
+  opacity: .65;
+  cursor: progress;
+}
+
+/* Connectivity cards ---------------------------------------------------- */
+
+.diag-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.diag-card {
+  background: var(--it-surface);
+  border: 1px solid var(--it-border);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+}
+
+.diag-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-bottom: .5rem;
+}
+
+.diag-card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--it-text);
+}
+
+.diag-card p {
+  margin: .25rem 0;
+  font-size: .88rem;
+  color: var(--it-text);
+}
+
+/* Badges ---------------------------------------------------------------- */
+
+.diag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  border-radius: 999px;
+  padding: .22rem .7rem;
+  font-size: .74rem;
+  font-weight: 700;
+  background: var(--it-surface-2);
+  color: var(--it-text-muted);
+  border: 1px solid var(--it-border);
+  white-space: nowrap;
+}
+
+.diag-badge-pass {
+  background: var(--it-success-soft-bg);
+  color: var(--it-success-soft-fg);
+  border-color: transparent;
+}
+
+.diag-badge-fail {
+  background: var(--it-danger-soft-bg);
+  color: var(--it-danger-soft-fg);
+  border-color: transparent;
+}
+
+/* Summary --------------------------------------------------------------- */
+
+.diag-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin: 1.25rem 0 .9rem;
+}
+
+.diag-summary-text h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--it-text);
+}
+
+/* Test cases ------------------------------------------------------------ */
+
+.diag-tests {
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+}
+
+.diag-test {
+  background: var(--it-surface);
+  border: 1px solid var(--it-border);
+  border-left: 4px solid var(--it-border-strong);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+}
+
+.diag-test-pass {
+  border-left-color: var(--it-success-soft-fg);
+}
+
+.diag-test-fail {
+  border-left-color: var(--it-danger-soft-fg);
+}
+
+.diag-test-head {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  margin-bottom: .6rem;
+}
+
+.diag-test-id {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: .9rem;
+  background: var(--it-surface-2);
+  color: var(--it-text);
+  border: 1px solid var(--it-border);
+}
+
+.diag-test-title {
+  flex: 1;
+  font-weight: 700;
+  color: var(--it-text);
+}
+
+/* Facts ----------------------------------------------------------------- */
+
+.diag-test-facts {
+  margin: 0 0 .6rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: .5rem 1.2rem;
+}
+
+.diag-test-facts dt {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--it-text-muted);
+}
+
+.diag-test-facts dd {
+  margin: .1rem 0 0;
+  font-size: .86rem;
+  color: var(--it-text);
+}
+
+.diag-chip {
+  display: inline-block;
+  border-radius: 999px;
+  padding: .12rem .6rem;
+  margin: .1rem .25rem .1rem 0;
+  font-size: .76rem;
+  font-weight: 600;
+  background: var(--it-surface-2);
+  border: 1px solid var(--it-border);
+  color: var(--it-text);
+}
+
+.diag-chip-muted {
+  color: var(--it-text-muted);
+}
+
+/* Results + verdict ----------------------------------------------------- */
+
+.diag-results {
+  border-radius: 10px;
+  border: 1px solid var(--it-border);
+  background: var(--it-surface-2);
+  padding: .5rem .8rem;
+  margin-bottom: .6rem;
+}
+
+.diag-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .4rem;
+  padding: .22rem 0;
+  font-size: .85rem;
+  color: var(--it-text);
+}
+
+.diag-result-score {
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--it-text-muted);
+}
+
+.diag-verdict {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  margin: 0;
+  font-size: .87rem;
+  font-weight: 600;
+  color: var(--it-success-soft-fg);
+}
+
+.diag-verdict-fail {
+  color: var(--it-danger-soft-fg);
+}
+
+/* Misc ------------------------------------------------------------------ */
+
+.diag-meta {
+  color: var(--it-text-muted);
+  font-size: .8rem;
+}
+
+.diag-error {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin: .5rem 0 1rem;
+  padding: .6rem .9rem;
+  border-radius: 10px;
+  font-size: .88rem;
+  font-weight: 600;
+  background: var(--it-danger-soft-bg);
+  color: var(--it-danger-soft-fg);
+}
+
+.diag-idle {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--it-text-muted);
+}
+
+.diag-idle i {
+  font-size: 2.2rem;
+}
+
+.diag-idle h4 {
+  margin: .6rem 0 .3rem;
+  color: var(--it-text);
+}
+
+.diag-idle p {
+  margin: 0 auto;
+  max-width: 52ch;
+  font-size: .9rem;
+}
+
+@media (max-width: 767px) {
+  .diag-hero {
+    padding: 1.1rem 1.2rem;
+  }
+
+  .diag-run-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

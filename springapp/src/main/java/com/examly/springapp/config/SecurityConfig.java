@@ -90,6 +90,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/investments")
                         .hasAnyRole("Admin", "SuperAdmin")
 
+                        // AI diagnostics — Gemini health probe and the A-H test suite run
+                        // real external API calls and exercise the full pipeline, so they are
+                        // restricted to administrators. The API key is never exposed.
+                        .requestMatchers(HttpMethod.GET, "/api/ai/health")
+                        .hasAnyRole("Admin", "SuperAdmin")
+
+                        .requestMatchers(HttpMethod.POST, "/api/ai/diagnostics")
+                        .hasAnyRole("Admin", "SuperAdmin")
+
                         // AI search — read-only over the public investment catalogue, so every
                         // authenticated role (User included) can run it. Matching percentages are
                         // calculated by the backend, never by the client.
